@@ -227,7 +227,7 @@ fun getBuildNumber(): String {
         it.range("c795901d796fba8ce8d3cb87d0172c59f56f3c9b", "HEAD")
     }
 
-    return "$commits.size"
+    return "${commits.size}"
 }
 
 fun getVersionFromJava(file: File): String  {
