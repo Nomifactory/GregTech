@@ -14,7 +14,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.event.HoverEvent;
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
@@ -93,36 +92,36 @@ public class CoverFluidRegulator extends CoverPump {
         if(sourceHandler == null || destHandler == null || fluidFilter == null)
             return 0;
 
-        final Map<Fluid, Integer> sourceFluids =
+        final Map<FluidStack, Integer> sourceFluids =
             collectDistinctFluids(sourceHandler, IFluidTankProperties::canDrain, fluidFilter);
-        final Map<Fluid, Integer> destFluids =
+        final Map<FluidStack, Integer> destFluids =
             collectDistinctFluids(destHandler, IFluidTankProperties::canFill, fluidFilter);
 
         int transferred = 0;
-        for(Fluid fluid : sourceFluids.keySet()) {
+        for(FluidStack fluidStack : sourceFluids.keySet()) {
             if(transferred >= transferLimit)
                 break;
 
             // if fluid needs to be moved to meet the Keep Exact value
             int amountInDest;
-            if((amountInDest = destFluids.getOrDefault(fluid, 0)) < keepAmount) {
+            if((amountInDest = destFluids.getOrDefault(fluidStack, 0)) < keepAmount) {
 
                 // move the lesser of the remaining transfer limit and the difference in actual vs keep exact amount
                 int amountToMove = Math.min(transferLimit - transferred,
                                             keepAmount - amountInDest);
 
                 // Simulate a drain of this fluid from the source tanks
-                FluidStack drainedResult = sourceHandler.drain(new FluidStack(fluid, amountToMove), false);
+                FluidStack drainedResult = sourceHandler.drain(copyFluidStackWithAmount(fluidStack, amountToMove), false);
 
                 // Can't drain this fluid. Try the next one.
-                if(drainedResult == null || drainedResult.amount <= 0 || !fluid.equals(drainedResult.getFluid()))
+                if(drainedResult == null || drainedResult.amount <= 0 || !fluidStack.equals(drainedResult))
                     continue;
 
                 // account for the possibility that the drain might give us less than requested
                 final int drainable = Math.min(amountToMove, drainedResult.amount);
 
                 // Simulate a fill of the drained amount
-                int fillResult = destHandler.fill(new FluidStack(fluid, drainable), false);
+                int fillResult = destHandler.fill(copyFluidStackWithAmount(fluidStack, drainable), false);
 
                 // Can't fill, try the next fluid.
                 if(fillResult <= 0)
@@ -130,13 +129,13 @@ public class CoverFluidRegulator extends CoverPump {
 
                 // This Fluid can be drained and filled, so let's move the most that will actually work.
                 int fluidToMove = Math.min(drainable, fillResult);
-                FluidStack drainedActual = sourceHandler.drain(new FluidStack(fluid, fluidToMove), true);
+                FluidStack drainedActual = sourceHandler.drain(copyFluidStackWithAmount(fluidStack, fluidToMove), true);
 
                 // Account for potential error states from the drain
                 if(drainedActual == null)
                     throw new RuntimeException("Misbehaving fluid container: drain produced null after simulation succeeded");
 
-                if(!fluid.equals(drainedActual.getFluid()))
+                if(!fluidStack.equals(drainedActual))
                     throw new RuntimeException("Misbehaving fluid container: drain produced a different fluid than the simulation");
 
                 if(drainedActual.amount != fluidToMove)
@@ -147,7 +146,7 @@ public class CoverFluidRegulator extends CoverPump {
 
 
                 // Perform Fill
-                int filledActual = destHandler.fill(new FluidStack(fluid, fluidToMove), true);
+                int filledActual = destHandler.fill(copyFluidStackWithAmount(fluidStack, fluidToMove), true);
 
                 // Account for potential error states from the fill
                 if(filledActual != fluidToMove)
@@ -164,10 +163,24 @@ public class CoverFluidRegulator extends CoverPump {
         return transferred;
     }
 
-    private Map<Fluid,Integer> collectDistinctFluids(IFluidHandler handler,
+    /**
+     * Copies a FluidStack and sets its amount to the specified value.
+     *
+     * @param fs     the original fluid stack to copy
+     * @param amount the amount to set the copied FluidStack to
+     * @return the copied FluidStack with the specified amount
+     */
+    private static FluidStack copyFluidStackWithAmount(FluidStack fs, int amount) {
+        FluidStack fs2 = fs.copy();
+        fs2.amount = amount;
+        return fs2;
+    }
+
+    private Map<FluidStack, Integer> collectDistinctFluids(IFluidHandler handler,
                                                      Predicate<IFluidTankProperties> tankTypeFilter,
                                                      Predicate<FluidStack> fluidTypeFilter) {
-        final Map<Fluid, Integer> summedFluids = new HashMap<>();
+
+        final Map<FluidStack, Integer> summedFluids = new HashMap<>();
         Arrays.stream(handler.getTankProperties())
               .filter(tankTypeFilter)
               .map(IFluidTankProperties::getContents)
@@ -175,8 +188,8 @@ public class CoverFluidRegulator extends CoverPump {
               .filter(fluidTypeFilter)
               .filter(Objects::nonNull) // objects can and have been null here, shut up IntelliJ
               .forEach(fs -> {
-                  summedFluids.putIfAbsent(fs.getFluid(), 0);
-                  summedFluids.computeIfPresent(fs.getFluid(), (k,v) -> v + fs.amount);
+                  summedFluids.putIfAbsent(fs, 0);
+                  summedFluids.computeIfPresent(fs, (k,v) -> v + fs.amount);
               });
 
         return summedFluids;
