@@ -89,7 +89,7 @@ public class CoverFluidRegulator extends CoverPump {
                               final Predicate<FluidStack> fluidFilter,
                               final int keepAmount) {
 
-        if(sourceHandler == null || destHandler == null || fluidFilter == null)
+        if(sourceHandler == null || destHandler == null || fluidFilter == null || keepAmount <= 0)
             return 0;
 
         final Map<FluidStack, Integer> sourceFluids =
@@ -109,6 +109,10 @@ public class CoverFluidRegulator extends CoverPump {
                 // move the lesser of the remaining transfer limit and the difference in actual vs keep exact amount
                 int amountToMove = Math.min(transferLimit - transferred,
                                             keepAmount - amountInDest);
+
+                // Nothing to do here, try the next fluid.
+                if(amountToMove <= 0)
+                    continue;
 
                 // Simulate a drain of this fluid from the source tanks
                 FluidStack drainedResult = sourceHandler.drain(copyFluidStackWithAmount(fluidStack, amountToMove), false);
