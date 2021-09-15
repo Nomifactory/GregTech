@@ -14,11 +14,13 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.event.HoverEvent;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
+import org.apache.logging.log4j.message.FormattedMessage;
 
-import java.util.List;
+import java.util.*;
 import java.util.function.Predicate;
 
 
@@ -73,43 +75,111 @@ public class CoverFluidRegulator extends CoverPump {
         return transferLimit - fluidLeftToTransfer;
     }
 
-    protected int doKeepExact(int transferLimit, IFluidHandler sourceHandler, IFluidHandler destHandler, Predicate<FluidStack> fluidFilter, int keepAmount) {
-        int fluidLeftToTransfer = transferLimit;
-        for (IFluidTankProperties tankProperties : sourceHandler.getTankProperties()) {
-            FluidStack sourceFluid = tankProperties.getContents();
-            if (sourceFluid == null || sourceFluid.amount == 0 || !fluidFilter.test(sourceFluid)) continue;
-            sourceFluid.amount = keepAmount;
-            FluidStack destFluid = null;
+    /**
+     * Performs one tick worth of Keep Exact behavior.
+     * @param transferLimit the maximum amount in milliBuckets that may be transferred in one tick
+     * @param sourceHandler source(s) to move fluids from
+     * @param destHandler destination(s) to move fluids to
+     * @param fluidFilter a predicate which determines what fluids may be moved
+     * @param keepAmount the desired amount in milliBuckets of a particular fluid in the destination
+     * @return the total amount in milliBuckets of all fluids transferred from source to dest by this method
+     */
+    protected int doKeepExact(final int transferLimit,
+                              final IFluidHandler sourceHandler,
+                              final IFluidHandler destHandler,
+                              final Predicate<FluidStack> fluidFilter,
+                              final int keepAmount) {
 
-            // Initialize the amount here, in case no fluid is found in destination inventory
-            int amountToDrainAndFill = Math.min(keepAmount, fluidLeftToTransfer);
+        if(sourceHandler == null || destHandler == null || fluidFilter == null)
+            return 0;
 
-            // Check all tanks in the destination inventory
-            for(IFluidTankProperties destProperties : destHandler.getTankProperties()) {
-                if(destProperties.getContents() != null && destProperties.getContents().isFluidEqual(sourceFluid)) {
-                    destFluid = destProperties.getContents();
-                    amountToDrainAndFill = Math.min(Math.max(0, keepAmount - destFluid.amount), fluidLeftToTransfer);
-                    break;
-                    // Breaking here will only allow interaction with the first tank found,
-                    // which could hit the edge case of having the same fluid in multiple tanks. However, this will be
-                    // a rare edge case, because Fluid Handlers are limited by recipe.
-                }
+        final Map<Fluid, Integer> sourceFluids =
+            collectDistinctFluids(sourceHandler, IFluidTankProperties::canDrain, fluidFilter);
+        final Map<Fluid, Integer> destFluids =
+            collectDistinctFluids(destHandler, IFluidTankProperties::canFill, fluidFilter);
+
+        int transferred = 0;
+        for(Fluid fluid : sourceFluids.keySet()) {
+            if(transferred >= transferLimit)
+                break;
+
+            // if fluid needs to be moved to meet the Keep Exact value
+            int amountInDest;
+            if((amountInDest = destFluids.getOrDefault(fluid, 0)) < keepAmount) {
+
+                // move the lesser of the remaining transfer limit and the difference in actual vs keep exact amount
+                int amountToMove = Math.min(transferLimit - transferred,
+                                            keepAmount - amountInDest);
+
+                // Simulate a drain of this fluid from the source tanks
+                FluidStack drainedResult = sourceHandler.drain(new FluidStack(fluid, amountToMove), false);
+
+                // Can't drain this fluid. Try the next one.
+                if(drainedResult == null || drainedResult.amount <= 0 || !fluid.equals(drainedResult.getFluid()))
+                    continue;
+
+                // account for the possibility that the drain might give us less than requested
+                final int drainable = Math.min(amountToMove, drainedResult.amount);
+
+                // Simulate a fill of the drained amount
+                int fillResult = destHandler.fill(new FluidStack(fluid, drainable), false);
+
+                // Can't fill, try the next fluid.
+                if(fillResult <= 0)
+                    continue;
+
+                // This Fluid can be drained and filled, so let's move the most that will actually work.
+                int fluidToMove = Math.min(drainable, fillResult);
+                FluidStack drainedActual = sourceHandler.drain(new FluidStack(fluid, fluidToMove), true);
+
+                // Account for potential error states from the drain
+                if(drainedActual == null)
+                    throw new RuntimeException("Misbehaving fluid container: drain produced null after simulation succeeded");
+
+                if(!fluid.equals(drainedActual.getFluid()))
+                    throw new RuntimeException("Misbehaving fluid container: drain produced a different fluid than the simulation");
+
+                if(drainedActual.amount != fluidToMove)
+                    throw new RuntimeException(new FormattedMessage(
+                        "Misbehaving fluid container: drain expected: {}, actual: {}",
+                        fluidToMove,
+                        drainedActual.amount).getFormattedMessage());
+
+
+                // Perform Fill
+                int filledActual = destHandler.fill(new FluidStack(fluid, fluidToMove), true);
+
+                // Account for potential error states from the fill
+                if(filledActual != fluidToMove)
+                    throw new RuntimeException(new FormattedMessage(
+                        "Misbehaving fluid container: fill expected: {}, actual: {}",
+                        fluidToMove,
+                        filledActual).getFormattedMessage());
+
+                // update the transferred amount
+                transferred += fluidToMove;
             }
-
-            // If the Destination Fluid is still null at this point, the tanks in the target inventory are empty
-
-            // Check if there is already too much fluid in the destination fluid inventory
-            if(destFluid != null && (destFluid.amount >= keepAmount || !destFluid.isFluidEqual(sourceFluid))) {
-                continue;
-            }
-
-            sourceFluid.amount = amountToDrainAndFill;
-            if (GTFluidUtils.transferExactFluidStack(sourceHandler, destHandler, sourceFluid.copy())) {
-                fluidLeftToTransfer -= sourceFluid.amount;
-            }
-            if (fluidLeftToTransfer == 0) break;
         }
-        return transferLimit - fluidLeftToTransfer;
+
+        return transferred;
+    }
+
+    private Map<Fluid,Integer> collectDistinctFluids(IFluidHandler handler,
+                                                     Predicate<IFluidTankProperties> tankTypeFilter,
+                                                     Predicate<FluidStack> fluidTypeFilter) {
+        final Map<Fluid, Integer> summedFluids = new HashMap<>();
+        Arrays.stream(handler.getTankProperties())
+              .filter(tankTypeFilter)
+              .map(IFluidTankProperties::getContents)
+              .filter(Objects::nonNull)
+              .filter(fluidTypeFilter)
+              .filter(Objects::nonNull) // objects can and have been null here, shut up IntelliJ
+              .forEach(fs -> {
+                  summedFluids.putIfAbsent(fs.getFluid(), 0);
+                  summedFluids.computeIfPresent(fs.getFluid(), (k,v) -> v + fs.amount);
+              });
+
+        return summedFluids;
     }
 
     public void setTransferMode(TransferMode transferMode) {
