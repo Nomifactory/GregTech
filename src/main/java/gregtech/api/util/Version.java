@@ -1,6 +1,7 @@
 package gregtech.api.util;
 
 import java.util.Arrays;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -21,7 +22,15 @@ public class Version implements Comparable<Version> {
     }
 
     public static Version parse(String vStr) {
-        return new Version(Arrays.stream(vStr.split(Pattern.quote("."))).mapToInt(Integer::parseInt).toArray());
+        final Pattern p = Pattern.compile("(\\d+).*");
+        return new Version(Arrays.stream(vStr.split(Pattern.quote(".")))
+                               .map(s -> {
+                                   Matcher m = p.matcher(s);
+                                   if(m.matches())
+                                       return m.group(1);
+                                   else
+                                       return "0";
+                               }).mapToInt(Integer::parseInt).toArray());
     }
 
     public int getNumber(int index) {
