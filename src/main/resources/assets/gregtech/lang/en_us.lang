@@ -2026,7 +2026,7 @@ gregtech.machine.distillery.ev.name=Advanced Distillery III
 gregtech.machine.electrolyzer.lv.name=Basic Electrolyzer
 gregtech.machine.electrolyzer.mv.name=Advanced Electrolyzer
 gregtech.machine.electrolyzer.hv.name=Advanced Electrolyzer II
-gregtech.machine.electrolyzer.ev.name=Molecular Disintegrator E-4908
+gregtech.machine.electrolyzer.ev.name=Advanced Electrolyzer III
 
 gregtech.machine.electromagnetic_separator.tooltip=Separating the magnetic Ores from the rest
 

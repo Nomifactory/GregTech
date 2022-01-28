@@ -1931,7 +1931,7 @@ gregtech.machine.distillery.ev.name=进阶蒸馏室 III
 gregtech.machine.electrolyzer.lv.name=基础电解机
 gregtech.machine.electrolyzer.mv.name=进阶电解机
 gregtech.machine.electrolyzer.hv.name=进阶电解机 II
-gregtech.machine.electrolyzer.ev.name=分子分解者 E-4908
+gregtech.machine.electrolyzer.ev.name=进阶电解机 III
 
 gregtech.machine.electromagnetic_separator.tooltip=将带磁性的矿物与其他部分分离开来
 

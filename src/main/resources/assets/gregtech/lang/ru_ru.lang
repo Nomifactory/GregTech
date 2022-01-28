@@ -1944,7 +1944,7 @@ gregtech.machine.distillery.ev.name=Улучшеный дистиллятор II
 gregtech.machine.electrolyzer.lv.name=Базовый электролизер
 gregtech.machine.electrolyzer.mv.name=Улучшеный электролизер
 gregtech.machine.electrolyzer.hv.name=Улучшеный электролизер II
-gregtech.machine.electrolyzer.ev.name=Молекулярный электролизер E-4908
+gregtech.machine.electrolyzer.ev.name=Улучшеный электролизер III
 
 gregtech.machine.electromagnetic_separator.tooltip=Отделение магнитных руд от остальных
 
