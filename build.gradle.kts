@@ -91,7 +91,7 @@ repositories {
     }
     maven { //JEI
         name = "Progwml6 maven"
-        setUrl("http://dvs1.progwml6.com/files/maven/")
+        setUrl("https://dvs1.progwml6.com/files/maven/")
     }
     maven { //JEI fallback
         name = "ModMaven"

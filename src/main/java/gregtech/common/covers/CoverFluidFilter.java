@@ -89,6 +89,7 @@ public class CoverFluidFilter extends CoverBehavior implements CoverWithUI {
 
     public <T> T getCapability(Capability<T> capability, T defaultValue) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+            if (defaultValue == null) return null;
             IFluidHandler delegate = (IFluidHandler) defaultValue;
             if (fluidHandler == null || fluidHandler.delegate != delegate) {
                 this.fluidHandler = new FluidHandlerFiltered(delegate);
