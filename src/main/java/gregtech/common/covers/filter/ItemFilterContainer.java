@@ -14,6 +14,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import javax.annotation.Nonnull;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.IntFunction;
 
 public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
 
@@ -82,8 +83,23 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
             .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.FILTER_SLOT_OVERLAY));
 
         ServerWidgetGroup stackSizeGroup = new ServerWidgetGroup(this::showGlobalTransferLimitSlider);
-        stackSizeGroup.addWidget(new ClickButtonWidget(91, 70, 20, 20, "-1", data -> adjustTransferStackSize(data.isShiftClick ? -10 : -1)));
-        stackSizeGroup.addWidget(new ClickButtonWidget(146, 70, 20, 20, "+1", data -> adjustTransferStackSize(data.isShiftClick ? +10 : +1)));
+
+        // shift -> 10x, ctrl -> 100x, shift+ctrl -> 1000x
+        final IntFunction<Consumer<Widget.ClickData>> fun = rate -> data -> {
+            int newRate = rate;
+            if(data.isCtrlClick)
+                if(data.isShiftClick)
+                    newRate = rate * 1000;
+                else
+                    newRate = rate * 100;
+            else if(data.isShiftClick)
+                newRate = rate * 10;
+
+            adjustTransferStackSize(newRate);
+        };
+
+        stackSizeGroup.addWidget(new ClickButtonWidget(91, 70, 20, 20, "-", fun.apply(-1)));
+        stackSizeGroup.addWidget(new ClickButtonWidget(146, 70, 20, 20, "+", fun.apply(1)));
         stackSizeGroup.addWidget(new ImageWidget(111, 70, 35, 20, GuiTextures.DISPLAY));
         stackSizeGroup.addWidget(new SimpleTextWidget(128, 80, "", 0xFFFFFF, () -> Integer.toString(transferStackSize)));
         widgetGroup.accept(stackSizeGroup);

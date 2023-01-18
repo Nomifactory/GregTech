@@ -111,7 +111,7 @@ public class CoverRoboticArm extends CoverConveyor {
     public void setTransferMode(TransferMode transferMode) {
         this.transferMode = transferMode;
         this.coverHolder.markDirty();
-        this.itemFilterContainer.setMaxStackSize(transferMode.maxStackSize);
+        this.itemFilterContainer.setMaxStackSize(this.maxItemTransferRate);
     }
 
     public TransferMode getTransferMode() {
@@ -142,7 +142,7 @@ public class CoverRoboticArm extends CoverConveyor {
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        this.transferMode = TransferMode.values()[tagCompound.getInteger("TransferMode")];
+        setTransferMode(TransferMode.values()[tagCompound.getInteger("TransferMode")]);
     }
 
 }
