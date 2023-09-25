@@ -88,7 +88,7 @@ public class SmartItemFilter extends ItemFilter {
 
     @Override
     public boolean showGlobalTransferLimitSlider() {
-        return false;
+        return true;
     }
 
     @Override

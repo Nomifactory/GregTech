@@ -11,7 +11,9 @@ import gregtech.api.gui.widgets.CycleButtonWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.render.Textures;
 import gregtech.api.util.ItemStackKey;
+import gregtech.common.items.MetaItems;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
@@ -51,12 +53,25 @@ public class CoverRoboticArm extends CoverConveyor {
     protected int doTransferExact(IItemHandler itemHandler, IItemHandler myItemHandler, int maxTransferAmount) {
         Map<ItemStackKey, TypeItemInfo> sourceItemAmount = doCountSourceInventoryItemsByType(itemHandler, myItemHandler);
         Iterator<ItemStackKey> iterator = sourceItemAmount.keySet().iterator();
+        ItemStack filter = this.itemFilterContainer.getFilterInventory().getStackInSlot(0);
+        boolean smartFilter = MetaItems.SMART_FILTER.isItemEqual(filter);
         while (iterator.hasNext()) {
             ItemStackKey key = iterator.next();
             TypeItemInfo sourceInfo = sourceItemAmount.get(key);
             int itemAmount = sourceInfo.totalCount;
             Set<ItemStackKey> matchedItems = Collections.singleton(key);
             int itemToMoveAmount = itemFilterContainer.getSlotTransferLimit(sourceInfo.filterSlot, matchedItems);
+
+            // Smart Filter: use transfer rate as a multiplier
+            if(smartFilter) {
+                int multiplier = itemFilterContainer.getTransferStackSize();
+                if (multiplier > 1) {
+                    itemToMoveAmount *= multiplier;
+                    if (itemToMoveAmount > maxTransferAmount)
+                        itemToMoveAmount = 0;
+                }
+            }
+
             if (itemAmount >= itemToMoveAmount) {
                 sourceInfo.totalCount = itemToMoveAmount;
             } else {
