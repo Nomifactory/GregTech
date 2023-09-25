@@ -22,6 +22,7 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
     private final ItemFilterWrapper filterWrapper;
     private int maxStackSizeLimit = 1;
     private int transferStackSize;
+    public boolean forceHideRateSlider = false;
 
     public ItemFilterContainer(IDirtyNotifiable dirtyNotifiable) {
         this.filterWrapper = new ItemFilterWrapper(dirtyNotifiable);
@@ -130,6 +131,8 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
     }
 
     public boolean showGlobalTransferLimitSlider() {
+        if(forceHideRateSlider)
+            return false;
         return getMaxStackSize() > 1 && filterWrapper.showGlobalTransferLimitSlider();
     }
 

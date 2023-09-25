@@ -111,7 +111,17 @@ public class CoverRoboticArm extends CoverConveyor {
     public void setTransferMode(TransferMode transferMode) {
         this.transferMode = transferMode;
         this.coverHolder.markDirty();
-        this.itemFilterContainer.setMaxStackSize(this.maxItemTransferRate);
+
+        // Workaround to prevent rate slider showing in Transfer Any
+        itemFilterContainer.forceHideRateSlider = (transferMode == TransferMode.TRANSFER_ANY);
+
+        // restrict general rate to 1024 so filters don't overflow
+        int limit = 1024;
+        // restrict Supply Exact to maximum transfer per second
+        if(transferMode == TransferMode.TRANSFER_EXACT)
+            limit = this.maxItemTransferRate;
+
+        this.itemFilterContainer.setMaxStackSize(limit);
     }
 
     public TransferMode getTransferMode() {
