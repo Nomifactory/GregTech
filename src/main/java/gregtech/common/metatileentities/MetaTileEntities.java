@@ -12,6 +12,7 @@ import gregtech.common.metatileentities.electric.*;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityEnergyHatch;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityFluidHatch;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityItemBus;
+import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityMultiFluidHatch;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityRotorHolder;
 import gregtech.common.metatileentities.multi.MetaTileEntityCokeOven;
 import gregtech.common.metatileentities.multi.MetaTileEntityCokeOvenHatch;
@@ -108,6 +109,8 @@ public class MetaTileEntities {
     public static MetaTileEntityItemBus[] ITEM_IMPORT_BUS = new MetaTileEntityItemBus[GTValues.V.length];
     public static MetaTileEntityItemBus[] ITEM_EXPORT_BUS = new MetaTileEntityItemBus[GTValues.V.length];
     public static MetaTileEntityFluidHatch[] FLUID_IMPORT_HATCH = new MetaTileEntityFluidHatch[GTValues.V.length];
+    public static MetaTileEntityMultiFluidHatch[] FLUID_MULTI_IMPORT_HATCH = new MetaTileEntityMultiFluidHatch[2];
+    public static MetaTileEntityMultiFluidHatch[] FLUID_MULTI_EXPORT_HATCH = new MetaTileEntityMultiFluidHatch[2];
     public static MetaTileEntityFluidHatch[] FLUID_EXPORT_HATCH = new MetaTileEntityFluidHatch[GTValues.V.length];
     public static MetaTileEntityEnergyHatch[] ENERGY_INPUT_HATCH = new MetaTileEntityEnergyHatch[GTValues.V.length];
     public static MetaTileEntityEnergyHatch[] ENERGY_OUTPUT_HATCH = new MetaTileEntityEnergyHatch[GTValues.V.length];
@@ -471,6 +474,15 @@ public class MetaTileEntities {
             GregTechAPI.registerMetaTileEntity(700 + 10 * i + 4, ENERGY_INPUT_HATCH[i]);
             GregTechAPI.registerMetaTileEntity(700 + 10 * i + 5, ENERGY_OUTPUT_HATCH[i]);
         }
+
+        FLUID_MULTI_IMPORT_HATCH[0] = new MetaTileEntityMultiFluidHatch(gregtechId("fluid_multi_hatch.import.4x"), 2, false);
+        FLUID_MULTI_EXPORT_HATCH[0] = new MetaTileEntityMultiFluidHatch(gregtechId("fluid_multi_hatch.export.4x"), 2, true);
+        FLUID_MULTI_IMPORT_HATCH[1] = new MetaTileEntityMultiFluidHatch(gregtechId("fluid_multi_hatch.import.9x"), 3, false);
+        FLUID_MULTI_EXPORT_HATCH[1] = new MetaTileEntityMultiFluidHatch(gregtechId("fluid_multi_hatch.export.9x"), 3, true);
+        GregTechAPI.registerMetaTileEntity(706, FLUID_MULTI_IMPORT_HATCH[0]);
+        GregTechAPI.registerMetaTileEntity(716, FLUID_MULTI_IMPORT_HATCH[1]);
+        GregTechAPI.registerMetaTileEntity(707, FLUID_MULTI_EXPORT_HATCH[0]);
+        GregTechAPI.registerMetaTileEntity(717, FLUID_MULTI_EXPORT_HATCH[1]);
 
         ROTOR_HOLDER[0] = GregTechAPI.registerMetaTileEntity(817, new MetaTileEntityRotorHolder(gregtechId("rotor_holder.hv"), GTValues.HV, 1.0f));
         ROTOR_HOLDER[1] = GregTechAPI.registerMetaTileEntity(818, new MetaTileEntityRotorHolder(gregtechId("rotor_holder.luv"), GTValues.LuV, 1.15f));

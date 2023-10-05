@@ -15,6 +15,7 @@ import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.Textures;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.MetaBlocks;
+import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityMultiFluidHatch;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -53,6 +54,7 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
     @Override
     protected BlockPattern createStructurePattern() {
         Predicate<BlockWorldState> fluidExportPredicate = countMatch("HatchesAmount", abilityPartPredicate(MultiblockAbility.EXPORT_FLUIDS));
+        Predicate<BlockWorldState> notMultiHatch = partPredicate(MetaTileEntityMultiFluidHatch.class).negate();
         Predicate<PatternMatchContext> exactlyOneHatch = context -> context.getInt("HatchesAmount") == 1;
         return FactoryBlockPattern.start(RIGHT, FRONT, UP)
             .aisle("YSY", "YZY", "YYY")
@@ -61,7 +63,7 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
             .where('S', selfPredicate())
             .where('Z', abilityPartPredicate(MultiblockAbility.IMPORT_FLUIDS))
             .where('Y', statePredicate(getCasingState()).or(abilityPartPredicate(MultiblockAbility.EXPORT_ITEMS, MultiblockAbility.INPUT_ENERGY)))
-            .where('X', fluidExportPredicate.or(statePredicate(getCasingState())))
+            .where('X', (fluidExportPredicate.and(notMultiHatch)).or(statePredicate(getCasingState())))
             .where('#', isAirPredicate())
             .validateLayer(1, exactlyOneHatch)
             .validateLayer(2, exactlyOneHatch)

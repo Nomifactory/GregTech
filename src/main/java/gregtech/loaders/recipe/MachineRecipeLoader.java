@@ -56,6 +56,12 @@ import static gregtech.api.GTValues.L;
 import static gregtech.api.GTValues.M;
 import static gregtech.api.util.DyeUtil.getOrdictColorName;
 import static gregtech.common.items.MetaItems.*;
+import static gregtech.common.metatileentities.MetaTileEntities.FLUID_EXPORT_HATCH;
+import static gregtech.common.metatileentities.MetaTileEntities.FLUID_IMPORT_HATCH;
+import static gregtech.common.metatileentities.MetaTileEntities.FLUID_MULTI_EXPORT_HATCH;
+import static gregtech.common.metatileentities.MetaTileEntities.FLUID_MULTI_IMPORT_HATCH;
+import static gregtech.common.metatileentities.MetaTileEntities.ITEM_EXPORT_BUS;
+import static gregtech.common.metatileentities.MetaTileEntities.ITEM_IMPORT_BUS;
 
 public class MachineRecipeLoader {
 
@@ -84,6 +90,7 @@ public class MachineRecipeLoader {
         registerOrganicRecyclingRecipes();
 
         registerNBTRemoval();
+        registerHatchConversions();
     }
 
     private static void registerBendingCompressingRecipes() {
@@ -687,6 +694,40 @@ public class MachineRecipeLoader {
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(4).input(OrePrefix.dust, Materials.Redstone, 1).input(OrePrefix.plate, Materials.Gold, 4).outputs(new ItemStack(Items.CLOCK, 1)).duration(400).buildAndRegister();
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(1).input(OrePrefix.stick, Materials.Wood, 1).input(OrePrefix.dust, Materials.Sulfur, 1).outputs(new ItemStack(Blocks.TORCH, 2)).duration(400).buildAndRegister();
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(1).input(OrePrefix.stick, Materials.Wood, 1).input(OrePrefix.dust, Materials.Phosphorus, 1).outputs(new ItemStack(Blocks.TORCH, 6)).duration(400).buildAndRegister();
+
+        // Fluid Multi Hatches
+        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).inputs(MetaTileEntities.HULL[GTValues.HV].getStackForm()).input(OrePrefix.pipeMedium, Materials.Titanium, 4).outputs(FLUID_MULTI_IMPORT_HATCH[0].getStackForm()).circuitMeta(1).duration(50).buildAndRegister();
+        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).inputs(MetaTileEntities.HULL[GTValues.HV].getStackForm()).input(OrePrefix.pipeMedium, Materials.Titanium, 4).outputs(FLUID_MULTI_EXPORT_HATCH[0].getStackForm()).circuitMeta(2).duration(50).buildAndRegister();
+        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).inputs(MetaTileEntities.HULL[GTValues.IV].getStackForm()).input(OrePrefix.pipeMedium, Materials.TungstenSteel, 9).outputs(FLUID_MULTI_IMPORT_HATCH[1].getStackForm()).circuitMeta(1).duration(50).buildAndRegister();
+        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).inputs(MetaTileEntities.HULL[GTValues.IV].getStackForm()).input(OrePrefix.pipeMedium, Materials.TungstenSteel, 9).outputs(FLUID_MULTI_EXPORT_HATCH[1].getStackForm()).circuitMeta(2).duration(50).buildAndRegister();
+    }
+
+    private static void registerHatchConversions() {
+        for (int i = 0; i < FLUID_IMPORT_HATCH.length; i++) {
+            if (FLUID_IMPORT_HATCH[i] != null && FLUID_EXPORT_HATCH[i] != null) {
+                ModHandler.addShapedRecipe("fluid_hatch_output_to_input_" + FLUID_IMPORT_HATCH[i].getTier(), FLUID_IMPORT_HATCH[i].getStackForm(),
+                                           "d", "B", 'B', FLUID_EXPORT_HATCH[i].getStackForm());
+                ModHandler.addShapedRecipe("fluid_hatch_input_to_output_" + FLUID_EXPORT_HATCH[i].getTier(), FLUID_EXPORT_HATCH[i].getStackForm(),
+                                           "d", "B", 'B', FLUID_IMPORT_HATCH[i].getStackForm());
+            }
+        }
+        for (int i = 0; i < ITEM_IMPORT_BUS.length; i++) {
+            if (ITEM_IMPORT_BUS[i] != null && ITEM_EXPORT_BUS[i] != null) {
+                ModHandler.addShapedRecipe("item_bus_output_to_input_" + ITEM_IMPORT_BUS[i].getTier(), ITEM_IMPORT_BUS[i].getStackForm(),
+                                           "d", "B", 'B', ITEM_EXPORT_BUS[i].getStackForm());
+                ModHandler.addShapedRecipe("item_bus_input_to_output_" + ITEM_EXPORT_BUS[i].getTier(), ITEM_EXPORT_BUS[i].getStackForm(),
+                                           "d", "B", 'B', ITEM_IMPORT_BUS[i].getStackForm());
+            }
+        }
+
+        for (int i = 0; i < FLUID_MULTI_IMPORT_HATCH.length; i++) {
+            if (FLUID_MULTI_IMPORT_HATCH[i] != null && FLUID_MULTI_EXPORT_HATCH[i] != null) {
+                ModHandler.addShapedRecipe("multi_fluid_hatch_output_to_input_" + FLUID_MULTI_IMPORT_HATCH[i].getTier(), FLUID_MULTI_IMPORT_HATCH[i].getStackForm(),
+                                           "d", "B", 'B', FLUID_MULTI_EXPORT_HATCH[i].getStackForm());
+                ModHandler.addShapedRecipe("multi_fluid_hatch_input_to_output_" + FLUID_MULTI_EXPORT_HATCH[i].getTier(), FLUID_MULTI_EXPORT_HATCH[i].getStackForm(),
+                                           "d", "B", 'B', FLUID_MULTI_IMPORT_HATCH[i].getStackForm());
+            }
+        }
     }
 
     private static void registerBlastFurnaceRecipes() {

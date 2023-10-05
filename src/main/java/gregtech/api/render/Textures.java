@@ -148,6 +148,8 @@ public class Textures {
 
     public static SimpleOverlayRenderer PIPE_OUT_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_pipe_out");
     public static SimpleOverlayRenderer PIPE_IN_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_pipe_in");
+    public static SimpleOverlayRenderer PIPE_4X_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_pipe_4x");
+    public static SimpleOverlayRenderer PIPE_9X_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_pipe_9x");
     public static SimpleOverlayRenderer FLUID_HATCH_OUTPUT_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_fluid_hatch_output");
     public static SimpleOverlayRenderer FLUID_HATCH_INPUT_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_fluid_hatch_input");
     public static SimpleOverlayRenderer FLUID_OUTPUT_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_fluid_output");

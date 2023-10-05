@@ -2758,6 +2758,12 @@ gregtech.machine.fluid_hatch.export.zpm.name=Жидкостный выходно
 gregtech.machine.fluid_hatch.export.uv.name=Жидкостный выходной люк (UV)
 gregtech.machine.fluid_hatch.export.max.name=Жидкостный выходной люк (Макс.)
 
+gregtech.machine.fluid_multi_hatch.capacity=Объем жидкости: %d Л (x%d)
+gregtech.machine.fluid_multi_hatch.import.4x.name=Четверной входной люк
+gregtech.machine.fluid_multi_hatch.import.9x.name=Девятерной входной люк
+gregtech.machine.fluid_multi_hatch.export.4x.name=Четверной выходной люк
+gregtech.machine.fluid_multi_hatch.export.9x.name=Девятерной выходной люк
+
 gregtech.machine.energy_hatch.input.tooltip=Разъем для подключения кабелей к агрегату
 
 gregtech.machine.energy_hatch.input.ulv.name=Энергетический входной разъем (ULV)
