@@ -3,6 +3,7 @@ package gregtech.common.metatileentities.electric.multiblockpart;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.ModularUI.Builder;
@@ -24,14 +25,12 @@ import net.minecraftforge.items.ItemStackHandler;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class MetaTileEntityItemBus extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IItemHandlerModifiable> {
+public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IItemHandlerModifiable> {
 
     private static final int[] INVENTORY_SIZES = {1, 4, 9, 16, 25, 36, 49};
-    private final boolean isExportHatch;
 
     public MetaTileEntityItemBus(ResourceLocation metaTileEntityId, int tier, boolean isExportHatch) {
-        super(metaTileEntityId, tier);
-        this.isExportHatch = isExportHatch;
+        super(metaTileEntityId, tier, isExportHatch);
         initializeInventory();
     }
 
@@ -70,12 +69,12 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockPart implemen
 
     @Override
     protected IItemHandlerModifiable createExportItemHandler() {
-        return isExportHatch ? new ItemStackHandler(getInventorySize()) : new ItemStackHandler(0);
+        return isExportHatch ? new NotifiableItemStackHandler(getInventorySize(), getController(), true) : new ItemStackHandler(0);
     }
 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
-        return isExportHatch ? new ItemStackHandler(0) : new ItemStackHandler(getInventorySize());
+        return isExportHatch ? new ItemStackHandler(0) : new NotifiableItemStackHandler(getInventorySize(), getController(), false);
     }
 
     @Override

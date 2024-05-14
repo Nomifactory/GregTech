@@ -58,6 +58,10 @@ public class FluidTankList implements IFluidHandler, IMultipleTankHandler, INBTS
         return fluidTanks.get(index);
     }
 
+    @Override public boolean allowSameFluidFill() {
+        return allowSameFluidFill;
+    }
+
     @Override
     public IFluidTankProperties[] getTankProperties() {
         if (fluidTankProperties == null) {

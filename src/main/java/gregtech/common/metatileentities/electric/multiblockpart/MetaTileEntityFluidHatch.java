@@ -4,6 +4,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.capability.impl.NotifiableFluidTank;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.ModularUI.Builder;
@@ -32,18 +33,16 @@ import net.minecraftforge.items.ItemStackHandler;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IFluidTank> {
+public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IFluidTank> {
 
     private static final int INITIAL_INVENTORY_SIZE = 8000;
     private ItemStackHandler containerInventory;
     private FluidTank fluidTank;
-    private boolean isExportHatch;
 
     public MetaTileEntityFluidHatch(ResourceLocation metaTileEntityId, int tier, boolean isExportHatch) {
-        super(metaTileEntityId, tier);
+        super(metaTileEntityId, tier, isExportHatch);
         this.containerInventory = new ItemStackHandler(2);
-        this.isExportHatch = isExportHatch;
-        this.fluidTank = new FluidTank(getInventorySize());
+        this.fluidTank = new NotifiableFluidTank(getInventorySize(), this, isExportHatch);
         initializeInventory();
     }
 
