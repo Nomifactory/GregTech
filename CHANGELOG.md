@@ -1,5 +1,20 @@
 ## Changelog
 
+### 1.18.0
+* Fix the build (bad maven repo URL) - Exaxxion
+* Standardize unusual EV machine names, fix typo in ru_ru translation - Exaxxion
+* Multi-Fluid Hatches, Screwdriver Input<->Output Recipes - Exaxxion
+* Smart Filter - Supply Exact multiplier feature - Exaxxion
+* Robot Arm regression fix, small GUI enhancement - Exaxxion
+* Disable decomp and hide composition of lenses - Exaxxion
+* Uncap Supply Exact - Exaxxion
+* Prevent NPE crash from Covers - Tictim
+* Change EV electrolyzer to "Advanced Electrolyzer III" in lang files - Exaxxion
+* Fix lang file typo for Tricalcium Phosphate - Exaxxion
+* Corrects inadvertent rename to "Tricalcium Phospate" during the lang file adjustment in #1718 - Exaxxion
+* Fix Quantum Chest voiding items near maximum capacity - alongstringofnumbers
+* Fix DataFixers Version class breaking on non-numeric semver decoration - Exaxxion
+
 ### 1.17.1
 * Added warning to controller if Turbine is obstructed (#1710) - ALongStringOfNumbers
 * Updated fetching of dimensions in worldgen to catch late registrations (#1709) - ALongStringOfNumbers

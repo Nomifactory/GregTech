@@ -1,15 +1,14 @@
 [{
   "modid": "gregtech",
-  "name": "GregTech Community Edition",
-  "description": "Finally, the awesome technology of GregTech-Intergalactical can be used in 1.12!",
+  "name": "GregTech Nomifactory Edition",
+  "description": "A continuation of GregTechCE by Nomifactory",
   "version": "${version}",
   "mcversion": "${mcversion}",
-  "logoFile": "/assets/gregtech/textures/gt_logo_long.png",
-  "url": "https://minecraft.curseforge.com/projects/gregtechce",
+  "logoFile": "/assets/gregtech/textures/gt_logo.png",
+  "url": "https://www.curseforge.com/minecraft/mc-mods/gregtech-nomifactory-edition",
   "authorList": [
-      "Archengius",
-      "Exidex"
+      "Exa4096"
   ],
-  "credits": "GregoriusT for making GregTech and textures, various GT community members for help in development.",
+  "credits": "GregoriusT for making GregTech and textures, various GT community members for help in development. Archengius and Exidex for making, and LAGIdiot for maintaining, GregTechCE through 2021.",
   "dependencies": ["codechickenlib"]
 }]

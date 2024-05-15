@@ -435,7 +435,7 @@ fun configureCurseforgeTask(): CurseProject? {
         extension.apiKey = System.getenv("CURSE_API_KEY")
         return extension.project {
             apiKey = System.getenv("CURSE_API_KEY")
-            id = "293327"
+            id = "1019238"
             changelog = file("CHANGELOG.md")
             changelogType = "markdown"
             releaseType = "release"
