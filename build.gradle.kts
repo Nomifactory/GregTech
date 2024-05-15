@@ -87,7 +87,7 @@ minecraft {
 repositories {
     maven {
         name = "ic2, forestry"
-        setUrl("http://maven.ic2.player.to/")
+        setUrl("http://maven2.ic2.player.to/")
     }
     maven { //JEI
         name = "Progwml6 maven"
