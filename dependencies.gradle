@@ -38,16 +38,16 @@
  * For more details, see https://docs.gradle.org/8.4/userguide/java_library_plugin.html#sec:java_library_configurations_graph
  */
 dependencies {
+    // Existing tests are written in JUnit 4
     testImplementation("junit:junit:4.13.1")
 
     compileOnly rfg.deobf("curse.maven:forestry-59751:2684780") // Forestry 5.8.2.387
     api rfg.deobf("codechicken:ChickenASM:1.12-1.0.2.9")
     api("codechicken:codechickenlib:3.2.3.358")
     api("CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-4.1.20.684")
-//    api rfg.deobf("mezz.jei:jei_1.12.2:4.15.0.291")
-//    compileOnly rfg.deobf("mcjty.theoneprobe:TheOneProbe-1.12:1.12-1.4.28-17")
     api rfg.deobf("curse.maven:ctm-267602:2915363") // CTM 1.0.2.31
 
+    // Of possible future interest, but don't need right now.
 //    api("com.cleanroommc:groovyscript:1.0.1") { transitive = false }
 //    api rfg.deobf("curse.maven:ae2-extended-life-570458:5147702") // AE2UEL 0.56.4
 //    api rfg.deobf("curse.maven:nae2-884359:5317480") // NAE2 1.6.2
@@ -67,9 +67,9 @@ minecraft {
 
 configurations {
     compileOnly {
-        // exclude GNU trove, FastUtil is superior and still updated
+        // exclude GNU trove, FastUtil is superior and still updated - TODO: investigate switching trove to FastUtil
 //        exclude group: "net.sf.trove4j", module: "trove4j"
-        // exclude javax.annotation from findbugs, jetbrains annotations are superior
+        // exclude javax.annotation from findbugs, jetbrains annotations are superior - TODO: replace annotations
 //        exclude group: "com.google.code.findbugs", module: "jsr305"
         // exclude scala as we don't use it for anything and causes import confusion
         exclude group: "org.scala-lang"
