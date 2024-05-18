@@ -4,7 +4,7 @@
   "description": "A continuation of GregTechCE by Nomifactory",
   "version": "${version}",
   "mcversion": "${mcversion}",
-  "logoFile": "/assets/gregtech/textures/gt_logo.png",
+  "logoFile": "assets/gregtech/textures/gt_logo.png",
   "url": "https://www.curseforge.com/minecraft/mc-mods/gregtech-nomifactory-edition",
   "authorList": [
       "Exa4096"
