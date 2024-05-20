@@ -1,0 +1,32 @@
+// Add any additional repositories for your dependencies here
+
+repositories {
+    maven {
+        name = "ic2, forestry"
+        setUrl("http://maven2.ic2.player.to/")
+        allowInsecureProtocol = true
+    }
+    maven { //JEI
+        name = "Progwml6 maven"
+        setUrl("https://dvs1.progwml6.com/files/maven/")
+    }
+    maven { //JEI fallback
+        name = "ModMaven"
+        setUrl("modmaven.k-4u.nl")
+    }
+    maven {
+        name = "tterrag maven"
+        setUrl("http://maven.tterrag.com/")
+        allowInsecureProtocol = true
+    }
+    maven {
+        name = "ChickenBones maven"
+        setUrl("http://chickenbones.net/maven/")
+        allowInsecureProtocol = true
+    }
+    maven {
+        name = "CoFH Maven"
+        setUrl("http://maven.covers1624.net")
+        allowInsecureProtocol = true
+    }
+}
