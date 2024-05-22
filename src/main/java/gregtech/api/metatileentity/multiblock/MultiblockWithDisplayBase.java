@@ -37,6 +37,13 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     }
 
     /**
+     * @return whether the current multiblock is active or not
+     */
+    public boolean isActive() {
+        return isStructureFormed();
+    }
+
+    /**
      * Called on serverside when client is clicked on the specific text component
      * with special click event handler
      * Data is the data specified in the component

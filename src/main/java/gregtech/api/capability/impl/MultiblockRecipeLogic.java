@@ -2,9 +2,12 @@ package gregtech.api.capability.impl;
 
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMultipleTankHandler;
+import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.Recipe;
 import net.minecraftforge.items.IItemHandlerModifiable;
+
+import java.util.List;
 
 public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 
@@ -21,6 +24,20 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         super.update();
     }
 
+    /**
+     * Used to reset cached values in the Recipe Logic on structure deform
+     */
+    public void invalidate() {
+        previousRecipe = null;
+        progressTime = 0;
+        maxProgressTime = 0;
+        recipeEUt = 0;
+        fluidOutputs = null;
+        itemOutputs = null;
+        isOutputsFull = false;
+        setActive(false); // this marks dirty for us
+    }
+
     public IEnergyContainer getEnergyContainer() {
         RecipeMapMultiblockController controller = (RecipeMapMultiblockController) metaTileEntity;
         return controller.getEnergyContainer();
@@ -30,6 +47,12 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     protected IItemHandlerModifiable getInputInventory() {
         RecipeMapMultiblockController controller = (RecipeMapMultiblockController) metaTileEntity;
         return controller.getInputInventory();
+    }
+
+    // Used for distinct bus recipe checking in SoG
+    protected List<IItemHandlerModifiable> getInputBuses() {
+        RecipeMapMultiblockController controller = (RecipeMapMultiblockController) metaTileEntity;
+        return controller.getAbilities(MultiblockAbility.IMPORT_ITEMS);
     }
 
     @Override

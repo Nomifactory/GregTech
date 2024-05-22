@@ -21,7 +21,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity implements IMultiblockPart {
 
-    private final int tier;
+    protected final int tier;
     private BlockPos controllerPos;
     private MultiblockControllerBase controllerTile;
 

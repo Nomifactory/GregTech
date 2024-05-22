@@ -4,7 +4,9 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
+import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.capability.impl.NotifiableFluidTankFromList;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.LabelWidget;
@@ -27,26 +29,31 @@ import net.minecraftforge.fluids.IFluidTank;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.function.Supplier;
 
-public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IFluidTank> {
+public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IFluidTank> {
 
-	private final boolean isExportHatch;
-	private final FluidTankList tanks;
+	private static final int TANK_SIZE = 16_000;
+
+	protected FluidTankList fluidTanks;
 
 	public MetaTileEntityMultiFluidHatch(ResourceLocation metaTileEntityId, int tier, boolean isExportHatch) {
-		super(metaTileEntityId, tier);
-		this.isExportHatch = isExportHatch;
-
-		FluidTank[] slots = new FluidTank[tier * tier];
-		for(int i = 0; i < slots.length; i++)
-			slots[i] = new FluidTank(16000);
-		this.tanks = new FluidTankList(false, slots);
+		super(metaTileEntityId, tier, isExportHatch);
 		initializeInventory();
 	}
 
 	@Override
 	protected void initializeInventory() {
-		if (this.tanks == null) return;
+		FluidTank[] fluidsHandlers = new FluidTank[tier * tier];
+		for(int i = 0; i < fluidsHandlers.length; i++)
+			fluidsHandlers[i] = new NotifiableFluidTankFromList(TANK_SIZE, this, isExportHatch, i) {
+				@Override
+				public Supplier<IMultipleTankHandler> getFluidTankList() {
+					return () -> MetaTileEntityMultiFluidHatch.this.fluidTanks;
+				}
+			};
+		this.fluidTanks = new FluidTankList(false, fluidsHandlers);
+		this.fluidInventory = fluidTanks;
 		super.initializeInventory();
 	}
 
@@ -87,12 +94,12 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockPart 
 
 	@Override
 	protected FluidTankList createImportFluidHandler() {
-		return isExportHatch ? new FluidTankList(false) : tanks;
+		return isExportHatch ? new FluidTankList(false) : fluidTanks;
 	}
 
 	@Override
 	protected FluidTankList createExportFluidHandler() {
-		return !isExportHatch ? new FluidTankList(false) : tanks;
+		return !isExportHatch ? new FluidTankList(false) : fluidTanks;
 	}
 
 	@Override
@@ -115,7 +122,7 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockPart 
 				int slotIndex = y * rowSize + x;
 				int xpos = 89 - rowSize * 9 + x * 18;
 				int ypos = 18 + y * 18;
-				builder.widget(new TankWidget(tanks.getTankAt(slotIndex), xpos, ypos, 18, 18)
+				builder.widget(new TankWidget(fluidTanks.getTankAt(slotIndex), xpos, ypos, 18, 18)
 					               .setAlwaysShowFull(true)
 					               .setBackgroundTexture(GuiTextures.FLUID_SLOT)
 					               .setContainerClicking(true, !isExportHatch));

@@ -66,6 +66,10 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         return outputFluidInventory;
     }
 
+    public MultiblockRecipeLogic getRecipeMapWorkable() {
+        return recipeMapWorkable;
+    }
+
     /**
      * Performs extra checks for validity of given recipe before multiblock
      * will start it's processing.
@@ -84,6 +88,12 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     public void invalidateStructure() {
         super.invalidateStructure();
         resetTileAbilities();
+        this.recipeMapWorkable.invalidate();
+    }
+
+    @Override
+    public boolean isActive() {
+        return isStructureFormed() && recipeMapWorkable.isActive() && recipeMapWorkable.isWorkingEnabled();
     }
 
     @Override

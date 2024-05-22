@@ -1,12 +1,14 @@
 package gregtech.api.capability.impl;
 
-import gnu.trove.map.TIntObjectMap;
-import gnu.trove.map.hash.TIntObjectHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +18,7 @@ import java.util.Map;
  */
 public class ItemHandlerList implements IItemHandlerModifiable {
 
-    private TIntObjectMap<IItemHandler> handlerBySlotIndex = new TIntObjectHashMap<>();
+    private final Int2ObjectMap<IItemHandler> handlerBySlotIndex = new Int2ObjectOpenHashMap<>();
     private Map<IItemHandler, Integer> baseIndexOffset = new IdentityHashMap<>();
 
     public ItemHandlerList(List<? extends IItemHandler> itemHandlerList) {
@@ -75,4 +77,8 @@ public class ItemHandlerList implements IItemHandlerModifiable {
         return itemHandler.extractItem(slot - baseIndexOffset.get(itemHandler), amount, simulate);
     }
 
+    @Nonnull
+    public Collection<IItemHandler> getBackingHandlers() {
+        return Collections.unmodifiableCollection(handlerBySlotIndex.values());
+    }
 }
