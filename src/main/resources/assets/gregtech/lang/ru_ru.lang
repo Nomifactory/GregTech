@@ -2906,6 +2906,9 @@ gregtech.command.util.hand.meta_item=Название мета-предмета:
 gregtech.command.util.hand.not_a_player=Эта команда может использоваться только игроком.
 gregtech.command.util.hand.no_item=Перед выполнением этой команды, вы должны держать что-то в основной руке.
 
+gregtech.sharing.enabled=Совместное использование между структурами: §aВключено
+gregtech.sharing.disabled=Совместное использование между структурами: §4Выключено
+
 # Fixes
 fluid.tile.water=Вода
 fluid.tile.lava=Лава

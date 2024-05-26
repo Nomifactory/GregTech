@@ -167,10 +167,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity {
             ArrayList<IMultiblockPart> parts = new ArrayList<>(rawPartsSet);
             parts.sort(Comparator.comparing(it -> ((MetaTileEntity) it).getPos().hashCode()));
             for (IMultiblockPart part : parts) {
-                if (part.isAttachedToMultiBlock()) {
-                    //disallow sharing of multiblock parts
-                    //if part is already attached to another multiblock,
-                    //stop here without attempting to register abilities
+                // do not form if part is in use and not shareable
+                if (part.isAttachedToMultiBlock() && !part.canPartShare()) {
                     return;
                 }
             }

@@ -138,5 +138,11 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
 			                        ? "gregtech.machine.fluid_hatch.export.tooltip"
 			                        : "gregtech.machine.fluid_hatch.import.tooltip"));
 		tooltip.add(I18n.format("gregtech.machine.fluid_multi_hatch.capacity", 16000, getTier() * getTier()));
+		super.addInformation(stack, player, tooltip, advanced);
+	}
+
+	@Override
+	public boolean canPartShare() {
+		return true;
 	}
 }

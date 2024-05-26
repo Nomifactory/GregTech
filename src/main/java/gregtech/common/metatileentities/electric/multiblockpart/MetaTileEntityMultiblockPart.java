@@ -12,18 +12,26 @@ import gregtech.api.render.ICubeRenderer;
 import gregtech.api.render.Textures;
 import gregtech.api.util.GTUtility;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity implements IMultiblockPart {
 
     protected final int tier;
     private BlockPos controllerPos;
     private MultiblockControllerBase controllerTile;
+    /** Temporary storage for the last known controller-derived part texture */
+    protected ICubeRenderer partTexture;
 
     public MetaTileEntityMultiblockPart(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId);
@@ -69,7 +77,16 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity implem
 
     public ICubeRenderer getBaseTexture() {
         MultiblockControllerBase controller = getController();
-        return controller == null ? Textures.VOLTAGE_CASINGS[tier] : controller.getBaseTexture(this);
+
+        if(controller != null)
+            // retrieve the desired part texture from the controller
+            return this.partTexture = controller.getBaseTexture(this);
+        else if(this.partTexture != null)
+            // use the last recorded part texture, if available
+            return partTexture;
+        else
+            // fallback: use tiered casing texture
+            return Textures.VOLTAGE_CASINGS[tier];
     }
 
     public boolean shouldRenderOverlay() {
@@ -140,15 +157,27 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity implem
     @Override
     public void addToMultiBlock(MultiblockControllerBase controllerBase) {
         setController(controllerBase);
+        scheduleRenderUpdate();
     }
 
     @Override
     public void removeFromMultiBlock(MultiblockControllerBase controllerBase) {
         setController(null);
+        scheduleRenderUpdate();
     }
 
     @Override
     public boolean isAttachedToMultiBlock() {
         return getController() != null;
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+
+        // Common part sharing information
+        if(this.canPartShare())
+            tooltip.add(I18n.format("gregtech.sharing.enabled"));
+        else
+            tooltip.add(I18n.format("gregtech.sharing.disabled"));
     }
 }
