@@ -35,7 +35,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
 
     public final RecipeMap<?> recipeMap;
 
-    protected boolean forceRecipeRecheck;
     protected Recipe previousRecipe;
     protected boolean allowOverclocking = true;
     private long overclockVoltage = 0;
@@ -207,9 +206,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         metaTileEntity.getNotifiedFluidInputList().clear();
     }
 
-    public void forceRecipeRecheck() {
-        this.forceRecipeRecheck = true;
-    }
 
     protected int getMinTankCapacity(IMultipleTankHandler tanks) {
         if(tanks.getTanks() == 0) {
