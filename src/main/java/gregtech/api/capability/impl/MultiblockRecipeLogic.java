@@ -2,6 +2,7 @@ package gregtech.api.capability.impl;
 
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMultipleTankHandler;
+import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.Recipe;
@@ -11,6 +12,8 @@ import java.util.List;
 
 public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 
+    /** If a structure was reformed with insufficient output space, the structure is jammed. */
+    protected boolean isJammed = false;
 
     public MultiblockRecipeLogic(RecipeMapMultiblockController tileEntity) {
         super(tileEntity, tileEntity.recipeMap);
@@ -98,5 +101,35 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     @Override
     protected long getMaxVoltage() {
         return Math.max(getEnergyContainer().getInputVoltage(), getEnergyContainer().getOutputVoltage());
+    }
+
+    public boolean isJammed() {
+        return this.isJammed;
+    }
+
+    // Handle case where structure was reformed with insufficient output space relative to start
+    @Override
+    protected void completeRecipe() {
+
+        RecipeMapMultiblockController controller = (RecipeMapMultiblockController) metaTileEntity;
+
+        // The structure is jammed if there's no room for the outputs computed when ingredients were consumed
+        this.isJammed =
+            !MetaTileEntity.addItemsToItemHandler(getOutputInventory(), true, itemOutputs) ||
+            !MetaTileEntity.addFluidsToFluidHandler(getOutputTank(), true, fluidOutputs) ||
+            !controller.checkRecipe(previousRecipe, false);
+
+        // Finish the recipe only if the structure is not jammed.
+        if(!isJammed)
+            super.completeRecipe();
+    }
+
+    @Override
+    protected void updateRecipeProgress() {
+        // normal update
+        if(!isJammed)
+            super.updateRecipeProgress();
+        else // retry recipe completion
+            completeRecipe();
     }
 }
