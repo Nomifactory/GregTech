@@ -11,6 +11,7 @@ import gregtech.api.multiblock.FactoryBlockPattern;
 import gregtech.api.multiblock.PatternMatchContext;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.recipeproperties.*;
 import gregtech.api.render.ICubeRenderer;
 import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.Textures;
@@ -68,8 +69,7 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
 
     @Override
     public boolean checkRecipe(Recipe recipe, boolean consumeIfSuccess) {
-        int recipeRequiredTemp = recipe.getIntegerProperty("blast_furnace_temperature");
-        return this.blastFurnaceTemperature >= recipeRequiredTemp;
+        return this.blastFurnaceTemperature >= recipe.getProperty(BlastTemperatureProperty.getInstance(),0);
     }
 
     public static Predicate<BlockWorldState> heatingCoilPredicate() {

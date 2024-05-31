@@ -186,7 +186,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         IMultipleTankHandler importFluids = getInputTank();
 
         // see if the last recipe we used still works
-        if (this.previousRecipe != null && this.previousRecipe.matches(false, importInventory, importFluids))
+        if (checkPreviousRecipe())
             currentRecipe = this.previousRecipe;
         // If there is no active recipe, then we need to find one.
         else {
@@ -201,11 +201,17 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         // proceed if we have a usable recipe.
         if (currentRecipe != null && setupAndConsumeRecipeInputs(currentRecipe))
             setupRecipe(currentRecipe);
+
         // Inputs have been inspected.
         metaTileEntity.getNotifiedItemInputList().clear();
         metaTileEntity.getNotifiedFluidInputList().clear();
     }
 
+    protected boolean checkPreviousRecipe() {
+        if(this.previousRecipe == null) return false;
+        if(this.previousRecipe.getEUt() > this.getMaxVoltage()) return false;
+        return this.previousRecipe.matches(false, getInputInventory(), getInputTank());
+    }
 
     protected int getMinTankCapacity(IMultipleTankHandler tanks) {
         if(tanks.getTanks() == 0) {

@@ -332,6 +332,17 @@ public class Recipe {
         return hasValidInputs;
     }
 
+    /**
+     * Retrieve a property or fallback value from the property store
+     * @param property the desired property
+     * @param defaultValue fallback value
+     * @param <T> type of the property
+     * @return the requested property's value, or the fallback value if a value isn't available.
+     */
+    public <T> T getProperty(RecipeProperty<T> property, T defaultValue) {
+        return recipePropertyStorage.getRecipePropertyValue(property, defaultValue);
+    }
+
     //region RecipeProperties
 
     /**
