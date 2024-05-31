@@ -236,15 +236,43 @@ public class Recipe {
         return outputs;
     }
 
-    public List<ItemStack> getResultItemOutputs(int maxOutputSlots, Random random, int tier) {
+    /**
+     * Computes real outputs of a recipe, truncated to a maximum number of output slots.
+     *
+     * @param maxOutputSlots the number of output slots to consider
+     * @param random the Random to use for chanced recipe outputs
+     * @param overclocks the number of overclocks for applying tiered bonuses
+     * @return the outputs of the current iteration of running the recipe
+     */
+    public List<ItemStack> getResultItemOutputs(int maxOutputSlots, @NotNull Random random, int overclocks) {
+        assert maxOutputSlots >= 0;
+        assert overclocks >= 0;
+
+        // Nothing to return if there are no output slots
+        if(maxOutputSlots == 0)
+            return Collections.emptyList();
+
+        // Get fixed and chanced outputs
         ArrayList<ItemStack> outputs = new ArrayList<>(GTUtility.copyStackList(getOutputs()));
         List<ChanceEntry> chancedOutputsList = getChancedOutputs();
+
+        // If there's enough fixed outputs to reach the max, return as many as will fit.
+        if (outputs.size() >= maxOutputSlots)
+            return outputs.subList(0, maxOutputSlots);
+
+        // if there are no chanced outputs, then we can just return the standard outputs.
+        if(chancedOutputsList.isEmpty())
+            return outputs;
+
+        // Truncate the chanced outputs list to fit remaining available space
         int maxChancedSlots = maxOutputSlots - outputs.size();
-        if (chancedOutputsList.size() > maxChancedSlots) {
-            chancedOutputsList = chancedOutputsList.subList(0, Math.max(0, maxChancedSlots));
-        }
+        if (chancedOutputsList.size() > maxChancedSlots)
+            chancedOutputsList = chancedOutputsList.subList(0, maxChancedSlots);
+
+        // Roll each chanced output to see if it is actually produced
+        final RecipeMap.IChanceFunction cf = RecipeMap.getChanceFunction();
         for (ChanceEntry chancedOutput : chancedOutputsList) {
-            int outputChance = RecipeMap.getChanceFunction().chanceFor(chancedOutput.getChance(), chancedOutput.getBoostPerTier(), tier);
+            int outputChance = cf.chanceFor(chancedOutput.getChance(), chancedOutput.getBoostPerTier(), overclocks);
             if (random.nextInt(Recipe.getMaxChancedValue()) <= outputChance) {
                 outputs.add(chancedOutput.getItemStack().copy());
             }
