@@ -19,6 +19,8 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.resources.IResource;
+import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
@@ -48,8 +50,10 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
+import org.apache.commons.io.IOUtils;
 
 import javax.annotation.Nullable;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -302,6 +306,22 @@ public class GTUtility {
         GlStateManager.translate(-textWidth * sizeMultiplier / 2.0, -textHeight * sizeMultiplier / 2.0, 0);
         fontRenderer.drawString(string, x, y, color);
         GlStateManager.popMatrix();
+    }
+
+    /**
+     * @param resource the ResourceLocation to check, formatted with the root dir and file extension
+     * @return if the resource exists
+     */
+    @SideOnly(Side.CLIENT)
+    public static boolean doResourcepacksHaveResource(ResourceLocation resource) {
+        IResourceManager manager = Minecraft.getMinecraft().getResourceManager();
+        try {
+            IResource ignored = manager.getResource(resource);
+            IOUtils.closeQuietly(ignored);
+            return true;
+        } catch (IOException exception) {
+            return false;
+        }
     }
 
     /**
