@@ -2,6 +2,6 @@
     "parent": "item/handheld",
     "textures": {
         "layer0": "gregtech:items/material_sets/netherstar/stick",
-        "layer1": "gregtech:items/material_sets/netherstar/stick_overlay"
+        "layer1": "gregtech:items/material_sets/shiny/stick_overlay"
     }
 }
