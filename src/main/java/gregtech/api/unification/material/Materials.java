@@ -229,8 +229,8 @@ public class Materials {
     public static DustMaterial YellowLimonite = new DustMaterial(199, "yellow_limonite", 0xC8C800, METALLIC, 2, of(new MaterialStack(Iron, 1), new MaterialStack(Hydrogen, 1), new MaterialStack(Oxygen, 2)), GENERATE_ORE | INDUCTION_SMELTING_LOW_OUTPUT);
     public static IngotMaterial YttriumBariumCuprate = new IngotMaterial(200, "yttrium_barium_cuprate", 0x504046, METALLIC, 2, of(new MaterialStack(Yttrium, 1), new MaterialStack(Barium, 2), new MaterialStack(Copper, 3), new MaterialStack(Oxygen, 7)), EXT_METAL | GENERATE_FOIL | GENERATE_FINE_WIRE, null, 4500);
     public static GemMaterial NetherQuartz = new GemMaterial(201, "nether_quartz", 0xE6D2D2, QUARTZ, 1, of(), STD_SOLID | NO_SMELTING | CRYSTALLISABLE | GENERATE_ORE | EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES);
-    public static GemMaterial CertusQuartz = new GemMaterial(202, "certus_quartz", 0xD2D2E6, QUARTZ, 1, of(), STD_SOLID | NO_SMELTING | CRYSTALLISABLE | GENERATE_ORE);
-    public static GemMaterial Quartzite = new GemMaterial(203, "quartzite", 0xD2E6D2, QUARTZ, 1, of(), NO_SMELTING | CRYSTALLISABLE | GENERATE_ORE);
+    public static GemMaterial CertusQuartz = new GemMaterial(202, "certus_quartz", 0xD2D2E6, CERTUS, 1, of(), STD_SOLID | NO_SMELTING | CRYSTALLISABLE | GENERATE_ORE);
+    public static GemMaterial Quartzite = new GemMaterial(203, "quartzite", 0xD2E6D2, CERTUS, 1, of(), NO_SMELTING | CRYSTALLISABLE | GENERATE_ORE);
     public static IngotMaterial Graphite = new IngotMaterial(204, "graphite", 0x808080, DULL, 2, of(), GENERATE_PLATE | GENERATE_ORE | NO_SMELTING | FLAMMABLE);
     public static IngotMaterial Graphene = new IngotMaterial(205, "graphene", 0x808080, SHINY, 2, of(), GENERATE_PLATE);
     public static GemMaterial Jasper = new GemMaterial(206, "jasper", 0xC85050, EMERALD, 2, of(), STD_GEM | NO_SMELTING | HIGH_SIFTER_OUTPUT);
