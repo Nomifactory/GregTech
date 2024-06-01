@@ -53,6 +53,7 @@ public class MaterialIconSet {
         this.parent = parent;
         this.isRootIconSet = isRootIconSet;
         this.id = idCounter++;
+        ICON_SETS.put(name.toLowerCase(), this);
     }
 
     public MaterialIconSet(String name, MaterialIconSet parent) {
@@ -84,7 +85,7 @@ public class MaterialIconSet {
 
     @ZenMethod("get")
     public static MaterialIconSet getByName(String name) {
-        return ICON_SETS.get(name);
+        return ICON_SETS.get(name.toLowerCase());
     }
 
     @Override
