@@ -2859,6 +2859,7 @@ gregtech.fluid_pipe.throughput=Пропускная способность: §e%
 gregtech.fluid_pipe.max_temperature=Максимальная температура: §c%dK
 gregtech.fluid_pipe.non_gas_proof=Не может переносить газы.
 
+gregtech.multiblock.jammed=§cНевозможно завершить рецепт с текущей конфигурацией (машины).
 gregtech.multiblock.work_paused=Работа приостановлена.
 gregtech.multiblock.running=Работает отлично.
 gregtech.multiblock.idling=Холостой ход.

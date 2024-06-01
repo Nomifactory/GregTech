@@ -2838,6 +2838,7 @@ gregtech.fluid_pipe.throughput=传输速率: §e%d 升/刻
 gregtech.fluid_pipe.max_temperature=温度上限: §c%d K
 gregtech.fluid_pipe.non_gas_proof=不能传输气体.
 
+gregtech.multiblock.jammed=§c当前（机器）配置无法完成配方。
 gregtech.multiblock.work_paused=暂停.
 gregtech.multiblock.running=运行正常.
 gregtech.multiblock.idling=待机.
