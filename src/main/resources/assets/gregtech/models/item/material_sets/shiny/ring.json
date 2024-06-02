@@ -1,5 +1,5 @@
 {
-    "parent": "item/handheld",
+    "parent": "item/generated",
     "textures": {
         "layer0": "gregtech:items/material_sets/dull/ring",
         "layer1": "gregtech:items/material_sets/shiny/ring_overlay"
