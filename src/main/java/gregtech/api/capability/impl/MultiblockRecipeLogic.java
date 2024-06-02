@@ -2,7 +2,6 @@ package gregtech.api.capability.impl;
 
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMultipleTankHandler;
-import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.Recipe;
@@ -10,10 +9,15 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import java.util.List;
 
+import static gregtech.api.metatileentity.MetaTileEntity.addItemsToItemHandler;
+import static gregtech.api.metatileentity.MetaTileEntity.addFluidsToFluidHandler;
+
 public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 
-    /** If a structure was reformed with insufficient output space, the structure is jammed. */
+    /** Indicates that a structure fails to meet requirements for proceeding with the active recipe */
     protected boolean isJammed = false;
+
+    private boolean invalidated = true;
 
     public MultiblockRecipeLogic(RecipeMapMultiblockController tileEntity) {
         super(tileEntity, tileEntity.recipeMap);
@@ -31,7 +35,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
      * Used to reset cached values in the Recipe Logic on structure deform
      */
     public void invalidate() {
-        // this space intentionally left black
+        invalidated = true;
     }
 
     public IEnergyContainer getEnergyContainer() {
@@ -107,29 +111,56 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         return this.isJammed;
     }
 
-    // Handle case where structure was reformed with insufficient output space relative to start
-    @Override
-    protected void completeRecipe() {
+    private void checkIfJammed() {
+        if(metaTileEntity instanceof RecipeMapMultiblockController controller) {
+            // determine if outputs will fit
+            boolean canFitItems = addItemsToItemHandler(getOutputInventory(), true, itemOutputs);
+            boolean canFitFluids = addFluidsToFluidHandler(getOutputTank(), true, fluidOutputs);
 
-        RecipeMapMultiblockController controller = (RecipeMapMultiblockController) metaTileEntity;
+            // clear output notifications since we just checked them
+            metaTileEntity.getNotifiedItemOutputList().clear();
+            metaTileEntity.getNotifiedFluidOutputList().clear();
 
-        // The structure is jammed if there's no room for the outputs computed when ingredients were consumed
-        this.isJammed =
-            !MetaTileEntity.addItemsToItemHandler(getOutputInventory(), true, itemOutputs) ||
-            !MetaTileEntity.addFluidsToFluidHandler(getOutputTank(), true, fluidOutputs) ||
-            !controller.checkRecipe(previousRecipe, false);
+            // Jam if we can't output all items and fluids, or we fail whatever other conditions the controller imposes
+            this.isJammed = !(canFitItems && canFitFluids && controller.checkRecipe(previousRecipe, false));
+        }
+    }
 
-        // Finish the recipe only if the structure is not jammed.
-        if(!isJammed)
-            super.completeRecipe();
+    private boolean hasOutputChanged() {
+        return hasNotifiedOutputs() &&
+            (!metaTileEntity.getNotifiedItemOutputList().isEmpty() ||
+                !metaTileEntity.getNotifiedFluidOutputList().isEmpty());
     }
 
     @Override
     protected void updateRecipeProgress() {
-        // normal update
+        // Recheck jammed status after the structure has been invalidated or output inventories were modified
+        if(invalidated || hasOutputChanged())
+            checkIfJammed();
+
+        // Only proceed if we're not jammed
         if(!isJammed)
-            super.updateRecipeProgress();
-        else // retry recipe completion
-            completeRecipe();
+            // if the recipe is running
+            if(progressTime < maxProgressTime) {
+                // clear invalidation flag
+                invalidated = false;
+                // do normal update check
+                super.updateRecipeProgress();
+            } else
+                // the recipe is done but was probably jammed. Try to complete it.
+                completeRecipe();
+    }
+
+    @Override
+    protected void completeRecipe() {
+        /*
+            Since multiblocks can share parts, if multiple machines try to output on the same tick and can't,
+            the excess outputs would be silently voided. Avoid this scenario by doing a final Jammed state check.
+        */
+        checkIfJammed();
+
+        // If we're not jammed, proceed with completing the recipe. Otherwise, wait for outputs to notify.
+        if(!this.isJammed)
+            super.completeRecipe();
     }
 }
