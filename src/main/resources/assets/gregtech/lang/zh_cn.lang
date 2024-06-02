@@ -2884,3 +2884,6 @@ gregtech.command.util.hand.tool_stats=工具状态类: %s
 gregtech.command.util.hand.meta_item=元物品名字: %s
 gregtech.command.util.hand.not_a_player=这条指令只能由玩家使用。
 gregtech.command.util.hand.no_item=必须在主手持握物品时执行这条指令。
+
+gregtech.sharing.enabled=多方块结构共享：§a允许
+gregtech.sharing.disabled=多方块结构共享：§4禁止

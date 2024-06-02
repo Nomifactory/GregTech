@@ -84,5 +84,12 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart impl
             tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_in_till", energyContainer.getInputAmperage()));
         }
         tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
+        super.addInformation(stack, player, tooltip, advanced);
+    }
+
+    @Override
+    public boolean canPartShare() {
+        // Energy hatches are NOT shareable, at least for now. Need to add functionality first, otherwise it'd be weird.
+        return false;
     }
 }
