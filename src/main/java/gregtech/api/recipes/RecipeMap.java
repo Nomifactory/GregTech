@@ -100,6 +100,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     @ZenMethod
+    @Nullable
     public static RecipeMap<?> getByName(String unlocalizedName) {
         return RECIPE_MAPS.stream()
             .filter(map -> map.unlocalizedName.equals(unlocalizedName))
