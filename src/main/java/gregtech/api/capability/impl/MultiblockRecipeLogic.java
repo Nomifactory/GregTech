@@ -9,8 +9,15 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import java.util.List;
 
+import static gregtech.api.metatileentity.MetaTileEntity.addItemsToItemHandler;
+import static gregtech.api.metatileentity.MetaTileEntity.addFluidsToFluidHandler;
+
 public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 
+    /** Indicates that a structure fails to meet requirements for proceeding with the active recipe */
+    protected boolean isJammed = false;
+
+    private boolean invalidated = true;
 
     public MultiblockRecipeLogic(RecipeMapMultiblockController tileEntity) {
         super(tileEntity, tileEntity.recipeMap);
@@ -28,14 +35,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
      * Used to reset cached values in the Recipe Logic on structure deform
      */
     public void invalidate() {
-        previousRecipe = null;
-        progressTime = 0;
-        maxProgressTime = 0;
-        recipeEUt = 0;
-        fluidOutputs = null;
-        itemOutputs = null;
-        isOutputsFull = false;
-        setActive(false); // this marks dirty for us
+        invalidated = true;
     }
 
     public IEnergyContainer getEnergyContainer() {
@@ -105,5 +105,62 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     @Override
     protected long getMaxVoltage() {
         return Math.max(getEnergyContainer().getInputVoltage(), getEnergyContainer().getOutputVoltage());
+    }
+
+    public boolean isJammed() {
+        return this.isJammed;
+    }
+
+    private void checkIfJammed() {
+        if(metaTileEntity instanceof RecipeMapMultiblockController controller) {
+            // determine if outputs will fit
+            boolean canFitItems = addItemsToItemHandler(getOutputInventory(), true, itemOutputs);
+            boolean canFitFluids = addFluidsToFluidHandler(getOutputTank(), true, fluidOutputs);
+
+            // clear output notifications since we just checked them
+            metaTileEntity.getNotifiedItemOutputList().clear();
+            metaTileEntity.getNotifiedFluidOutputList().clear();
+
+            // Jam if we can't output all items and fluids, or we fail whatever other conditions the controller imposes
+            this.isJammed = !(canFitItems && canFitFluids && controller.checkRecipe(previousRecipe, false));
+        }
+    }
+
+    private boolean hasOutputChanged() {
+        return hasNotifiedOutputs() &&
+            (!metaTileEntity.getNotifiedItemOutputList().isEmpty() ||
+                !metaTileEntity.getNotifiedFluidOutputList().isEmpty());
+    }
+
+    @Override
+    protected void updateRecipeProgress() {
+        // Recheck jammed status after the structure has been invalidated or output inventories were modified
+        if(invalidated || hasOutputChanged())
+            checkIfJammed();
+
+        // Only proceed if we're not jammed
+        if(!isJammed)
+            // if the recipe is running
+            if(progressTime < maxProgressTime) {
+                // clear invalidation flag
+                invalidated = false;
+                // do normal update check
+                super.updateRecipeProgress();
+            } else
+                // the recipe is done but was probably jammed. Try to complete it.
+                completeRecipe();
+    }
+
+    @Override
+    protected void completeRecipe() {
+        /*
+            Since multiblocks can share parts, if multiple machines try to output on the same tick and can't,
+            the excess outputs would be silently voided. Avoid this scenario by doing a final Jammed state check.
+        */
+        checkIfJammed();
+
+        // If we're not jammed, proceed with completing the recipe. Otherwise, wait for outputs to notify.
+        if(!this.isJammed)
+            super.completeRecipe();
     }
 }
