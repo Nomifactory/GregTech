@@ -475,10 +475,29 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             '}';
     }
 
+    /**
+     * A ChanceFunction specifies alternative behavior applied to all chanced outputs, overriding
+     * the default {@code RecipeMap.chanceFunction}. The default behavior is additive, applying
+     * a flat bonus multiplied by the number of tiers the machine is above the base recipe tier.<br />
+     * <br />
+     * All integer parameters to this function and the resulting value express a "chance value" which
+     * is a percent chance out of 100 with two decimal places, multiplied by 100 to produce a resulting
+     * integer value. For example {@code 10000} is 100% and {@code 750} is 7.5%.<br />
+     * <br />
+     * Values can exceed 100% but chanced outputs will simply be guaranteed at or above 100% (you won't get twice
+     * the amount with 200%, for example). As long as the result of {@code chanceFor} is of the appropriate format,
+     * how exactly you compute the result doesn't really matter.
+     */
     @FunctionalInterface
     @ZenClass("mods.gregtech.recipe.IChanceFunction")
     @ZenRegister
     public interface IChanceFunction {
+        /**
+         * @param chance the base chance value
+         * @param boostPerTier the increase in chance value to apply per tier of boost
+         * @param boostTier the number of times to apply {@code boostPerTier}
+         * @return the computed chance value
+         */
         int chanceFor(int chance, int boostPerTier, int boostTier);
     }
 }

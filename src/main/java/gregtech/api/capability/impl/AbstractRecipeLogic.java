@@ -324,8 +324,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         setMaxProgress(resultOverclock[1]);
         this.recipeEUt = resultOverclock[0];
         this.fluidOutputs = GTUtility.copyFluidList(recipe.getFluidOutputs());
-        int tier = getMachineTierForRecipe(recipe);
-        this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(getOutputInventory().getSlots(), random, tier));
+        int overclocks = getMachineTierForRecipe(recipe) - recipe.getBaseTier();
+        this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(getOutputInventory().getSlots(), random, overclocks));
         if (this.wasActiveAndNeedsUpdate) {
             this.wasActiveAndNeedsUpdate = false;
         } else {

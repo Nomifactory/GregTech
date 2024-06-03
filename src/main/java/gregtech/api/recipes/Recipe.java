@@ -1,6 +1,7 @@
 package gregtech.api.recipes;
 
 import com.google.common.collect.ImmutableList;
+import gregtech.api.GTValues;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.recipes.recipeproperties.RecipeProperty;
 import gregtech.api.recipes.recipeproperties.RecipePropertyStorage;
@@ -14,6 +15,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static java.util.Arrays.binarySearch;
+import static net.minecraft.util.math.MathHelper.abs;
 
 /**
  * Class that represent machine recipe.<p>
@@ -53,6 +57,11 @@ public class Recipe {
      * if > 0 means EU/t consumed, if < 0 - produced
      */
     private final int EUt;
+
+    /**
+     * GTValues ordinal for this Recipe's base power tier
+     */
+    private int baseTier = -1;
 
     /**
      * If this Recipe is hidden from JEI
@@ -318,6 +327,22 @@ public class Recipe {
 
     public int getEUt() {
         return EUt;
+    }
+
+    /**
+     * @return The tier of machine required to run this recipe, as defined by {@link GTValues}
+     */
+    public int getBaseTier() {
+
+        // Lazily compute and store for later recall
+        if(baseTier == -1) {
+            int tier = binarySearch(GTValues.V, abs(EUt));
+            if(tier < 0)
+                tier = abs(tier + 1);
+            baseTier = tier;
+        }
+
+        return baseTier;
     }
 
     public boolean isHidden() {
