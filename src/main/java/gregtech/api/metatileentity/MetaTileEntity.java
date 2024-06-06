@@ -20,6 +20,7 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.render.Textures;
 import gregtech.api.util.GTFluidUtils;
 import gregtech.api.util.GTUtility;
+import gregtech.common.ConfigHolder;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -86,6 +87,9 @@ public abstract class MetaTileEntity implements ICoverable {
     private int cachedComparatorValue;
     private int cachedLightValue;
     protected boolean isFragile = false;
+
+    protected boolean muffled = false;
+    private int playSoundCooldown = 0;
 
     private final CoverBehavior[] coverBehaviors = new CoverBehavior[6];
 
@@ -258,6 +262,45 @@ public abstract class MetaTileEntity implements ICoverable {
 
     public final String getMetaFullName() {
         return getMetaName() + ".name";
+    }
+
+    public boolean isActive() {
+        return false;
+    }
+
+    public boolean isMuffled() {
+        return muffled;
+    }
+
+    public float getVolume() {
+        return 1.0F;
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Nullable
+    public SoundEvent getSound() {
+        return null;
+    }
+
+    @SideOnly(Side.CLIENT)
+    private void updateSound() {
+        if (!ConfigHolder.doMachinesHaveSounds || isMuffled()) {
+            return;
+        }
+        SoundEvent event = getSound();
+        if (event == null) {
+            return;
+        }
+        if (isValid() && isActive()) {
+            if (--playSoundCooldown > 0) {
+                return;
+            }
+            GregTechAPI.soundManager.startTileSound(event.getSoundName(), getVolume(), getPos());
+            playSoundCooldown = 20;
+        } else {
+            GregTechAPI.soundManager.stopTileSound(getPos());
+            playSoundCooldown = 0;
+        }
     }
 
     public <T> void addNotifiedInput(T input) {
@@ -512,6 +555,12 @@ public abstract class MetaTileEntity implements ICoverable {
         return !isOpaqueCube();
     }
 
+    public void invalidate() {
+        if (getWorld() != null && getWorld().isRemote) {
+            GregTechAPI.soundManager.stopTileSound(getPos());
+        }
+    }
+
     public void onLoad() {
         this.cachedComparatorValue = getActualComparatorValue();
         for (EnumFacing side : EnumFacing.VALUES) {
@@ -625,6 +674,8 @@ public abstract class MetaTileEntity implements ICoverable {
             if (getOffsetTimer() % 5 == 0L) {
                 updateComparatorValue();
             }
+        } else {
+            updateSound();
         }
         if (getOffsetTimer() % 5 == 0L) {
             updateLightValue();

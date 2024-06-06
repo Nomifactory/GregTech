@@ -1,6 +1,7 @@
 package gregtech.common;
 
 import gregtech.api.GTValues;
+import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.enchants.EnchantmentEnderDamage;
 import gregtech.api.items.metaitem.MetaItem;
@@ -19,6 +20,8 @@ import gregtech.common.items.MetaItems;
 import gregtech.common.items.potions.PotionFluids;
 import gregtech.common.pipelike.cable.ItemBlockCable;
 import gregtech.common.pipelike.fluidpipe.ItemBlockFluidPipe;
+import gregtech.common.sound.GTSoundEvents;
+import gregtech.common.sound.SoundManager;
 import gregtech.loaders.MaterialInfoLoader;
 import gregtech.loaders.OreDictionaryLoader;
 import gregtech.loaders.oreprocessing.DecompositionRecipeHandler;
@@ -33,6 +36,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemMultiTexture;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.common.config.Config.Type;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.event.RegistryEvent;
@@ -135,6 +139,12 @@ public class CommonProxy {
         ORES.stream()
             .map(block -> createItemBlock(block, OreItemBlock::new))
             .forEach(registry::register);
+    }
+
+    @SubscribeEvent
+    public static void registerSounds(RegistryEvent.Register<SoundEvent> event) {
+        GregTechAPI.soundManager = SoundManager.getInstance();
+        GTSoundEvents.register();
     }
 
     //this is called with normal priority, so most mods working with

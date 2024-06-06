@@ -23,11 +23,13 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class SteamMetaTileEntity extends MetaTileEntity {
 
@@ -47,6 +49,17 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity {
         this.renderer = renderer;
         BRONZE_BACKGROUND_TEXTURE = getFullGuiTexture("%s_gui");
         BRONZE_SLOT_BACKGROUND_TEXTURE = getFullGuiTexture("slot_%s");
+    }
+
+    @Override
+    public boolean isActive() {
+        return workableHandler.isActive() && workableHandler.isWorkingEnabled();
+    }
+
+    @Nullable
+    @Override
+    public SoundEvent getSound() {
+        return workableHandler.recipeMap.getSound();
     }
 
     @SideOnly(Side.CLIENT)

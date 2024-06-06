@@ -2,6 +2,7 @@ package gregtech.api;
 
 import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.sound.ISoundManager;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.type.DustMaterial;
@@ -20,6 +21,7 @@ public class GregTechAPI {
 
     public static BlockMachine MACHINE;
     public static final Map<DustMaterial, Map<StoneType, IBlockOre>> oreBlockTable = new HashMap<>();
+    public static ISoundManager soundManager;
 
     public static final BaseCreativeTab TAB_GREGTECH =
         new BaseCreativeTab(GTValues.MODID + ".main", () -> MetaItems.BATTERY_HULL_HV.getStackForm(), true);

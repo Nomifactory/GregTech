@@ -27,6 +27,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.ValidationResult;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Optional.Method;
@@ -60,6 +61,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     protected TextureArea progressBarTexture;
     protected MoveType moveType;
     public final boolean isHidden;
+    protected SoundEvent sound;
 
     private final Map<FluidKey, Collection<Recipe>> recipeFluidMap = new HashMap<>();
     private final Collection<Recipe> recipeList = new ArrayList<>();
@@ -140,6 +142,11 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     public RecipeMap<R> setSlotOverlay(boolean isOutput, boolean isFluid, boolean isLast, TextureArea slotOverlay) {
         this.slotOverlays.put((byte) ((isOutput ? 2 : 0) + (isFluid ? 1 : 0) + (isLast ? 4 : 0)), slotOverlay);
+        return this;
+    }
+
+    public RecipeMap<R> setSound(SoundEvent event) {
+        this.sound = event;
         return this;
     }
 
@@ -383,6 +390,11 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return Collections.unmodifiableCollection(recipeList);
     }
 
+    @Nullable
+    public SoundEvent getSound() {
+        return this.sound;
+    }
+
     @ZenMethod("findRecipe")
     @Method(modid = GTValues.MODID_CT)
     @Nullable
@@ -466,6 +478,12 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     @ZenGetter("maxFluidOutputs")
     public int getMaxFluidOutputs() {
         return maxFluidOutputs;
+    }
+
+    @ZenGetter("sound")
+    @Nullable
+    public String ctGetSound() {
+        return getSound() != null ? getSound().getSoundName().toString() : null;
     }
 
     @Override

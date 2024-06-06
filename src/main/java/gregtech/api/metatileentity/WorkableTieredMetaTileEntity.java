@@ -11,6 +11,7 @@ import gregtech.api.render.OrientedOverlayRenderer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
@@ -38,6 +39,17 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
 
     protected RecipeLogicEnergy createWorkable(RecipeMap<?> recipeMap) {
         return new RecipeLogicEnergy(this, recipeMap, () -> energyContainer);
+    }
+
+    @Override
+    public boolean isActive() {
+        return workable.isActive() && workable.isWorkingEnabled();
+    }
+
+    @Nullable
+    @Override
+    public SoundEvent getSound() {
+        return workable.recipeMap.getSound();
     }
 
     @Override

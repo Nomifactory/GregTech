@@ -1,2 +1,142 @@
 {
+  "tick.macerator": {
+    "subtitle": "gregtech.subtitle.tick.macerator",
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:macerator",
+        "stream": false
+      }
+    ]
+  },
+  "tick.forge_hammer": {
+    "subtitle": "gregtech.subtitle.tick.forge_hammer",
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:forge_hammer",
+        "stream": false
+      }
+    ]
+  },
+  "tick.chemical_reactor": {
+    "subtitle": "gregtech.subtitle.tick.chemical_reactor",
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:chemical",
+        "stream": false
+      }
+    ]
+  },
+  "tick.assembler": {
+    "subtitle": "gregtech.subtitle.tick.assembler",
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:assembler",
+        "stream": false
+      }
+    ]
+  },
+  "tick.centrifuge": {
+    "subtitle": "gregtech.subtitle.tick.centrifuge",
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:centrifuge",
+        "stream": false
+      }
+    ]
+  },
+  "tick.compressor": {
+    "subtitle": "gregtech.subtitle.tick.compressor",
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:compressor",
+        "stream": false
+      }
+    ]
+  },
+  "tick.electrolyzer": {
+    "subtitle": "gregtech.subtitle.tick.electrolyzer",
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:electrolyzer",
+        "stream": false
+      }
+    ]
+  },
+  "tick.mixer": {
+    "subtitle": "gregtech.subtitle.tick.mixer",
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:mixer",
+        "stream": false
+      }
+    ]
+  },
+  "tick.arc": {
+    "subtitle": "gregtech.subtitle.tick.arc",
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:hum",
+        "stream": false
+      }
+    ]
+  },
+  "tick.boiler": {
+    "subtitle": "gregtech.subtitle.tick.boiler",
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:boiling",
+        "stream": false
+      }
+    ]
+  },
+  "tick.bath": {
+    "subtitle": "gregtech.subtitle.tick.bath",
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:bath",
+        "stream": false
+      }
+    ]
+  },
+  "tick.motor": {
+    "subtitle": "gregtech.subtitle.tick.motor",
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:motor",
+        "stream": false
+      }
+    ]
+  },
+  "tick.cut": {
+    "subtitle": "gregtech.subtitle.tick.cut",
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:cut",
+        "stream": false
+      }
+    ]
+  },
+  "tick.furnace": {
+    "subtitle": "gregtech.subtitle.tick.furnace",
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:heating",
+        "stream": false
+      }
+    ]
+  }
 }

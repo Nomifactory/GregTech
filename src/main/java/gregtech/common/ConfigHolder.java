@@ -109,6 +109,9 @@ public class ConfigHolder {
     @Config.RequiresMcRestart
     public static boolean doLosslessWiresMakeLossyCables = false;
 
+    @Config.Comment("If false, machines will not make noise. Default: true")
+    public static boolean doMachinesHaveSounds = true;
+
     public static class VanillaRecipes {
 
         @Config.Comment("Whether to nerf the paper crafting recipe. Default: true")
