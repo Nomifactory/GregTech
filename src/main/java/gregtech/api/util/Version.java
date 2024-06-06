@@ -22,7 +22,7 @@ public class Version implements Comparable<Version> {
     }
 
     public static Version parse(String vStr) {
-        final Pattern p = Pattern.compile("(\\d+).*");
+        final Pattern p = Pattern.compile("v?(\\d+).*");
         return new Version(Arrays.stream(vStr.split(Pattern.quote(".")))
                                .map(s -> {
                                    Matcher m = p.matcher(s);
