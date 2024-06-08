@@ -46,10 +46,15 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
         return workable.isActive() && workable.isWorkingEnabled();
     }
 
+    @Override
+    public float getVolume() {
+        return super.getVolume() / (workable.isHasNotEnoughEnergy() ? 4 : 1);
+    }
+
     @Nullable
     @Override
     public SoundEvent getSound() {
-        return workable.recipeMap.getSound();
+        return workable.getSound();
     }
 
     @Override

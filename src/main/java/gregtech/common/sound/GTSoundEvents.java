@@ -20,6 +20,7 @@ public class GTSoundEvents {
     public static SoundEvent MOTOR = SoundManager.createSound("tick.motor");
     public static SoundEvent CUTTING = SoundManager.createSound("tick.cut");
     public static SoundEvent COOLING = SoundManager.createSound("tick.cooling");
+    public static SoundEvent INTERRUPTED = SoundManager.createSound("tick.interrupt");
 
     public static void register() {
         GregTechAPI.soundManager.registerSound(MACERATOR);
@@ -37,5 +38,6 @@ public class GTSoundEvents {
         GregTechAPI.soundManager.registerSound(MOTOR);
         GregTechAPI.soundManager.registerSound(CUTTING);
         GregTechAPI.soundManager.registerSound(COOLING);
+        GregTechAPI.soundManager.registerSound(INTERRUPTED);
     }
 }

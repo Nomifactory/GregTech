@@ -49,6 +49,9 @@ public class SoundManager implements ISoundManager {
     @Override
     public ISound startTileSound(ResourceLocation location, float volume, BlockPos pos) {
         ISound sound = soundMap.get(pos);
+        if (sound != null && !sound.getSoundLocation().equals(location)) {
+            stopTileSound(pos);
+        }
         if (sound == null || !Minecraft.getMinecraft().getSoundHandler().isSoundPlaying(sound)) {
             sound = new PositionedSoundRecord(location, SoundCategory.BLOCKS, volume, 1.0F, true, 0, ISound.AttenuationType.LINEAR, pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F);
             soundMap.put(pos, sound);

@@ -148,5 +148,15 @@
         "stream": false
       }
     ]
+  },
+  "tick.interrupt": {
+    "subtitle": "gregtech.subtitle.tick.interrupt",
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:interrupt",
+        "stream": false
+      }
+    ]
   }
 }

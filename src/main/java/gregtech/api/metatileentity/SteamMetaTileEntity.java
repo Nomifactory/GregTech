@@ -56,10 +56,15 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity {
         return workableHandler.isActive() && workableHandler.isWorkingEnabled();
     }
 
+    @Override
+    public float getVolume() {
+        return super.getVolume() / (workableHandler.isHasNotEnoughEnergy() ? 4 : 1);
+    }
+
     @Nullable
     @Override
     public SoundEvent getSound() {
-        return workableHandler.recipeMap.getSound();
+        return workableHandler.getSound();
     }
 
     @SideOnly(Side.CLIENT)

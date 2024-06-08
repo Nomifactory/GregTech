@@ -10,11 +10,13 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
+import gregtech.common.sound.GTSoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.world.*;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
@@ -81,6 +83,13 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
 
     protected IMultipleTankHandler getOutputTank() {
         return metaTileEntity.getExportFluids();
+    }
+
+    public SoundEvent getSound() {
+        if (isActive() && isHasNotEnoughEnergy()) {
+            return GTSoundEvents.INTERRUPTED;
+        }
+        return recipeMap.getSound();
     }
 
     @Override
@@ -161,13 +170,14 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         boolean drawEnergy = drawEnergy(recipeEUt);
         if (drawEnergy || (recipeEUt < 0)) {
             //as recipe starts with progress on 1 this has to be > only not => to compensate for it
+            setHasNotEnoughEnergy(false);
             if (++progressTime > maxProgressTime) {
                 completeRecipe();
             }
         } else if (recipeEUt > 0) {
             //only set hasNotEnoughEnergy if this recipe is consuming recipe
             //generators always have enough energy
-            this.hasNotEnoughEnergy = true;
+            setHasNotEnoughEnergy(true);
             //if current progress value is greater than 2, decrement it by 2
             if (progressTime >= 2) {
                 if (ConfigHolder.insufficientEnergySupplyWipesRecipeProgress) {
@@ -176,6 +186,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
                     this.progressTime = Math.max(1, progressTime - 2);
                 }
             }
+
         }
     }
 
@@ -345,7 +356,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         this.recipeEUt = 0;
         this.fluidOutputs = null;
         this.itemOutputs = null;
-        this.hasNotEnoughEnergy = false;
+        setHasNotEnoughEnergy(false);
         this.wasActiveAndNeedsUpdate = true;
     }
 
@@ -382,6 +393,15 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         World world = metaTileEntity.getWorld();
         if (world != null && !world.isRemote) {
             writeCustomData(1, buf -> buf.writeBoolean(active));
+        }
+    }
+
+    protected void setHasNotEnoughEnergy(boolean hasNotEnoughEnergy) {
+        this.hasNotEnoughEnergy = hasNotEnoughEnergy;
+        metaTileEntity.markDirty();
+        World world = metaTileEntity.getWorld();
+        if (world != null && !world.isRemote) {
+            writeCustomData(2, buf -> buf.writeBoolean(hasNotEnoughEnergy));
         }
     }
 
@@ -460,17 +480,21 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         if (dataId == 1) {
             this.isActive = buf.readBoolean();
             getMetaTileEntity().getHolder().scheduleChunkForRenderUpdate();
+        } else if (dataId == 2) {
+            this.hasNotEnoughEnergy = buf.readBoolean();
         }
     }
 
     @Override
     public void writeInitialData(PacketBuffer buf) {
         buf.writeBoolean(this.isActive);
+        buf.writeBoolean(this.hasNotEnoughEnergy);
     }
 
     @Override
     public void receiveInitialData(PacketBuffer buf) {
         this.isActive = buf.readBoolean();
+        this.hasNotEnoughEnergy = buf.readBoolean();
     }
 
     @Override

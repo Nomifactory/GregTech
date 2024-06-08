@@ -98,10 +98,15 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         return isStructureFormed() && recipeMapWorkable.isActive() && recipeMapWorkable.isWorkingEnabled();
     }
 
+    @Override
+    public float getVolume() {
+        return super.getVolume() / (recipeMapWorkable.isHasNotEnoughEnergy() ? 4 : 1);
+    }
+
     @Nullable
     @Override
     public SoundEvent getSound() {
-        return recipeMapWorkable.recipeMap.getSound();
+        return recipeMapWorkable.getSound();
     }
 
     @Override
