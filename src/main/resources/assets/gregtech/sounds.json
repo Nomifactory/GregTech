@@ -138,5 +138,15 @@
         "stream": false
       }
     ]
+  },
+  "tick.cooling": {
+    "subtitle": "gregtech.subtitle.tick.cooling",
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:cooling",
+        "stream": false
+      }
+    ]
   }
 }

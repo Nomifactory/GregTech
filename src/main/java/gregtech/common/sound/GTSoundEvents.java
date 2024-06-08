@@ -19,6 +19,7 @@ public class GTSoundEvents {
     public static SoundEvent CHEMICAL_BATH = SoundManager.createSound("tick.bath");
     public static SoundEvent MOTOR = SoundManager.createSound("tick.motor");
     public static SoundEvent CUTTING = SoundManager.createSound("tick.cut");
+    public static SoundEvent COOLING = SoundManager.createSound("tick.cooling");
 
     public static void register() {
         GregTechAPI.soundManager.registerSound(MACERATOR);
@@ -35,5 +36,6 @@ public class GTSoundEvents {
         GregTechAPI.soundManager.registerSound(CHEMICAL_BATH);
         GregTechAPI.soundManager.registerSound(MOTOR);
         GregTechAPI.soundManager.registerSound(CUTTING);
+        GregTechAPI.soundManager.registerSound(COOLING);
     }
 }
