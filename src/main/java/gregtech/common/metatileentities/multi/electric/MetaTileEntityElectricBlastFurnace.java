@@ -20,9 +20,11 @@ import gregtech.common.blocks.BlockWireCoil;
 import gregtech.common.blocks.BlockWireCoil.CoilType;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
+import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -36,7 +38,10 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
         MultiblockAbility.INPUT_ENERGY
     };
 
+    /** The current blast furnace temperature */
     private int blastFurnaceTemperature;
+    /** The temperature required by the actively running recipe */
+    private int recipeTemperature;
 
     public MetaTileEntityElectricBlastFurnace(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.BLAST_RECIPES);
@@ -68,16 +73,29 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     }
 
     @Override
-    public boolean checkRecipe(Recipe recipe, boolean consumeIfSuccess) {
-        return this.blastFurnaceTemperature >= recipe.getProperty(BlastTemperatureProperty.getInstance(),0);
+    public boolean checkRecipe(@Nullable Recipe recipe, boolean consumeIfSuccess) {
+        // Recipe will be null during Jam checks when a world has been reloaded after starting a Recipe.
+        int requiredTemperature = (recipe == null)
+            // fall back to the recorded value (which will be 0 for any Recipe started before this change)
+            ? recipeTemperature
+            // otherwise, get it as normal from the Recipe
+            : recipe.getProperty(BlastTemperatureProperty.getInstance(), 0);
+
+        // Verify sufficient coil heat
+        if (this.blastFurnaceTemperature >= requiredTemperature) {
+            // If this is a new recipe, record its temperature
+            if (consumeIfSuccess)
+                recipeTemperature = requiredTemperature;
+            return true;
+        }
+        return false;
     }
 
     public static Predicate<BlockWorldState> heatingCoilPredicate() {
         return blockWorldState -> {
             IBlockState blockState = blockWorldState.getBlockState();
-            if (!(blockState.getBlock() instanceof BlockWireCoil))
+            if (!(blockState.getBlock() instanceof BlockWireCoil blockWireCoil))
                 return false;
-            BlockWireCoil blockWireCoil = (BlockWireCoil) blockState.getBlock();
             CoilType coilType = blockWireCoil.getState(blockState);
             CoilType currentCoilType = blockWorldState.getMatchContext().getOrPut("CoilType", coilType);
             return currentCoilType.getName().equals(coilType.getName());
@@ -112,5 +130,18 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     @Override
     protected OrientedOverlayRenderer getFrontOverlay() {
         return Textures.BLAST_FURNACE_OVERLAY;
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound data) {
+        if (getRecipeMapWorkable().isActive())
+            data.setInteger("RecipeTemp", recipeTemperature);
+        return super.writeToNBT(data);
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound data) {
+        recipeTemperature = data.getInteger("RecipeTemp");
+        super.readFromNBT(data);
     }
 }
