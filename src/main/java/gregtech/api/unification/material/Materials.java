@@ -349,7 +349,7 @@ public class Materials {
     public static FluidMaterial Lava = new FluidMaterial(329, "lava", 0xFF4000, FLUID, of(), 0);
     public static DustMaterial Glowstone = new DustMaterial(330, "glowstone", 0xFFFF00, SHINY, 1, of(), NO_SMASHING | SMELT_INTO_FLUID | GENERATE_PLATE | EXCLUDE_PLATE_COMPRESSOR_RECIPE);
     public static GemMaterial NetherStar = new GemMaterial(331, "nether_star", 0xFFFFFF, NETHERSTAR, 4, of(), STD_SOLID | GENERATE_LENSE | NO_SMASHING | NO_SMELTING);
-    public static DustMaterial Endstone = new DustMaterial(332, "endstone", 0xFFFFFF, DULL, 1, of(), NO_SMASHING);
+    public static DustMaterial Endstone = new DustMaterial(332, "endstone", 0xC5C59C, ROUGH, 1, of(), NO_SMASHING);
     public static DustMaterial Netherrack = new DustMaterial(333, "netherrack", 0xC80000, ROUGH, 1, of(), NO_SMASHING | FLAMMABLE);
     public static FluidMaterial DrillingFluid = new FluidMaterial(348, "drilling_fluid", 0xFFFFAA, FLUID, of(), 0);
     public static FluidMaterial ConstructionFoam = new FluidMaterial(347, "construction_foam", 0x333333, FLUID, of(), 0);
