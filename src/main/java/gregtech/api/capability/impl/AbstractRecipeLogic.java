@@ -392,7 +392,10 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         metaTileEntity.markDirty();
         World world = metaTileEntity.getWorld();
         if (world != null && !world.isRemote) {
-            writeCustomData(1, buf -> buf.writeBoolean(active));
+            writeCustomData(1, buf -> {
+                buf.writeBoolean(active);
+                buf.writeBoolean(workingEnabled);
+            });
         }
     }
 
@@ -409,6 +412,13 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
     public void setWorkingEnabled(boolean workingEnabled) {
         this.workingEnabled = workingEnabled;
         metaTileEntity.markDirty();
+        World world = metaTileEntity.getWorld();
+        if (world != null && !world.isRemote) {
+            writeCustomData(1, buf -> {
+                buf.writeBoolean(isActive);
+                buf.writeBoolean(workingEnabled);
+            });
+        }
     }
 
     public void setAllowOverclocking(boolean allowOverclocking) {
@@ -479,6 +489,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         if (dataId == 1) {
             this.isActive = buf.readBoolean();
+            this.workingEnabled = buf.readBoolean();
             getMetaTileEntity().getHolder().scheduleChunkForRenderUpdate();
         } else if (dataId == 2) {
             this.hasNotEnoughEnergy = buf.readBoolean();
@@ -489,12 +500,14 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
     public void writeInitialData(PacketBuffer buf) {
         buf.writeBoolean(this.isActive);
         buf.writeBoolean(this.hasNotEnoughEnergy);
+        buf.writeBoolean(this.workingEnabled);
     }
 
     @Override
     public void receiveInitialData(PacketBuffer buf) {
         this.isActive = buf.readBoolean();
         this.hasNotEnoughEnergy = buf.readBoolean();
+        this.workingEnabled = buf.readBoolean();
     }
 
     @Override
