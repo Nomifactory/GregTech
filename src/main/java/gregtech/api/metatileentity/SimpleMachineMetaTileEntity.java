@@ -319,13 +319,13 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     }
 
     protected ModularUI.Builder createGuiTemplate(EntityPlayer player) {
-        ModularUI.Builder builder = workable.recipeMap.createUITemplate(workable::getProgressPercent, importItems, exportItems, importFluids, exportFluids)
-            .widget(new LabelWidget(7, 5, getMetaFullName()))
-            .widget(new DischargerSlotWidget(chargerInventory, 0, 79, 62)
+        ModularUI.Builder builder = workable.recipeMap.createUITemplate(workable::getProgressPercent, importItems, exportItems, importFluids, exportFluids);
+            builder.widget(new LabelWidget(7, 5, getMetaFullName()))
+            .widget(new DischargerSlotWidget(chargerInventory, 0, 79, builder.getHeight() - 104)
                 .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.CHARGER_OVERLAY))
-            .widget(new ImageWidget(79, 42, 18, 18, GuiTextures.INDICATOR_NO_ENERGY)
+            .widget(new ImageWidget(79, builder.getHeight() - 124, 18, 18, GuiTextures.INDICATOR_NO_ENERGY)
                 .setPredicate(workable::isHasNotEnoughEnergy))
-            .bindPlayerInventory(player.inventory);
+            .bindPlayerInventory(player.inventory, builder.getHeight() - 82);
 
         int leftButtonStartX = 7;
         int rightButtonStartX = 176 - 7 - 45;
@@ -335,19 +335,19 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
         }
 
         if (exportItems.getSlots() > 0) {
-            builder.widget(new ToggleButtonWidget(leftButtonStartX, 62, 18, 18,
+            builder.widget(new ToggleButtonWidget(leftButtonStartX, builder.getHeight() - 104, 18, 18,
                 GuiTextures.BUTTON_ITEM_OUTPUT, this::isAutoOutputItems, this::setAutoOutputItems)
                 .setTooltipText("gregtech.gui.item_auto_output.tooltip"));
             leftButtonStartX += 18;
         }
         if (exportFluids.getTanks() > 0) {
-            builder.widget(new ToggleButtonWidget(leftButtonStartX, 62, 18, 18,
+            builder.widget(new ToggleButtonWidget(leftButtonStartX, builder.getHeight() - 104, 18, 18,
                 GuiTextures.BUTTON_FLUID_OUTPUT, this::isAutoOutputFluids, this::setAutoOutputFluids)
                 .setTooltipText("gregtech.gui.fluid_auto_output.tooltip"));
             leftButtonStartX += 18;
         }
 
-        builder.widget(new CycleButtonWidget(leftButtonStartX, 62, 18, 18,
+        builder.widget(new CycleButtonWidget(leftButtonStartX, builder.getHeight() - 104, 18, 18,
                 workable.getAvailableOverclockingTiers(), workable::getOverclockTier, workable::setOverclockTier)
                 .setTooltipHoverString("gregtech.gui.overclock.description")
                 .setButtonTexture(GuiTextures.BUTTON_OVERCLOCK));

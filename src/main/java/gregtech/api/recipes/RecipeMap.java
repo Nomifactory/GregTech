@@ -307,7 +307,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         int itemSlotsToLeft = inputSlotGrid[0];
         int itemSlotsToDown = inputSlotGrid[1];
         int startInputsX = isOutputs ? 106 : 69 - itemSlotsToLeft * 18;
-        int startInputsY = 32 - (int) (itemSlotsToDown / 2.0 * 18);
+        int startInputsY = builder.getHeight() - 134 - (int) (itemSlotsToDown / 2.0 * 18);
         for (int i = 0; i < itemSlotsToDown; i++) {
             for (int j = 0; j < itemSlotsToLeft; j++) {
                 int slotIndex = i * itemSlotsToLeft + j;
