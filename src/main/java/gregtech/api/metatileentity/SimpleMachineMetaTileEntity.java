@@ -63,12 +63,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     public SimpleMachineMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, OrientedOverlayRenderer renderer, int tier, boolean hasFrontFacing) {
         super(metaTileEntityId, recipeMap, renderer, tier);
         this.hasFrontFacing = hasFrontFacing;
-        this.chargerInventory = new ItemStackHandler(1) {
-            @Override
-            public int getSlotLimit(int slot) {
-                return 1;
-            }
-        };
+        this.chargerInventory = new ItemStackHandler(1);
     }
 
     @Override
