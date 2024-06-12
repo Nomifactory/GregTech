@@ -30,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OreByProductCategory extends PrimitiveRecipeCategory<OreByProduct, OreByProduct>{
+public class OreByProductCategory extends PrimitiveRecipeCategory<OreByProduct, OreByProduct> {
 
     // XY positions of every item and fluid, in three enormous lists
     protected final static ImmutableList<Integer> ITEM_INPUT_LOCATIONS = ImmutableList.of(
@@ -48,7 +48,7 @@ public class OreByProductCategory extends PrimitiveRecipeCategory<OreByProduct, 
             41, 145,    // cauldron (impure)
             102, 145,   // cauldron (purified)
             24, 48,     // chem bath
-            155, 71,    // electro separator
+            155, 71,    // electromagnetic separator
             101, 25     // sifter
     );
 
@@ -129,7 +129,7 @@ public class OreByProductCategory extends PrimitiveRecipeCategory<OreByProduct, 
         this.arrowsSifter = guiHelper.drawableBuilder(new ResourceLocation(baseLocation + "oreby-sift.png"), 0, 0, 176, 166)
                 .setTextureSize(176, 166).build();
 
-        this.icon = guiHelper.createDrawableIngredient(OreDictUnifier.get(OrePrefix.ore, Materials.Iron));
+        this.icon = guiHelper.createDrawableIngredient(OreDictUnifier.get(OrePrefix.ore, Materials.Platinum));
 	}
 
 	@Override
