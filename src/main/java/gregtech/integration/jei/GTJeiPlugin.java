@@ -40,6 +40,7 @@ import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeCategoryRegistration;
 import mezz.jei.api.recipe.VanillaRecipeCategoryUid;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -49,6 +50,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
+
+import static gregtech.api.GTValues.ULV;
 
 @JEIPlugin
 public class GTJeiPlugin implements IModPlugin {
@@ -164,16 +167,11 @@ public class GTJeiPlugin implements IModPlugin {
         }
         String oreByProductId = GTValues.MODID + ":" + "ore_by_product";
         registry.addRecipes(oreByproductList, oreByProductId);
-        for (MetaTileEntity machine : MetaTileEntities.MACERATOR)
-            registry.addRecipeCatalyst(machine.getStackForm(), oreByProductId);
-        for (MetaTileEntity machine : MetaTileEntities.ORE_WASHER)
-            registry.addRecipeCatalyst(machine.getStackForm(), oreByProductId);
-        for (MetaTileEntity machine : MetaTileEntities.CENTRIFUGE)
-            registry.addRecipeCatalyst(machine.getStackForm(), oreByProductId);
-        for (MetaTileEntity machine : MetaTileEntities.THERMAL_CENTRIFUGE)
-            registry.addRecipeCatalyst(machine.getStackForm(), oreByProductId);
-        for (MetaTileEntity machine : MetaTileEntities.CHEMICAL_BATH)
-            registry.addRecipeCatalyst(machine.getStackForm(), oreByProductId);
+        registry.addRecipeCatalyst(MetaTileEntities.MACERATOR[ULV].getStackForm(), oreByProductId);
+        registry.addRecipeCatalyst(MetaTileEntities.ORE_WASHER[ULV].getStackForm(), oreByProductId);
+        registry.addRecipeCatalyst(MetaTileEntities.CENTRIFUGE[ULV].getStackForm(), oreByProductId);
+        registry.addRecipeCatalyst(MetaTileEntities.THERMAL_CENTRIFUGE[ULV].getStackForm(), oreByProductId);
+        registry.addRecipeCatalyst(new ItemStack(Items.CAULDRON), oreByProductId);
 
         //Ore Veins
         List<OreDepositDefinition> oreVeins = WorldGenRegistry.getOreDeposits();
