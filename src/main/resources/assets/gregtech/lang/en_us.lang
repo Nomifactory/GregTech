@@ -1573,6 +1573,8 @@ item.wheat.dustTiny=Tiny Pile of Flour
 item.wheat.dustSmall=Small Pile of Flour
 item.wheat.dust=Flour
 
+gregtech.jei.materialtree.name=Material Tree
+
 recipemap.orewasher.name=Ore Washer
 recipemap.thermal_centrifuge.name=Thermal Centrifuge
 recipemap.extractor.name=Extractor
@@ -2944,6 +2946,10 @@ gregtech.gui.item_auto_output.tooltip.disabled=Item Auto-Output Disabled
 gregtech.jei.ore_by_product_from_ore=Use %s for %s
 gregtech.jei.ore_by_product_from_machine=Produce by processing %s with %s
 gregtech.jei.ore_by_product_not_obtainable=Byproduct not obtainable
+
+gregtech.jei.materials.average_mass=Average mass: %,d
+gregtech.jei.materials.average_protons=Average protons: %,d
+gregtech.jei.materials.average_neutrons=Average neutrons: %,d
 
 ore.spawnlocation.name=Ore Spawn Information
 gregtech.jei.ore.surface_rock_1=Surface Rocks with this material denote vein spawn locations.
