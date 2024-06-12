@@ -47,6 +47,7 @@ import net.minecraft.block.BlockLog.EnumAxis;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.DefaultStateMapper;
 import net.minecraft.client.renderer.block.statemap.IStateMapper;
@@ -314,7 +315,9 @@ public class MetaBlocks {
         registerItemModel(CONCRETE);
         registerItemModelWithOverride(LOG, ImmutableMap.of(BlockGregLog.LOG_AXIS, EnumAxis.Y));
         registerItemModel(LEAVES);
-        registerItemModel(SAPLING);
+
+        ModelBakery.registerItemVariants(Item.getItemFromBlock(SAPLING), new ResourceLocation(GTValues.MODID, "sapling_rubber"));
+        ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(SAPLING), stack -> new ModelResourceLocation(new ResourceLocation(GTValues.MODID, "sapling_rubber"), "inventory"));
 
         COMPRESSED.values().stream().distinct().forEach(MetaBlocks::registerItemModel);
         FRAMES.values().forEach(it -> registerItemModelWithFilteredProperties(it));
