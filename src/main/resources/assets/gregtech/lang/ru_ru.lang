@@ -2836,7 +2836,7 @@ gregtech.fluid.click_to_empty.shift=§7(Shift-нажатие опустошит 
 
 gregtech.fluid.plasma=%s плазма
 gregtech.fluid.empty=пустой
-gregtech.fluid.amount=§7%,d/%,d
+gregtech.fluid.amount=§7%,d/%,dL
 gregtech.fluid.temperature=§7Температура: %dK
 gregtech.fluid.state_gas=§7Состояние: газообразный
 gregtech.fluid.state_liquid=§7Состояние: жидкость

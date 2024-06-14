@@ -1,5 +1,6 @@
 package gregtech.integration.jei.utils.render;
 
+import gregtech.api.gui.resources.RenderUtil;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.util.TextFormattingUtil;
 import mezz.jei.api.gui.IDrawable;
@@ -38,10 +39,12 @@ public class FluidStackTextRenderer extends FluidStackRenderer {
 
     @Override
     public void render(@NotNull Minecraft minecraft, int xPosition, int yPosition, @org.jetbrains.annotations.Nullable FluidStack fluidStack) {
-        super.render(minecraft, xPosition, yPosition, fluidStack);
         if (fluidStack == null) return;
 
         GlStateManager.disableBlend();
+
+        RenderUtil.drawFluidForGui(fluidStack, fluidStack.amount, xPosition, yPosition, 17, 17);
+
         GlStateManager.pushMatrix();
         GlStateManager.scale(0.5F, 0.5F, 1);
         GlStateManager.translate(0, 0, 160);

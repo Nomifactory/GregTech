@@ -9,6 +9,7 @@ import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+import gregtech.api.util.TextFormattingUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -116,14 +117,17 @@ public class TankWidget extends Widget implements IIngredientSlot {
             RenderUtil.drawFluidForGui(lastFluidInTank, alwaysShowFull ? lastFluidInTank.amount : lastTankCapacity,
                 pos.x + fluidRenderOffset, pos.y + fluidRenderOffset,
                 size.width - fluidRenderOffset, size.height - fluidRenderOffset);
-            int bucketsAmount = lastFluidInTank.amount / 1000;
+            int bucketsAmount = lastFluidInTank.amount;
             if (alwaysShowFull && !hideTooltip && bucketsAmount > 0) {
-                String s = String.valueOf(bucketsAmount);
+                String s = TextFormattingUtil.formatLongToCompactString(bucketsAmount, 4) + "L";
+                GlStateManager.pushMatrix();
+                GlStateManager.scale(0.49, 0.49, 1);
                 FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
-                fontRenderer.drawStringWithShadow(s, pos.x + 1 + size.width - 2 - fontRenderer.getStringWidth(s), pos.y + (size.height / 3) + 3, 0xFFFFFF);
+                fontRenderer.drawStringWithShadow(s, (pos.x + size.width) * 2.05F - 2 - fontRenderer.getStringWidth(s), pos.y * 2.05F + (size.height) + 8, 0xFFFFFF);
             }
             GlStateManager.enableBlend();
             GlStateManager.color(1.0f, 1.0f, 1.0f);
+            GlStateManager.popMatrix();
         }
         if (overlayTexture != null) {
             overlayTexture.draw(pos.x, pos.y, size.width, size.height);
