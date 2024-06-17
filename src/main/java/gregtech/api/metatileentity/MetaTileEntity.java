@@ -289,6 +289,7 @@ public abstract class MetaTileEntity implements ICoverable {
         }
         SoundEvent event = getSound();
         if (event == null) {
+            GregTechAPI.soundManager.stopTileSound(getPos());
             return;
         }
         if (isValid() && isActive()) {
