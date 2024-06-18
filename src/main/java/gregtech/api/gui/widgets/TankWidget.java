@@ -119,7 +119,7 @@ public class TankWidget extends Widget implements IIngredientSlot {
                 size.width - fluidRenderOffset, size.height - fluidRenderOffset);
             int bucketsAmount = lastFluidInTank.amount;
             if (alwaysShowFull && !hideTooltip && bucketsAmount > 0) {
-                String s = TextFormattingUtil.formatLongToCompactString(bucketsAmount, 4) + "L";
+                String s = TextFormattingUtil.formatLongToCompactString(bucketsAmount, 5) + "L";
                 GlStateManager.pushMatrix();
                 GlStateManager.scale(0.49, 0.49, 1);
                 FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
