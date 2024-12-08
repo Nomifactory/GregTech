@@ -114,6 +114,17 @@ public abstract class MetaTileEntity implements ICoverable, IMuffleable {
         this.fluidInventory = new FluidHandlerProxy(importFluids, exportFluids);
     }
 
+    protected static class DataIDs {
+        public static final int FRONT_CHANGED = -2;
+        public static final int PAINTED = -3;
+        public static final int TRAIT = -4;
+        public static final int COVER_PLACED = -5;
+        public static final int COVER_REMOVED = -6;
+        public static final int COVER_UPDATE = -7;
+        public static final int FRAGILE = -8;
+        public static final int MUFFLED = -9;
+    }
+
     public MetaTileEntityHolder getHolder() {
         return holder;
     }
@@ -273,13 +284,11 @@ public abstract class MetaTileEntity implements ICoverable, IMuffleable {
         return muffled;
     }
 
-    public void setMuffled(boolean muffled) {
-        this.muffled = muffled;
-    }
-
     @Override
     public void toggleMuffled() {
-        setMuffled(!this.muffled);
+        this.muffled = !this.muffled;
+        if(!getWorld().isRemote)
+            writeCustomData(DataIDs.MUFFLED, buf -> buf.writeBoolean(this.muffled));
     }
 
     public float getVolume() {
@@ -485,7 +494,7 @@ public abstract class MetaTileEntity implements ICoverable, IMuffleable {
         }
         this.coverBehaviors[side.getIndex()] = coverBehavior;
         coverBehavior.onAttached(itemStack);
-        writeCustomData(-5, buffer -> {
+        writeCustomData(DataIDs.COVER_PLACED, buffer -> {
             buffer.writeByte(side.getIndex());
             buffer.writeVarInt(CoverDefinition.getNetworkIdForCover(coverDefinition));
             coverBehavior.writeInitialSyncData(buffer);
@@ -510,7 +519,7 @@ public abstract class MetaTileEntity implements ICoverable, IMuffleable {
         for (ItemStack dropStack : drops) {
             Block.spawnAsEntity(getWorld(), getPos(), dropStack);
         }
-        writeCustomData(-6, buffer -> buffer.writeByte(side.getIndex()));
+        writeCustomData(DataIDs.COVER_REMOVED, buffer -> buffer.writeByte(side.getIndex()));
         if (getHolder() != null) {
             getHolder().notifyBlockUpdate();
             getHolder().markDirty();
@@ -797,6 +806,7 @@ public abstract class MetaTileEntity implements ICoverable, IMuffleable {
             }
         }
         buf.writeBoolean(isFragile);
+        buf.writeBoolean(muffled);
     }
 
     public void receiveInitialSyncData(PacketBuffer buf) {
@@ -818,10 +828,11 @@ public abstract class MetaTileEntity implements ICoverable, IMuffleable {
             }
         }
         this.isFragile = buf.readBoolean();
+        this.muffled = buf.readBoolean();
     }
 
     public void writeTraitData(MTETrait trait, int internalId, Consumer<PacketBuffer> dataWriter) {
-        writeCustomData(-4, buffer -> {
+        writeCustomData(DataIDs.TRAIT, buffer -> {
             buffer.writeVarInt(trait.getNetworkID());
             buffer.writeVarInt(internalId);
             dataWriter.accept(buffer);
@@ -829,7 +840,7 @@ public abstract class MetaTileEntity implements ICoverable, IMuffleable {
     }
 
     public void writeCoverData(CoverBehavior cover, int internalId, Consumer<PacketBuffer> dataWriter) {
-        writeCustomData(-7, buffer -> {
+        writeCustomData(DataIDs.COVER_UPDATE, buffer -> {
             buffer.writeByte(cover.attachedSide.getIndex());
             buffer.writeVarInt(internalId);
             dataWriter.accept(buffer);
@@ -837,18 +848,18 @@ public abstract class MetaTileEntity implements ICoverable, IMuffleable {
     }
 
     public void receiveCustomData(int dataId, PacketBuffer buf) {
-        if (dataId == -2) {
+        if (dataId == DataIDs.FRONT_CHANGED) {
             this.frontFacing = EnumFacing.VALUES[buf.readByte()];
             getHolder().scheduleChunkForRenderUpdate();
-        } else if (dataId == -3) {
+        } else if (dataId == DataIDs.PAINTED) {
             this.paintingColor = buf.readInt();
             getHolder().scheduleChunkForRenderUpdate();
-        } else if (dataId == -4) {
+        } else if (dataId == DataIDs.TRAIT) {
             int traitNetworkId = buf.readVarInt();
             MTETrait trait = mteTraits.stream().filter(otherTrait -> otherTrait.getNetworkID() == traitNetworkId).findAny().get();
             int internalId = buf.readVarInt();
             trait.receiveCustomData(internalId, buf);
-        } else if (dataId == -5) {
+        } else if (dataId == DataIDs.COVER_PLACED) {
             //cover placement event
             EnumFacing placementSide = EnumFacing.VALUES[buf.readByte()];
             int coverId = buf.readVarInt();
@@ -858,13 +869,13 @@ public abstract class MetaTileEntity implements ICoverable, IMuffleable {
             coverBehavior.readInitialSyncData(buf);
             onCoverPlacementUpdate();
             getHolder().scheduleChunkForRenderUpdate();
-        } else if (dataId == -6) {
+        } else if (dataId == DataIDs.COVER_REMOVED) {
             //cover removed event
             EnumFacing placementSide = EnumFacing.VALUES[buf.readByte()];
             this.coverBehaviors[placementSide.getIndex()] = null;
             onCoverPlacementUpdate();
             getHolder().scheduleChunkForRenderUpdate();
-        } else if (dataId == -7) {
+        } else if (dataId == DataIDs.COVER_UPDATE) {
             //cover custom data received
             EnumFacing coverSide = EnumFacing.VALUES[buf.readByte()];
             CoverBehavior coverBehavior = getCoverAtSide(coverSide);
@@ -872,9 +883,15 @@ public abstract class MetaTileEntity implements ICoverable, IMuffleable {
             if (coverBehavior != null) {
                 coverBehavior.readUpdateData(internalId, buf);
             }
-        } else if (dataId == -8) {
+        } else if (dataId == DataIDs.FRAGILE) {
             this.isFragile = buf.readBoolean();
             getHolder().scheduleChunkForRenderUpdate();
+        } else if (dataId == DataIDs.MUFFLED) {
+            this.muffled = buf.readBoolean();
+            if(muffled) {
+                GregTechAPI.soundManager.stopTileSound(getPos());
+                playSoundCooldown = 0;
+            }
         }
     }
 
@@ -1133,7 +1150,7 @@ public abstract class MetaTileEntity implements ICoverable, IMuffleable {
         if (getWorld() != null && !getWorld().isRemote) {
             getHolder().notifyBlockUpdate();
             markDirty();
-            writeCustomData(-2, buf -> buf.writeByte(frontFacing.getIndex()));
+            writeCustomData(DataIDs.FRONT_CHANGED, buf -> buf.writeByte(frontFacing.getIndex()));
             mteTraits.forEach(trait -> trait.onFrontFacingSet(frontFacing));
         }
     }
@@ -1143,7 +1160,7 @@ public abstract class MetaTileEntity implements ICoverable, IMuffleable {
         if (getWorld() != null && !getWorld().isRemote) {
             getHolder().notifyBlockUpdate();
             markDirty();
-            writeCustomData(-3, buf -> buf.writeInt(paintingColor));
+            writeCustomData(DataIDs.PAINTED, buf -> buf.writeInt(paintingColor));
         }
     }
 
@@ -1152,7 +1169,7 @@ public abstract class MetaTileEntity implements ICoverable, IMuffleable {
         if (getWorld() != null && !getWorld().isRemote) {
             getHolder().notifyBlockUpdate();
             markDirty();
-            writeCustomData(-8, buf -> buf.writeBoolean(fragile));
+            writeCustomData(DataIDs.FRAGILE, buf -> buf.writeBoolean(fragile));
         }
     }
 
