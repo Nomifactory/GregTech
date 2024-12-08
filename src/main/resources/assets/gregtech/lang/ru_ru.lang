@@ -2233,6 +2233,8 @@ gregtech.machine.fisher.requirement=Требует куб воды радиус�
 # Общая техника
 gregtech.machine.basic.output_override.reset=Выходной фильтр: все резервуары.
 gregtech.machine.basic.output_override.set=Выходной фильтр: резервуар #%s.
+gregtech.machine.basic.muffled.true=Звуки отключены
+gregtech.machine.basic.muffled.false=Звуки включены
 
 # Достижение руды
 achievement.Naquadah=Найти наквада руду

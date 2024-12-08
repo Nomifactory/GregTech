@@ -10,6 +10,7 @@ import com.google.common.collect.Lists;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.BlockCustomParticle;
 import gregtech.api.capability.GregtechCapabilities;
+import gregtech.api.capability.tool.IHardHammerItem;
 import gregtech.api.capability.tool.IScrewdriverItem;
 import gregtech.api.capability.tool.IWrenchItem;
 import gregtech.api.cover.CoverBehavior;
@@ -276,7 +277,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
         if (itemStack.hasCapability(GregtechCapabilities.CAPABILITY_SCREWDRIVER, null)) {
             IScrewdriverItem screwdriver = itemStack.getCapability(GregtechCapabilities.CAPABILITY_SCREWDRIVER, null);
 
-            if (screwdriver.damageItem(DamageValues.DAMAGE_FOR_SCREWDRIVER, true) &&
+            if (screwdriver != null && screwdriver.damageItem(DamageValues.DAMAGE_FOR_SCREWDRIVER, true) &&
                 metaTileEntity.onCoverScrewdriverClick(playerIn, hand, rayTraceResult)) {
                 screwdriver.damageItem(DamageValues.DAMAGE_FOR_SCREWDRIVER, false);
                 return true;
@@ -288,9 +289,21 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
             IWrenchItem wrenchItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_WRENCH, null);
             EnumFacing wrenchDirection = ICoverable.determineGridSideHit(rayTraceResult);
 
-            if (wrenchItem.damageItem(DamageValues.DAMAGE_FOR_WRENCH, true) &&
+            if (wrenchItem != null && wrenchItem.damageItem(DamageValues.DAMAGE_FOR_WRENCH, true) &&
                 metaTileEntity.onWrenchClick(playerIn, hand, wrenchDirection, rayTraceResult)) {
                 wrenchItem.damageItem(DamageValues.DAMAGE_FOR_WRENCH, false);
+                return true;
+            }
+            return false;
+        }
+
+        if(itemStack.hasCapability(GregtechCapabilities.CAPABILITY_HAMMER, null)) {
+            IHardHammerItem hammer = itemStack.getCapability(GregtechCapabilities.CAPABILITY_HAMMER, null);
+            EnumFacing hammerDirection = ICoverable.determineGridSideHit(rayTraceResult);
+
+            if(hammer != null && hammer.damageItem(DamageValues.DAMAGE_FOR_HAMMER, true)) {
+                metaTileEntity.onHammerClick(playerIn, hand, hammerDirection, rayTraceResult);
+                hammer.damageItem(DamageValues.DAMAGE_FOR_HAMMER, false);
                 return true;
             }
             return false;

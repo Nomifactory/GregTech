@@ -36,6 +36,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.PooledMutableBlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -475,6 +476,19 @@ public abstract class MetaTileEntity implements ICoverable, IMuffleable {
     }
 
     public void onLeftClick(EntityPlayer player, EnumFacing facing, CuboidRayTraceResult hitResult) {
+    }
+
+    public void onHammerClick(EntityPlayer playerIn,
+                              EnumHand hand,
+                              EnumFacing facing,
+                              CuboidRayTraceResult hitResult) {
+        if(!getWorld().isRemote) {
+            toggleMuffled();
+            if (isMuffled())
+                playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.machine.basic.muffled.true"), true);
+            else
+                playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.machine.basic.muffled.false"), true);
+        }
     }
 
     @Nullable

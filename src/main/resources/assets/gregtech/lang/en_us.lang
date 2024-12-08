@@ -2323,6 +2323,8 @@ gregtech.machine.fisher.requirement=Requires a square of water with size of %,d 
 # General machinery
 gregtech.machine.basic.input_from_output_side.allow=Allow Input from Output Side
 gregtech.machine.basic.input_from_output_side.disallow=Disallow Input from Output Side
+gregtech.machine.basic.muffled.true=Disabled Sounds
+gregtech.machine.basic.muffled.false=Enabled Sounds
 
 # Achievement ores
 achievement.Naquadah=Find Naquadah Ore

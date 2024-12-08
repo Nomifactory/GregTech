@@ -2212,6 +2212,8 @@ gregtech.machine.tesla_coil.description=对 7 格以内的所有生物造成伤�
 # General machinery
 gregtech.machine.basic.output_override.reset=过滤输出: 所有的储罐.
 gregtech.machine.basic.output_override.set=过滤输出: #%s储罐.
+gregtech.machine.basic.muffled.true=声音已禁用
+gregtech.machine.basic.muffled.false=声音已启用
 
 # Achievement ores
 achievement.Naquadah=找到硅岩矿石
