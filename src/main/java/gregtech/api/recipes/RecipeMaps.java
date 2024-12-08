@@ -445,7 +445,7 @@ public class RecipeMaps {
 
     @ZenProperty
     public static final RecipeMap<BlastRecipeBuilder> BLAST_RECIPES = new RecipeMap<>("blast_furnace", 1, 3, 1, 2, 0, 1, 0, 1, new BlastRecipeBuilder())
-            .setSound(GTSoundEvents.FURNACE);;
+            .setSound(GTSoundEvents.FURNACE);
 
     /**
      * Example:
@@ -459,7 +459,8 @@ public class RecipeMaps {
      */
 
     @ZenProperty
-    public static final RecipeMap<ImplosionRecipeBuilder> IMPLOSION_RECIPES = new RecipeMap<>("implosion_compressor", 2, 3, 1, 2, 0, 0, 0, 0, new ImplosionRecipeBuilder().duration(20).EUt(30));
+    public static final RecipeMap<ImplosionRecipeBuilder> IMPLOSION_RECIPES = new RecipeMap<>("implosion_compressor", 2, 3, 1, 2, 0, 0, 0, 0, new ImplosionRecipeBuilder().duration(20).EUt(30))
+        .setSound(SoundEvents.ENTITY_GENERIC_EXPLODE);
 
     /**
      * Example:
@@ -734,21 +735,24 @@ public class RecipeMaps {
 
 
     @ZenProperty
-    public static final FuelRecipeMap DIESEL_GENERATOR_FUELS = new FuelRecipeMap("diesel_generator");
-
-
-    @ZenProperty
-    public static final FuelRecipeMap GAS_TURBINE_FUELS = new FuelRecipeMap("gas_turbine");
-
+    public static final FuelRecipeMap DIESEL_GENERATOR_FUELS = new FuelRecipeMap("diesel_generator")
+        .setSound(GTSoundEvents.COMBUSTION);
 
     @ZenProperty
-    public static final FuelRecipeMap STEAM_TURBINE_FUELS = new FuelRecipeMap("steam_turbine");
+    public static final FuelRecipeMap GAS_TURBINE_FUELS = new FuelRecipeMap("gas_turbine")
+        .setSound(GTSoundEvents.TURBINE);
 
     @ZenProperty
-    public static final FuelRecipeMap SEMI_FLUID_GENERATOR_FUELS = new FuelRecipeMap("semi_fluid_generator");
+    public static final FuelRecipeMap STEAM_TURBINE_FUELS = new FuelRecipeMap("steam_turbine")
+        .setSound(GTSoundEvents.TURBINE);
 
     @ZenProperty
-    public static final FuelRecipeMap PLASMA_GENERATOR_FUELS = new FuelRecipeMap("plasma_generator");
+    public static final FuelRecipeMap SEMI_FLUID_GENERATOR_FUELS = new FuelRecipeMap("semi_fluid_generator")
+        .setSound(GTSoundEvents.COMBUSTION);
+
+    @ZenProperty
+    public static final FuelRecipeMap PLASMA_GENERATOR_FUELS = new FuelRecipeMap("plasma_generator")
+        .setSound(GTSoundEvents.TURBINE);
 
     @ZenProperty
     public static final List<PrimitiveBlastFurnaceRecipe> PRIMITIVE_BLAST_FURNACE_RECIPES = new CopyOnWriteArrayList<>();

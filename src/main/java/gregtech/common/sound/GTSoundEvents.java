@@ -21,6 +21,8 @@ public class GTSoundEvents {
     public static SoundEvent CUTTING = SoundManager.createSound("tick.cut");
     public static SoundEvent COOLING = SoundManager.createSound("tick.cooling");
     public static SoundEvent INTERRUPTED = SoundManager.createSound("tick.interrupt");
+    public static SoundEvent COMBUSTION = SoundManager.createSound("tick.combustion");
+    public static SoundEvent TURBINE = SoundManager.createSound("tick.turbine");
 
     public static void register() {
         GregTechAPI.soundManager.registerSound(MACERATOR);

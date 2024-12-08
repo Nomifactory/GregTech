@@ -19,6 +19,7 @@ import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.recipes.builders.IntCircuitRecipeBuilder;
 import gregtech.api.recipes.crafttweaker.CTRecipe;
 import gregtech.api.recipes.crafttweaker.CTRecipeBuilder;
+import gregtech.api.sound.SoundEmitter;
 import gregtech.api.unification.material.type.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.EnumValidationResult;
@@ -44,7 +45,7 @@ import java.util.stream.Collectors;
 
 @ZenClass("mods.gregtech.recipe.RecipeMap")
 @ZenRegister
-public class RecipeMap<R extends RecipeBuilder<R>> {
+public class RecipeMap<R extends RecipeBuilder<R>> implements SoundEmitter<RecipeMap<R>> {
 
     private static final List<RecipeMap<?>> RECIPE_MAPS = new ArrayList<>();
     @ZenProperty
@@ -478,12 +479,6 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     @ZenGetter("maxFluidOutputs")
     public int getMaxFluidOutputs() {
         return maxFluidOutputs;
-    }
-
-    @ZenGetter("sound")
-    @Nullable
-    public String ctGetSound() {
-        return getSound() != null ? getSound().getSoundName().toString() : null;
     }
 
     @Override

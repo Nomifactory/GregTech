@@ -158,5 +158,25 @@
         "stream": false
       }
     ]
+  },
+  "tick.combustion": {
+    "subtitle": "gregtech.subtitle.tick.combustion",
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:combustion",
+        "stream": false
+      }
+    ]
+  },
+  "tick.turbine": {
+    "subtitle": "gregtech.subtitle.tick.turbine",
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:turbine",
+        "stream": false
+      }
+    ]
   }
 }
