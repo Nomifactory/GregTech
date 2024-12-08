@@ -12,6 +12,7 @@ import com.google.common.base.Preconditions;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IEnergyContainer;
+import gregtech.api.capability.IMuffleable;
 import gregtech.api.capability.impl.*;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverDefinition;
@@ -57,7 +58,7 @@ import java.util.function.Consumer;
 
 import static gregtech.api.util.InventoryUtils.simulateItemStackMerge;
 
-public abstract class MetaTileEntity implements ICoverable {
+public abstract class MetaTileEntity implements ICoverable, IMuffleable {
 
     public static final int DEFAULT_PAINTING_COLOR = 0xFFFFFF;
     public static final IndexedCuboid6 FULL_CUBE_COLLISION = new IndexedCuboid6(null, Cuboid6.full);
@@ -270,6 +271,10 @@ public abstract class MetaTileEntity implements ICoverable {
 
     public boolean isMuffled() {
         return muffled;
+    }
+
+    public void setMuffled(boolean muffled) {
+        this.muffled = muffled;
     }
 
     public float getVolume() {

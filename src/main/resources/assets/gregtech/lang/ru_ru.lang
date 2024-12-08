@@ -13,6 +13,7 @@ enchantment.disjunction=Разъединение
 gregtech.top.energy_stored=Энергия:
 gregtech.top.progress=Прогресс:
 gregtech.top.working_disabled=Работа запрещена
+gregtech.top.muffled=Звук выключен
 
 gregtech.multiblock.title=Шаблон мультиблочной структуры
 gregtech.multiblock.primitive_blast_furnace.description=Примитивная доменная печь (ПДП) - является многоблочной конструкцией, используемой для варки стали на ранней стадии игры. Хотя она и не очень быстра, она обеспечит вас сталью для ваших первых нужд.

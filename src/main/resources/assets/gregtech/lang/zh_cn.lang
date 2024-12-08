@@ -13,6 +13,7 @@ enchantment.disjunction=末影离析
 gregtech.top.energy_stored=储存能量:
 gregtech.top.progress=进度:
 gregtech.top.working_disabled=工作暂停
+gregtech.top.muffled=声音已关闭
 
 gregtech.multiblock.title=多方块结构
 gregtech.multiblock.primitive_blast_furnace.description=土高炉是一种用来在游戏前期生产钢的多方块结构. 尽管它不是很快, 却能为你的发展提供钢.

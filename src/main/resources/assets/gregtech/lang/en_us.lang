@@ -13,6 +13,7 @@ enchantment.disjunction=Disjunction
 gregtech.top.energy_stored=Energy:
 gregtech.top.progress=Progress:
 gregtech.top.working_disabled=Working Disabled
+gregtech.top.muffled=Sound Muffled
 
 gregtech.top.transform_up=§cStep Up§r
 gregtech.top.transform_down=§aStep Down§r
