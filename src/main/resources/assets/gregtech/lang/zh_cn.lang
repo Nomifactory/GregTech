@@ -2637,6 +2637,7 @@ for.bees.species.naquadah=硅岩
 
 behaviour.scoop=左键以捕捉蝴蝶
 behaviour.softhammer=用以开启与关闭机器
+behaviour.hardhammer=启用和禁用机器声音
 behaviour.wrench=右键以旋转方块
 behaviour.boor.by=by %s
 behaviour.paintspray.white.tooltip=可以将物体染成白色

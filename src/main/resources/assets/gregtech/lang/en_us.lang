@@ -2743,6 +2743,7 @@ for.bees.species.naquadah=Naquadah
 
 behaviour.scoop=Catches Butterflies on Leftclick
 behaviour.softhammer=Activates and Deactivates Machines
+behaviour.hardhammer=Muffles and Unmuffles Machine Sounds
 behaviour.wrench=Rotates Blocks on Rightclick
 behaviour.boor.by=by %s
 behaviour.paintspray.white.tooltip=Can paint things in White

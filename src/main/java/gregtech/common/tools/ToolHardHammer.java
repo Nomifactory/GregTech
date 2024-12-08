@@ -1,6 +1,8 @@
 package gregtech.common.tools;
 
+import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.common.items.behaviors.HardHammerBehavior;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
@@ -86,5 +88,10 @@ public class ToolHardHammer extends ToolBase {
     @Override
     public void addInformation(ItemStack stack, List<String> lines, boolean isAdvanced) {
         lines.add(I18n.format("metaitem.tool.tooltip.hammer.extra_drop"));
+    }
+
+    @Override
+    public void onStatsAddedToTool(MetaValueItem item) {
+        item.addComponents(new HardHammerBehavior(DamageValues.DAMAGE_FOR_HAMMER));
     }
 }

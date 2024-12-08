@@ -2658,6 +2658,7 @@ for.bees.species.naquadah=Наквадах
 
 behaviour.scoop=Ловит бабочек на левый клик
 behaviour.softhammer=Активирует и деактивирует машины
+behaviour.hardhammer=Включает и выключает звуки машины
 behaviour.wrench=Повернет блок по правому клику
 behaviour.boor.by=от %s
 behaviour.paintspray.white.tooltip=Может окрасить штуки в Белый
