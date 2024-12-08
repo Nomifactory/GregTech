@@ -6,7 +6,9 @@ import crafttweaker.api.minecraft.CraftTweakerMC;
 import gregtech.api.GTValues;
 import gregtech.api.recipes.FluidKey;
 import gregtech.api.recipes.recipes.FuelRecipe;
+import gregtech.api.sound.SoundEmitter;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Optional.Method;
 import net.minecraftforge.fml.relauncher.Side;
@@ -19,7 +21,7 @@ import java.util.*;
 
 @ZenClass("mods.gregtech.recipe.FuelRecipeMap")
 @ZenRegister
-public class FuelRecipeMap {
+public class FuelRecipeMap implements SoundEmitter<FuelRecipeMap> {
 
     private static final List<FuelRecipeMap> RECIPE_MAPS = new ArrayList<>();
 
@@ -27,6 +29,8 @@ public class FuelRecipeMap {
 
     private final Map<FluidKey, FuelRecipe> recipeFluidMap = new HashMap<>();
     private final List<FuelRecipe> recipeList = new ArrayList<>();
+
+    private SoundEvent sound;
 
     public FuelRecipeMap(String unlocalizedName) {
         this.unlocalizedName = unlocalizedName;
@@ -95,4 +99,14 @@ public class FuelRecipeMap {
         return unlocalizedName;
     }
 
+    @Override
+    public SoundEvent getSound() {
+        return sound;
+    }
+
+    @Override
+    public FuelRecipeMap setSound(SoundEvent event) {
+        this.sound = event;
+        return this;
+    }
 }

@@ -3,6 +3,7 @@ package gregtech.common.items;
 import gregtech.api.GTValues;
 import gregtech.api.items.ToolDictNames;
 import gregtech.api.items.metaitem.ElectricStats;
+import gregtech.api.items.toolitem.HardHammerItemStat;
 import gregtech.api.items.toolitem.ScrewdriverItemStat;
 import gregtech.api.items.toolitem.SoftMalletItemStat;
 import gregtech.api.items.toolitem.ToolMetaItem;
@@ -56,7 +57,8 @@ public class MetaTool extends ToolMetaItem<ToolMetaItem<?>.MetaToolValueItem> {
 
         HARD_HAMMER = addItem(6, "tool.hard_hammer").setToolStats(new ToolHardHammer())
             .setFullRepairCost(6)
-            .addOreDict(ToolDictNames.craftingToolHardHammer);
+            .addOreDict(ToolDictNames.craftingToolHardHammer)
+            .addComponents(new HardHammerItemStat());
 
         SOFT_HAMMER = addItem(7, "tool.soft_hammer").setToolStats(new ToolSoftHammer())
             .setFullRepairCost(6)

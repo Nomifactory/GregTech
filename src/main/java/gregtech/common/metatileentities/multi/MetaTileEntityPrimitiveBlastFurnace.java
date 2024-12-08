@@ -31,6 +31,7 @@ import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.MetaBlocks;
+import gregtech.common.sound.GTSoundEvents;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
@@ -41,8 +42,11 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
@@ -82,6 +86,12 @@ public class MetaTileEntityPrimitiveBlastFurnace extends MultiblockControllerBas
 
     public MetaTileEntityPrimitiveBlastFurnace(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public SoundEvent getSound() {
+        return GTSoundEvents.FURNACE;
     }
 
     @Override

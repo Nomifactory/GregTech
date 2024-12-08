@@ -22,6 +22,7 @@ import gregtech.api.render.ICubeRenderer;
 import gregtech.api.render.Textures;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.MetaBlocks;
+import gregtech.common.sound.GTSoundEvents;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -29,10 +30,13 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -54,6 +58,12 @@ public class MetaTileEntityCokeOven extends MultiblockControllerBase {
 
     public MetaTileEntityCokeOven(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public SoundEvent getSound() {
+        return GTSoundEvents.FURNACE;
     }
 
     @Override
