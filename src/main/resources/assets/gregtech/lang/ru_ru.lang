@@ -1587,7 +1587,6 @@ recipemap.semi_fluid_generator.name=Полужидкое топливо
 behavior.magnifying_glass.description=Нажмите на поверхность камня, чтобы осмотреть его
 behavior.magnifying_glass.inspect=Этот камень содержит %s
 behaviour.hoe=Может до грязи
-behaviour.soft_hammer=Нажмите на машину, чтобы разрешить/запретить ее работу
 behaviour.lighter.tooltip=Может поджечь предметы
 behaviour.lighter.uses=Осталось использований: %d
 behavior.plunger.description=Щелкните правой кнопкой мыши на машине, чтобы очистить 1000 мВ из его выходного бака./nкрадитесь, чтобы очистить 1000 мВ от входного бака машины./nОчистка входного бака работает только на машинах GTCE!

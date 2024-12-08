@@ -1572,7 +1572,6 @@ recipemap.semi_fluid_generator.name=半流体燃料
 behavior.magnifying_glass.description=单击表层岩石进行勘探
 behavior.magnifying_glass.inspect=这个岩石包含%s
 behaviour.hoe=可以耕作泥土
-behaviour.soft_hammer=用以开启与关闭机器
 behaviour.lighter.tooltip=可以点火
 behaviour.lighter.uses=剩余次数: %d
 behavior.plunger.description=右键机器以清除1000升流体输出./nShift+右键机器以清除1000升流体输入./n仅限清除GTCE机器的流体输入!

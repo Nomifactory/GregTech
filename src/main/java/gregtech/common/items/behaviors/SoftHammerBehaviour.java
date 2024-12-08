@@ -49,6 +49,6 @@ public class SoftHammerBehaviour implements IItemBehaviour {
 
     @Override
     public void addInformation(ItemStack itemStack, List<String> lines) {
-        lines.add(I18n.format("behaviour.soft_hammer"));
+        lines.add(I18n.format("behaviour.softhammer"));
     }
 }

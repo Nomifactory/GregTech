@@ -1640,7 +1640,6 @@ recipemap.semi_fluid_generator.name=Semi Fluid Fuels
 recipemap.plasma_generator.name=Plasma Generator
 
 behaviour.hoe=Can till dirt
-behaviour.soft_hammer=Use on machine to allow/disallow it to work
 behaviour.lighter.tooltip=Can light things on fire
 behaviour.lighter.uses=Remaining uses: %,d
 behavior.plunger.description=Use to clear 1000 mb out of a machine's output tank./nUse while sneaking to clear 1000 mb out of a machine's input tank./nInput tank clearing works only on GTCE machines!
