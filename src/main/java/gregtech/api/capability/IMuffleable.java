@@ -6,4 +6,5 @@ public interface IMuffleable {
 
     void setMuffled(boolean isMuffled);
 
+    void toggleMuffled();
 }

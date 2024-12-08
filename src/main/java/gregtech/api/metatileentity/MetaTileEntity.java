@@ -277,6 +277,11 @@ public abstract class MetaTileEntity implements ICoverable, IMuffleable {
         this.muffled = muffled;
     }
 
+    @Override
+    public void toggleMuffled() {
+        setMuffled(!this.muffled);
+    }
+
     public float getVolume() {
         return 1.0F;
     }
