@@ -109,6 +109,9 @@ public class ConfigHolder {
     @Config.RequiresMcRestart
     public static boolean doLosslessWiresMakeLossyCables = false;
 
+    @Config.Comment("If true, all rock variants of ores will drop the stone variant unless the player uses Silk Touch. Default: false")
+    public static boolean requireSilkTouchForRockVariants = false;
+
     public static class VanillaRecipes {
 
         @Config.Comment("Whether to nerf the paper crafting recipe. Default: true")
