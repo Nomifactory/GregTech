@@ -5,6 +5,7 @@ import gregtech.api.unification.material.type.DustMaterial;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.api.util.IBlockOre;
 import gregtech.common.blocks.properties.PropertyStoneType;
+import gregtech.common.ConfigHolder;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.SoundType;
@@ -12,7 +13,10 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Enchantments;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.NonNullList;
@@ -65,6 +69,23 @@ public class BlockOre extends BlockFalling implements IBlockOre {
 
     @Override
     public int damageDropped(IBlockState state) {
+        // Check if we should drop stone without silk touch
+        boolean requireSilkTouchForRockVariants = ConfigHolder.requireSilkTouchForRockVariants;
+
+        // See if we can determine the player
+        if (requireSilkTouchForRockVariants && harvesters.get() != null) {
+            // Get the player that broke the block
+            EntityPlayer entityPlayer = harvesters.get();
+            // Get the item the player is holding
+            ItemStack playerHeldItem = entityPlayer.getHeldItemMainhand();
+            // See if the item has silk touch
+            if (EnchantmentHelper.getEnchantments(playerHeldItem).containsKey(Enchantments.SILK_TOUCH)) {
+                return getMetaFromState(state);
+            }
+            return StoneType.STONE_TYPE_REGISTRY.getIdByObjectName("stone");
+        }
+
+        // If the option is disabled we should always drop the correct variant
         return getMetaFromState(state);
     }
 
