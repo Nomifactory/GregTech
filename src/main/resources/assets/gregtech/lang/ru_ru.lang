@@ -2916,3 +2916,22 @@ gregtech.sharing.disabled=Совместное использование меж
 # Fixes
 fluid.tile.water=Вода
 fluid.tile.lava=Лава
+
+gregtech.subtitle.tick.macerator=Предмет измельчается
+gregtech.subtitle.tick.forge_hammer=Кувалда крушит
+gregtech.subtitle.tick.chemical_reactor=Химикаты реагируют
+gregtech.subtitle.tick.assembler=Предмет собирается
+gregtech.subtitle.tick.centrifuge=Предметы расщипляются
+gregtech.subtitle.tick.compressor=Предмет сжимается
+gregtech.subtitle.tick.electrolyzer=Элементы электризуются
+gregtech.subtitle.tick.mixer=Пыль смешивается
+gregtech.subtitle.tick.arc=Электричество искрит
+gregtech.subtitle.tick.boiler=Жидкость кипит
+gregtech.subtitle.tick.bath=Предмет купается
+gregtech.subtitle.tick.motor=Мотор крутится
+gregtech.subtitle.tick.cut=Блок разрезается
+gregtech.subtitle.tick.furnace=Печь плавит
+gregtech.subtitle.tick.cooling=Слиток охлаждается
+gregtech.subtitle.tick.interrupt=Механическая неисправность
+gregtech.subtitle.tick.combustion=Топливо сгорает
+gregtech.subtitle.tick.turbine=Турбина крутится

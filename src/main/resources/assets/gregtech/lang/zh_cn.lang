@@ -2891,3 +2891,22 @@ gregtech.command.util.hand.no_item=必须在主手持握物品时执行这条指
 
 gregtech.sharing.enabled=多方块结构共享：§a允许
 gregtech.sharing.disabled=多方块结构共享：§4禁止
+
+gregtech.subtitle.tick.macerator=研磨机：破碎
+gregtech.subtitle.tick.forge_hammer=锻造锤：DUANG
+gregtech.subtitle.tick.chemical_reactor=化学反应釜：运行中
+gregtech.subtitle.tick.assembler=组装机：运行中
+gregtech.subtitle.tick.centrifuge=离心机：旋转
+gregtech.subtitle.tick.compressor=压缩机：挤压
+gregtech.subtitle.tick.electrolyzer=电解机：爆出火花
+gregtech.subtitle.tick.mixer=搅拌机：搅动
+gregtech.subtitle.tick.arc=电弧炉：嗡——
+gregtech.subtitle.tick.boiler=锅炉：液体沸腾
+gregtech.subtitle.tick.bath=化学浸洗机：嘶嘶
+gregtech.subtitle.tick.motor=马达：转啊转
+gregtech.subtitle.tick.cut=切割机：运行中
+gregtech.subtitle.tick.furnace=电炉：冶炼
+gregtech.subtitle.tick.cooling=真空冷冻机：运行中
+gregtech.subtitle.tick.interrupt=机械故障
+gregtech.subtitle.tick.combustion=燃烧发电机：燃料燃烧
+gregtech.subtitle.tick.turbine=涡轮：呼啸
