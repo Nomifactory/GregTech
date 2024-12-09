@@ -1234,6 +1234,7 @@ public abstract class MetaTileEntity implements ICoverable, IMuffleable {
         }
         data.setTag("Covers", coversList);
         data.setBoolean(TAG_KEY_FRAGILE, isFragile);
+        data.setBoolean("Muffled", muffled);
         return data;
     }
 
@@ -1269,6 +1270,7 @@ public abstract class MetaTileEntity implements ICoverable, IMuffleable {
         }
 
         this.isFragile = data.getBoolean(TAG_KEY_FRAGILE);
+        this.muffled = data.getBoolean("Muffled");
     }
 
     @Override
