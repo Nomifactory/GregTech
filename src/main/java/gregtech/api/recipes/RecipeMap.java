@@ -19,6 +19,7 @@ import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.recipes.builders.IntCircuitRecipeBuilder;
 import gregtech.api.recipes.crafttweaker.CTRecipe;
 import gregtech.api.recipes.crafttweaker.CTRecipeBuilder;
+import gregtech.api.sound.SoundEmitter;
 import gregtech.api.unification.material.type.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.EnumValidationResult;
@@ -27,6 +28,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.ValidationResult;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Optional.Method;
@@ -43,7 +45,7 @@ import java.util.stream.Collectors;
 
 @ZenClass("mods.gregtech.recipe.RecipeMap")
 @ZenRegister
-public class RecipeMap<R extends RecipeBuilder<R>> {
+public class RecipeMap<R extends RecipeBuilder<R>> implements SoundEmitter<RecipeMap<R>> {
 
     private static final List<RecipeMap<?>> RECIPE_MAPS = new ArrayList<>();
     @ZenProperty
@@ -60,6 +62,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     protected TextureArea progressBarTexture;
     protected MoveType moveType;
     public final boolean isHidden;
+    protected SoundEvent sound;
 
     private final Map<FluidKey, Collection<Recipe>> recipeFluidMap = new HashMap<>();
     private final Collection<Recipe> recipeList = new ArrayList<>();
@@ -140,6 +143,11 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     public RecipeMap<R> setSlotOverlay(boolean isOutput, boolean isFluid, boolean isLast, TextureArea slotOverlay) {
         this.slotOverlays.put((byte) ((isOutput ? 2 : 0) + (isFluid ? 1 : 0) + (isLast ? 4 : 0)), slotOverlay);
+        return this;
+    }
+
+    public RecipeMap<R> setSound(SoundEvent event) {
+        this.sound = event;
         return this;
     }
 
@@ -381,6 +389,11 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     public Collection<Recipe> getRecipeList() {
         return Collections.unmodifiableCollection(recipeList);
+    }
+
+    @Nullable
+    public SoundEvent getSound() {
+        return this.sound;
     }
 
     @ZenMethod("findRecipe")

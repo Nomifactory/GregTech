@@ -1,7 +1,7 @@
 package gregtech.common.items.behaviors;
 
 import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.capability.IControllable;
+import gregtech.api.capability.IMuffleable;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.util.GTUtility;
 import net.minecraft.client.resources.I18n;
@@ -16,11 +16,11 @@ import net.minecraft.world.World;
 
 import java.util.List;
 
-public class SoftHammerBehaviour implements IItemBehaviour {
+public class HardHammerBehavior implements IItemBehaviour {
 
     private final int cost;
 
-    public SoftHammerBehaviour(int cost) {
+    public HardHammerBehavior(int cost) {
         this.cost = cost;
     }
 
@@ -33,13 +33,9 @@ public class SoftHammerBehaviour implements IItemBehaviour {
 
         TileEntity tileEntity = world.getTileEntity(pos);
         if (tileEntity != null) {
-            IControllable controllable = tileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, side);
-            if (controllable != null) {
-                if (controllable.isWorkingEnabled()) {
-                    controllable.setWorkingEnabled(false);
-                } else {
-                    controllable.setWorkingEnabled(true);
-                }
+            IMuffleable muffleable = tileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_MUFFLEABLE, side);
+            if (muffleable != null) {
+                muffleable.toggleMuffled();
                 GTUtility.doDamageItem(stack, cost, false);
                 return EnumActionResult.SUCCESS;
             }
@@ -49,6 +45,6 @@ public class SoftHammerBehaviour implements IItemBehaviour {
 
     @Override
     public void addInformation(ItemStack itemStack, List<String> lines) {
-        lines.add(I18n.format("behaviour.softhammer"));
+        lines.add(I18n.format("behaviour.hardhammer"));
     }
 }

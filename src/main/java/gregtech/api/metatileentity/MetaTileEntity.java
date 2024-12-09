@@ -12,6 +12,7 @@ import com.google.common.base.Preconditions;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IEnergyContainer;
+import gregtech.api.capability.IMuffleable;
 import gregtech.api.capability.impl.*;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverDefinition;
@@ -20,6 +21,7 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.render.Textures;
 import gregtech.api.util.GTFluidUtils;
 import gregtech.api.util.GTUtility;
+import gregtech.common.ConfigHolder;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -34,6 +36,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.PooledMutableBlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -56,7 +59,7 @@ import java.util.function.Consumer;
 
 import static gregtech.api.util.InventoryUtils.simulateItemStackMerge;
 
-public abstract class MetaTileEntity implements ICoverable {
+public abstract class MetaTileEntity implements ICoverable, IMuffleable {
 
     public static final int DEFAULT_PAINTING_COLOR = 0xFFFFFF;
     public static final IndexedCuboid6 FULL_CUBE_COLLISION = new IndexedCuboid6(null, Cuboid6.full);
@@ -87,6 +90,9 @@ public abstract class MetaTileEntity implements ICoverable {
     private int cachedLightValue;
     protected boolean isFragile = false;
 
+    protected boolean muffled = false;
+    private int playSoundCooldown = 0;
+
     private final CoverBehavior[] coverBehaviors = new CoverBehavior[6];
 
     protected List<IItemHandlerModifiable> notifiedItemOutputList = new ArrayList<>();
@@ -107,6 +113,17 @@ public abstract class MetaTileEntity implements ICoverable {
         this.importFluids = createImportFluidHandler();
         this.exportFluids = createExportFluidHandler();
         this.fluidInventory = new FluidHandlerProxy(importFluids, exportFluids);
+    }
+
+    protected static class DataIDs {
+        public static final int FRONT_CHANGED = -2;
+        public static final int PAINTED = -3;
+        public static final int TRAIT = -4;
+        public static final int COVER_PLACED = -5;
+        public static final int COVER_REMOVED = -6;
+        public static final int COVER_UPDATE = -7;
+        public static final int FRAGILE = -8;
+        public static final int MUFFLED = -9;
     }
 
     public MetaTileEntityHolder getHolder() {
@@ -258,6 +275,53 @@ public abstract class MetaTileEntity implements ICoverable {
 
     public final String getMetaFullName() {
         return getMetaName() + ".name";
+    }
+
+    public boolean isActive() {
+        return false;
+    }
+
+    public boolean isMuffled() {
+        return muffled;
+    }
+
+    @Override
+    public void toggleMuffled() {
+        this.muffled = !this.muffled;
+        if(!getWorld().isRemote)
+            writeCustomData(DataIDs.MUFFLED, buf -> buf.writeBoolean(this.muffled));
+    }
+
+    public float getVolume() {
+        return 1.0F;
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Nullable
+    public SoundEvent getSound() {
+        return null;
+    }
+
+    @SideOnly(Side.CLIENT)
+    private void updateSound() {
+        if (!ConfigHolder.doMachinesHaveSounds || isMuffled()) {
+            return;
+        }
+        SoundEvent event = getSound();
+        if (event == null) {
+            GregTechAPI.soundManager.stopTileSound(getPos());
+            return;
+        }
+        if (isValid() && isActive()) {
+            if (--playSoundCooldown > 0) {
+                return;
+            }
+            GregTechAPI.soundManager.startTileSound(event.getSoundName(), getVolume(), getPos());
+            playSoundCooldown = 20;
+        } else {
+            GregTechAPI.soundManager.stopTileSound(getPos());
+            playSoundCooldown = 0;
+        }
     }
 
     public <T> void addNotifiedInput(T input) {
@@ -414,6 +478,19 @@ public abstract class MetaTileEntity implements ICoverable {
     public void onLeftClick(EntityPlayer player, EnumFacing facing, CuboidRayTraceResult hitResult) {
     }
 
+    public void onHammerClick(EntityPlayer playerIn,
+                              EnumHand hand,
+                              EnumFacing facing,
+                              CuboidRayTraceResult hitResult) {
+        if(!getWorld().isRemote) {
+            toggleMuffled();
+            if (isMuffled())
+                playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.machine.basic.muffled.true"), true);
+            else
+                playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.machine.basic.muffled.false"), true);
+        }
+    }
+
     @Nullable
     public final CoverBehavior getCoverAtSide(EnumFacing side) {
         return coverBehaviors[side.getIndex()];
@@ -431,7 +508,7 @@ public abstract class MetaTileEntity implements ICoverable {
         }
         this.coverBehaviors[side.getIndex()] = coverBehavior;
         coverBehavior.onAttached(itemStack);
-        writeCustomData(-5, buffer -> {
+        writeCustomData(DataIDs.COVER_PLACED, buffer -> {
             buffer.writeByte(side.getIndex());
             buffer.writeVarInt(CoverDefinition.getNetworkIdForCover(coverDefinition));
             coverBehavior.writeInitialSyncData(buffer);
@@ -456,7 +533,7 @@ public abstract class MetaTileEntity implements ICoverable {
         for (ItemStack dropStack : drops) {
             Block.spawnAsEntity(getWorld(), getPos(), dropStack);
         }
-        writeCustomData(-6, buffer -> buffer.writeByte(side.getIndex()));
+        writeCustomData(DataIDs.COVER_REMOVED, buffer -> buffer.writeByte(side.getIndex()));
         if (getHolder() != null) {
             getHolder().notifyBlockUpdate();
             getHolder().markDirty();
@@ -510,6 +587,12 @@ public abstract class MetaTileEntity implements ICoverable {
     @Override
     public boolean shouldRenderBackSide() {
         return !isOpaqueCube();
+    }
+
+    public void invalidate() {
+        if (getWorld() != null && getWorld().isRemote) {
+            GregTechAPI.soundManager.stopTileSound(getPos());
+        }
     }
 
     public void onLoad() {
@@ -625,6 +708,8 @@ public abstract class MetaTileEntity implements ICoverable {
             if (getOffsetTimer() % 5 == 0L) {
                 updateComparatorValue();
             }
+        } else {
+            updateSound();
         }
         if (getOffsetTimer() % 5 == 0L) {
             updateLightValue();
@@ -735,6 +820,7 @@ public abstract class MetaTileEntity implements ICoverable {
             }
         }
         buf.writeBoolean(isFragile);
+        buf.writeBoolean(muffled);
     }
 
     public void receiveInitialSyncData(PacketBuffer buf) {
@@ -756,10 +842,11 @@ public abstract class MetaTileEntity implements ICoverable {
             }
         }
         this.isFragile = buf.readBoolean();
+        this.muffled = buf.readBoolean();
     }
 
     public void writeTraitData(MTETrait trait, int internalId, Consumer<PacketBuffer> dataWriter) {
-        writeCustomData(-4, buffer -> {
+        writeCustomData(DataIDs.TRAIT, buffer -> {
             buffer.writeVarInt(trait.getNetworkID());
             buffer.writeVarInt(internalId);
             dataWriter.accept(buffer);
@@ -767,7 +854,7 @@ public abstract class MetaTileEntity implements ICoverable {
     }
 
     public void writeCoverData(CoverBehavior cover, int internalId, Consumer<PacketBuffer> dataWriter) {
-        writeCustomData(-7, buffer -> {
+        writeCustomData(DataIDs.COVER_UPDATE, buffer -> {
             buffer.writeByte(cover.attachedSide.getIndex());
             buffer.writeVarInt(internalId);
             dataWriter.accept(buffer);
@@ -775,18 +862,18 @@ public abstract class MetaTileEntity implements ICoverable {
     }
 
     public void receiveCustomData(int dataId, PacketBuffer buf) {
-        if (dataId == -2) {
+        if (dataId == DataIDs.FRONT_CHANGED) {
             this.frontFacing = EnumFacing.VALUES[buf.readByte()];
             getHolder().scheduleChunkForRenderUpdate();
-        } else if (dataId == -3) {
+        } else if (dataId == DataIDs.PAINTED) {
             this.paintingColor = buf.readInt();
             getHolder().scheduleChunkForRenderUpdate();
-        } else if (dataId == -4) {
+        } else if (dataId == DataIDs.TRAIT) {
             int traitNetworkId = buf.readVarInt();
             MTETrait trait = mteTraits.stream().filter(otherTrait -> otherTrait.getNetworkID() == traitNetworkId).findAny().get();
             int internalId = buf.readVarInt();
             trait.receiveCustomData(internalId, buf);
-        } else if (dataId == -5) {
+        } else if (dataId == DataIDs.COVER_PLACED) {
             //cover placement event
             EnumFacing placementSide = EnumFacing.VALUES[buf.readByte()];
             int coverId = buf.readVarInt();
@@ -796,13 +883,13 @@ public abstract class MetaTileEntity implements ICoverable {
             coverBehavior.readInitialSyncData(buf);
             onCoverPlacementUpdate();
             getHolder().scheduleChunkForRenderUpdate();
-        } else if (dataId == -6) {
+        } else if (dataId == DataIDs.COVER_REMOVED) {
             //cover removed event
             EnumFacing placementSide = EnumFacing.VALUES[buf.readByte()];
             this.coverBehaviors[placementSide.getIndex()] = null;
             onCoverPlacementUpdate();
             getHolder().scheduleChunkForRenderUpdate();
-        } else if (dataId == -7) {
+        } else if (dataId == DataIDs.COVER_UPDATE) {
             //cover custom data received
             EnumFacing coverSide = EnumFacing.VALUES[buf.readByte()];
             CoverBehavior coverBehavior = getCoverAtSide(coverSide);
@@ -810,9 +897,15 @@ public abstract class MetaTileEntity implements ICoverable {
             if (coverBehavior != null) {
                 coverBehavior.readUpdateData(internalId, buf);
             }
-        } else if (dataId == -8) {
+        } else if (dataId == DataIDs.FRAGILE) {
             this.isFragile = buf.readBoolean();
             getHolder().scheduleChunkForRenderUpdate();
+        } else if (dataId == DataIDs.MUFFLED) {
+            this.muffled = buf.readBoolean();
+            if(muffled) {
+                GregTechAPI.soundManager.stopTileSound(getPos());
+                playSoundCooldown = 0;
+            }
         }
     }
 
@@ -1071,7 +1164,7 @@ public abstract class MetaTileEntity implements ICoverable {
         if (getWorld() != null && !getWorld().isRemote) {
             getHolder().notifyBlockUpdate();
             markDirty();
-            writeCustomData(-2, buf -> buf.writeByte(frontFacing.getIndex()));
+            writeCustomData(DataIDs.FRONT_CHANGED, buf -> buf.writeByte(frontFacing.getIndex()));
             mteTraits.forEach(trait -> trait.onFrontFacingSet(frontFacing));
         }
     }
@@ -1081,7 +1174,7 @@ public abstract class MetaTileEntity implements ICoverable {
         if (getWorld() != null && !getWorld().isRemote) {
             getHolder().notifyBlockUpdate();
             markDirty();
-            writeCustomData(-3, buf -> buf.writeInt(paintingColor));
+            writeCustomData(DataIDs.PAINTED, buf -> buf.writeInt(paintingColor));
         }
     }
 
@@ -1090,7 +1183,7 @@ public abstract class MetaTileEntity implements ICoverable {
         if (getWorld() != null && !getWorld().isRemote) {
             getHolder().notifyBlockUpdate();
             markDirty();
-            writeCustomData(-8, buf -> buf.writeBoolean(fragile));
+            writeCustomData(DataIDs.FRAGILE, buf -> buf.writeBoolean(fragile));
         }
     }
 
@@ -1141,6 +1234,7 @@ public abstract class MetaTileEntity implements ICoverable {
         }
         data.setTag("Covers", coversList);
         data.setBoolean(TAG_KEY_FRAGILE, isFragile);
+        data.setBoolean("Muffled", muffled);
         return data;
     }
 
@@ -1176,6 +1270,7 @@ public abstract class MetaTileEntity implements ICoverable {
         }
 
         this.isFragile = data.getBoolean(TAG_KEY_FRAGILE);
+        this.muffled = data.getBoolean("Muffled");
     }
 
     @Override

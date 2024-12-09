@@ -18,4 +18,7 @@ public class GregtechTileCapabilities {
     @CapabilityInject(IActiveOutputSide.class)
     public static Capability<IActiveOutputSide> CAPABILITY_ACTIVE_OUTPUT_SIDE = null;
 
+    @CapabilityInject(IMuffleable.class)
+    public static Capability<IMuffleable> CAPABILITY_MUFFLEABLE = null;
+
 }

@@ -13,6 +13,7 @@ enchantment.disjunction=Disjunction
 gregtech.top.energy_stored=Energy:
 gregtech.top.progress=Progress:
 gregtech.top.working_disabled=Working Disabled
+gregtech.top.muffled=Sound Muffled
 
 gregtech.top.transform_up=§cStep Up§r
 gregtech.top.transform_down=§aStep Down§r
@@ -1639,7 +1640,6 @@ recipemap.semi_fluid_generator.name=Semi Fluid Fuels
 recipemap.plasma_generator.name=Plasma Generator
 
 behaviour.hoe=Can till dirt
-behaviour.soft_hammer=Use on machine to allow/disallow it to work
 behaviour.lighter.tooltip=Can light things on fire
 behaviour.lighter.uses=Remaining uses: %,d
 behavior.plunger.description=Use to clear 1000 mb out of a machine's output tank./nUse while sneaking to clear 1000 mb out of a machine's input tank./nInput tank clearing works only on GTCE machines!
@@ -2323,6 +2323,8 @@ gregtech.machine.fisher.requirement=Requires a square of water with size of %,d 
 # General machinery
 gregtech.machine.basic.input_from_output_side.allow=Allow Input from Output Side
 gregtech.machine.basic.input_from_output_side.disallow=Disallow Input from Output Side
+gregtech.machine.basic.muffled.true=Disabled Sounds
+gregtech.machine.basic.muffled.false=Enabled Sounds
 
 # Achievement ores
 achievement.Naquadah=Find Naquadah Ore
@@ -2743,6 +2745,7 @@ for.bees.species.naquadah=Naquadah
 
 behaviour.scoop=Catches Butterflies on Leftclick
 behaviour.softhammer=Activates and Deactivates Machines
+behaviour.hardhammer=Muffles and Unmuffles Machine Sounds
 behaviour.wrench=Rotates Blocks on Rightclick
 behaviour.boor.by=by %s
 behaviour.paintspray.white.tooltip=Can paint things in White
@@ -3033,3 +3036,22 @@ gregtech.command.util.hand.no_item=You must hold something in mainhand before ex
 gregtech.universal.clear_nbt_recipe.tooltip=§cThis will destroy all contents!
 gregtech.sharing.enabled=Sharing between Multiblocks: §aEnabled
 gregtech.sharing.disabled=Sharing between Multiblocks: §4Disabled
+
+gregtech.subtitle.tick.macerator=Items macerating
+gregtech.subtitle.tick.forge_hammer=Hammer smashes
+gregtech.subtitle.tick.chemical_reactor=Chemicals reacting
+gregtech.subtitle.tick.assembler=Items assembling
+gregtech.subtitle.tick.centrifuge=Items separating
+gregtech.subtitle.tick.compressor=Items compressing
+gregtech.subtitle.tick.electrolyzer=Elements electrolyzing
+gregtech.subtitle.tick.mixer=Dusts mixing
+gregtech.subtitle.tick.arc=Electricity arcing
+gregtech.subtitle.tick.boiler=Liquid boiling
+gregtech.subtitle.tick.bath=Items bathing
+gregtech.subtitle.tick.motor=Motor turning
+gregtech.subtitle.tick.cut=Blocks cutting
+gregtech.subtitle.tick.furnace=Furnace smelting
+gregtech.subtitle.tick.cooling=Ingot cooling
+gregtech.subtitle.tick.interrupt=Mechanical failure
+gregtech.subtitle.tick.combustion=Fuel combusting
+gregtech.subtitle.tick.turbine=Turbine spinning
