@@ -5,6 +5,7 @@ import gregtech.api.unification.material.type.DustMaterial;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.api.util.IBlockOre;
 import gregtech.common.blocks.properties.PropertyStoneType;
+import gregtech.common.ConfigHolder;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.SoundType;
@@ -12,7 +13,10 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Enchantments;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.NonNullList;
@@ -65,7 +69,18 @@ public class BlockOre extends BlockFalling implements IBlockOre {
 
     @Override
     public int damageDropped(IBlockState state) {
-        return getMetaFromState(state);
+        // Only drop the variants meta ID if:
+        // - The config option for requiring silk touch is disabled
+        // - OR The function was called without a harvester (needed for mod compatibility)
+        // - OR The harvester has an item with silk touch in their main hand
+        if (!ConfigHolder.requireSilkTouchForRockVariants ||
+                harvesters.get() == null ||
+                EnchantmentHelper.getEnchantments(harvesters.get().getHeldItemMainhand())
+                        .containsKey(Enchantments.SILK_TOUCH))
+            return getMetaFromState(state);
+
+        // otherwise, return the id of StoneType.STONE
+        return 0;
     }
 
     @Override

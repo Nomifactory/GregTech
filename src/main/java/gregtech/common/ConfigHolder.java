@@ -112,6 +112,9 @@ public class ConfigHolder {
     @Config.Comment("If false, machines will not make noise. Default: true")
     public static boolean doMachinesHaveSounds = true;
 
+    @Config.Comment("If true, all rock variants of ores will drop the stone variant unless the player uses Silk Touch. Default: false")
+    public static boolean requireSilkTouchForRockVariants = false;
+
     public static class VanillaRecipes {
 
         @Config.Comment("Whether to nerf the paper crafting recipe. Default: true")
