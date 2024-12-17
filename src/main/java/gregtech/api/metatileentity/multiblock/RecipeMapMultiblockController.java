@@ -16,6 +16,7 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTUtility;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -95,6 +96,17 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     @Override
     public boolean isActive() {
         return isStructureFormed() && recipeMapWorkable.isActive() && recipeMapWorkable.isWorkingEnabled();
+    }
+
+    @Override
+    public float getVolume() {
+        return super.getVolume() / (recipeMapWorkable.isHasNotEnoughEnergy() ? 4 : 1);
+    }
+
+    @Nullable
+    @Override
+    public SoundEvent getSound() {
+        return recipeMapWorkable.getSound();
     }
 
     @Override

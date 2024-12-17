@@ -13,6 +13,7 @@ enchantment.disjunction=末影离析
 gregtech.top.energy_stored=储存能量:
 gregtech.top.progress=进度:
 gregtech.top.working_disabled=工作暂停
+gregtech.top.muffled=声音已关闭
 
 gregtech.multiblock.title=多方块结构
 gregtech.multiblock.primitive_blast_furnace.description=土高炉是一种用来在游戏前期生产钢的多方块结构. 尽管它不是很快, 却能为你的发展提供钢.
@@ -1571,7 +1572,6 @@ recipemap.semi_fluid_generator.name=半流体燃料
 behavior.magnifying_glass.description=单击表层岩石进行勘探
 behavior.magnifying_glass.inspect=这个岩石包含%s
 behaviour.hoe=可以耕作泥土
-behaviour.soft_hammer=用以开启与关闭机器
 behaviour.lighter.tooltip=可以点火
 behaviour.lighter.uses=剩余次数: %d
 behavior.plunger.description=右键机器以清除1000升流体输出./nShift+右键机器以清除1000升流体输入./n仅限清除GTCE机器的流体输入!
@@ -2212,6 +2212,8 @@ gregtech.machine.tesla_coil.description=对 7 格以内的所有生物造成伤�
 # General machinery
 gregtech.machine.basic.output_override.reset=过滤输出: 所有的储罐.
 gregtech.machine.basic.output_override.set=过滤输出: #%s储罐.
+gregtech.machine.basic.muffled.true=声音已禁用
+gregtech.machine.basic.muffled.false=声音已启用
 
 # Achievement ores
 achievement.Naquadah=找到硅岩矿石
@@ -2637,6 +2639,7 @@ for.bees.species.naquadah=硅岩
 
 behaviour.scoop=左键以捕捉蝴蝶
 behaviour.softhammer=用以开启与关闭机器
+behaviour.hardhammer=启用和禁用机器声音
 behaviour.wrench=右键以旋转方块
 behaviour.boor.by=by %s
 behaviour.paintspray.white.tooltip=可以将物体染成白色
@@ -2888,3 +2891,22 @@ gregtech.command.util.hand.no_item=必须在主手持握物品时执行这条指
 
 gregtech.sharing.enabled=多方块结构共享：§a允许
 gregtech.sharing.disabled=多方块结构共享：§4禁止
+
+gregtech.subtitle.tick.macerator=研磨机：破碎
+gregtech.subtitle.tick.forge_hammer=锻造锤：DUANG
+gregtech.subtitle.tick.chemical_reactor=化学反应釜：运行中
+gregtech.subtitle.tick.assembler=组装机：运行中
+gregtech.subtitle.tick.centrifuge=离心机：旋转
+gregtech.subtitle.tick.compressor=压缩机：挤压
+gregtech.subtitle.tick.electrolyzer=电解机：爆出火花
+gregtech.subtitle.tick.mixer=搅拌机：搅动
+gregtech.subtitle.tick.arc=电弧炉：嗡——
+gregtech.subtitle.tick.boiler=锅炉：液体沸腾
+gregtech.subtitle.tick.bath=化学浸洗机：嘶嘶
+gregtech.subtitle.tick.motor=马达：转啊转
+gregtech.subtitle.tick.cut=切割机：运行中
+gregtech.subtitle.tick.furnace=电炉：冶炼
+gregtech.subtitle.tick.cooling=真空冷冻机：运行中
+gregtech.subtitle.tick.interrupt=机械故障
+gregtech.subtitle.tick.combustion=燃烧发电机：燃料燃烧
+gregtech.subtitle.tick.turbine=涡轮：呼啸

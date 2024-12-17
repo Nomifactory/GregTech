@@ -13,6 +13,7 @@ enchantment.disjunction=Разъединение
 gregtech.top.energy_stored=Энергия:
 gregtech.top.progress=Прогресс:
 gregtech.top.working_disabled=Работа запрещена
+gregtech.top.muffled=Звук выключен
 
 gregtech.multiblock.title=Шаблон мультиблочной структуры
 gregtech.multiblock.primitive_blast_furnace.description=Примитивная доменная печь (ПДП) - является многоблочной конструкцией, используемой для варки стали на ранней стадии игры. Хотя она и не очень быстра, она обеспечит вас сталью для ваших первых нужд.
@@ -1586,7 +1587,6 @@ recipemap.semi_fluid_generator.name=Полужидкое топливо
 behavior.magnifying_glass.description=Нажмите на поверхность камня, чтобы осмотреть его
 behavior.magnifying_glass.inspect=Этот камень содержит %s
 behaviour.hoe=Может до грязи
-behaviour.soft_hammer=Нажмите на машину, чтобы разрешить/запретить ее работу
 behaviour.lighter.tooltip=Может поджечь предметы
 behaviour.lighter.uses=Осталось использований: %d
 behavior.plunger.description=Щелкните правой кнопкой мыши на машине, чтобы очистить 1000 мВ из его выходного бака./nкрадитесь, чтобы очистить 1000 мВ от входного бака машины./nОчистка входного бака работает только на машинах GTCE!
@@ -2233,6 +2233,8 @@ gregtech.machine.fisher.requirement=Требует куб воды радиус�
 # Общая техника
 gregtech.machine.basic.output_override.reset=Выходной фильтр: все резервуары.
 gregtech.machine.basic.output_override.set=Выходной фильтр: резервуар #%s.
+gregtech.machine.basic.muffled.true=Звуки отключены
+gregtech.machine.basic.muffled.false=Звуки включены
 
 # Достижение руды
 achievement.Naquadah=Найти наквада руду
@@ -2658,6 +2660,7 @@ for.bees.species.naquadah=Наквадах
 
 behaviour.scoop=Ловит бабочек на левый клик
 behaviour.softhammer=Активирует и деактивирует машины
+behaviour.hardhammer=Включает и выключает звуки машины
 behaviour.wrench=Повернет блок по правому клику
 behaviour.boor.by=от %s
 behaviour.paintspray.white.tooltip=Может окрасить штуки в Белый
@@ -2913,3 +2916,22 @@ gregtech.sharing.disabled=Совместное использование меж
 # Fixes
 fluid.tile.water=Вода
 fluid.tile.lava=Лава
+
+gregtech.subtitle.tick.macerator=Предмет измельчается
+gregtech.subtitle.tick.forge_hammer=Кувалда крушит
+gregtech.subtitle.tick.chemical_reactor=Химикаты реагируют
+gregtech.subtitle.tick.assembler=Предмет собирается
+gregtech.subtitle.tick.centrifuge=Предметы расщипляются
+gregtech.subtitle.tick.compressor=Предмет сжимается
+gregtech.subtitle.tick.electrolyzer=Элементы электризуются
+gregtech.subtitle.tick.mixer=Пыль смешивается
+gregtech.subtitle.tick.arc=Электричество искрит
+gregtech.subtitle.tick.boiler=Жидкость кипит
+gregtech.subtitle.tick.bath=Предмет купается
+gregtech.subtitle.tick.motor=Мотор крутится
+gregtech.subtitle.tick.cut=Блок разрезается
+gregtech.subtitle.tick.furnace=Печь плавит
+gregtech.subtitle.tick.cooling=Слиток охлаждается
+gregtech.subtitle.tick.interrupt=Механическая неисправность
+gregtech.subtitle.tick.combustion=Топливо сгорает
+gregtech.subtitle.tick.turbine=Турбина крутится

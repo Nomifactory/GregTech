@@ -10,11 +10,13 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
+import gregtech.common.sound.GTSoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.world.*;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
@@ -83,6 +85,13 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         return metaTileEntity.getExportFluids();
     }
 
+    public SoundEvent getSound() {
+        if (isActive() && isHasNotEnoughEnergy()) {
+            return GTSoundEvents.INTERRUPTED;
+        }
+        return recipeMap.getSound();
+    }
+
     @Override
     public String getName() {
         return "RecipeMapWorkable";
@@ -99,6 +108,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
             return GregtechTileCapabilities.CAPABILITY_WORKABLE.cast(this);
         } else if(capability == GregtechTileCapabilities.CAPABILITY_CONTROLLABLE) {
             return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
+        } else if(capability == GregtechTileCapabilities.CAPABILITY_MUFFLEABLE) {
+            return GregtechTileCapabilities.CAPABILITY_MUFFLEABLE.cast(getMetaTileEntity());
         }
         return null;
     }
@@ -161,13 +172,14 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         boolean drawEnergy = drawEnergy(recipeEUt);
         if (drawEnergy || (recipeEUt < 0)) {
             //as recipe starts with progress on 1 this has to be > only not => to compensate for it
+            setHasNotEnoughEnergy(false);
             if (++progressTime > maxProgressTime) {
                 completeRecipe();
             }
         } else if (recipeEUt > 0) {
             //only set hasNotEnoughEnergy if this recipe is consuming recipe
             //generators always have enough energy
-            this.hasNotEnoughEnergy = true;
+            setHasNotEnoughEnergy(true);
             //if current progress value is greater than 2, decrement it by 2
             if (progressTime >= 2) {
                 if (ConfigHolder.insufficientEnergySupplyWipesRecipeProgress) {
@@ -176,6 +188,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
                     this.progressTime = Math.max(1, progressTime - 2);
                 }
             }
+
         }
     }
 
@@ -345,7 +358,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         this.recipeEUt = 0;
         this.fluidOutputs = null;
         this.itemOutputs = null;
-        this.hasNotEnoughEnergy = false;
+        setHasNotEnoughEnergy(false);
         this.wasActiveAndNeedsUpdate = true;
     }
 
@@ -381,7 +394,19 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         metaTileEntity.markDirty();
         World world = metaTileEntity.getWorld();
         if (world != null && !world.isRemote) {
-            writeCustomData(1, buf -> buf.writeBoolean(active));
+            writeCustomData(1, buf -> {
+                buf.writeBoolean(active);
+                buf.writeBoolean(workingEnabled);
+            });
+        }
+    }
+
+    protected void setHasNotEnoughEnergy(boolean hasNotEnoughEnergy) {
+        this.hasNotEnoughEnergy = hasNotEnoughEnergy;
+        metaTileEntity.markDirty();
+        World world = metaTileEntity.getWorld();
+        if (world != null && !world.isRemote) {
+            writeCustomData(2, buf -> buf.writeBoolean(hasNotEnoughEnergy));
         }
     }
 
@@ -389,6 +414,13 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
     public void setWorkingEnabled(boolean workingEnabled) {
         this.workingEnabled = workingEnabled;
         metaTileEntity.markDirty();
+        World world = metaTileEntity.getWorld();
+        if (world != null && !world.isRemote) {
+            writeCustomData(1, buf -> {
+                buf.writeBoolean(isActive);
+                buf.writeBoolean(workingEnabled);
+            });
+        }
     }
 
     public void setAllowOverclocking(boolean allowOverclocking) {
@@ -459,18 +491,25 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         if (dataId == 1) {
             this.isActive = buf.readBoolean();
+            this.workingEnabled = buf.readBoolean();
             getMetaTileEntity().getHolder().scheduleChunkForRenderUpdate();
+        } else if (dataId == 2) {
+            this.hasNotEnoughEnergy = buf.readBoolean();
         }
     }
 
     @Override
     public void writeInitialData(PacketBuffer buf) {
         buf.writeBoolean(this.isActive);
+        buf.writeBoolean(this.hasNotEnoughEnergy);
+        buf.writeBoolean(this.workingEnabled);
     }
 
     @Override
     public void receiveInitialData(PacketBuffer buf) {
         this.isActive = buf.readBoolean();
+        this.hasNotEnoughEnergy = buf.readBoolean();
+        this.workingEnabled = buf.readBoolean();
     }
 
     @Override
