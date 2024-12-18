@@ -5,8 +5,12 @@ import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.Recipe;
+import gregtech.common.sound.GTSoundEvents;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 import static gregtech.api.metatileentity.MetaTileEntity.addItemsToItemHandler;
@@ -16,6 +20,12 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 
     /** Indicates that a structure fails to meet requirements for proceeding with the active recipe */
     protected boolean isJammed = false;
+
+    /** DataIDs for packets */
+    private static final class DataIDs {
+        /** Jammed state changed */
+        private static final int JAMMED = 3;
+    }
 
     private boolean invalidated = true;
 
@@ -121,8 +131,15 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
             metaTileEntity.getNotifiedItemOutputList().clear();
             metaTileEntity.getNotifiedFluidOutputList().clear();
 
+            // remember prior value
+            boolean oldJammed = this.isJammed;
+
             // Jam if we can't output all items and fluids, or we fail whatever other conditions the controller imposes
             this.isJammed = !(canFitItems && canFitFluids && controller.checkRecipe(previousRecipe, false));
+
+            // Sync state if changed
+            if(this.isJammed != oldJammed)
+                writeCustomData(DataIDs.JAMMED, buf -> buf.writeBoolean(this.isJammed));
         }
     }
 
@@ -162,5 +179,32 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         // If we're not jammed, proceed with completing the recipe. Otherwise, wait for outputs to notify.
         if(!this.isJammed)
             super.completeRecipe();
+    }
+
+    @Override
+    public void writeInitialData(PacketBuffer buf) {
+        super.writeInitialData(buf);
+        buf.writeBoolean(isJammed);
+    }
+
+    @Override
+    public void receiveInitialData(PacketBuffer buf) {
+        super.receiveInitialData(buf);
+        isJammed = buf.readBoolean();
+    }
+
+    @Override
+    public void receiveCustomData(int dataId, PacketBuffer buf) {
+        super.receiveCustomData(dataId, buf);
+        if(dataId == DataIDs.JAMMED)
+            isJammed = buf.readBoolean();
+    }
+
+    @Override
+    @Nullable
+    public SoundEvent getSound() {
+        if (isActive && (isJammed || hasNotEnoughEnergy))
+            return GTSoundEvents.INTERRUPTED;
+        return recipeMap.getSound();
     }
 }
