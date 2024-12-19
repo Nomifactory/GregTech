@@ -3,13 +3,11 @@ package gregtech.api.recipes.recipeproperties;
 import com.google.common.collect.ImmutableMap;
 import gregtech.api.util.GTLog;
 import org.apache.logging.log4j.LogManager;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.*;
 
 import java.util.*;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RecipePropertyStorageTest {
     private static final String propInt1Key = "propInt1";
@@ -21,12 +19,12 @@ public class RecipePropertyStorageTest {
 
     private RecipePropertyStorage storage;
 
-    @BeforeClass
+    @BeforeAll
     public static void initTestClassStub() {
         GTLog.init(LogManager.getLogger(RecipePropertyStorageTest.class));
     }
 
-    @Before
+    @BeforeEach
     public void initTestStub() {
         this.storage = new RecipePropertyStorage();
     }

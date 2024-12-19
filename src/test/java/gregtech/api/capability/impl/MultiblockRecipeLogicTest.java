@@ -16,7 +16,6 @@ import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityFl
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityItemBus;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityMultiblockPart;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityElectricBlastFurnace;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Bootstrap;
 import net.minecraft.item.ItemStack;
@@ -24,17 +23,15 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.*;
 
 import java.lang.reflect.Field;
 
-import static org.junit.Assert.*;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MultiblockRecipeLogicTest {
 
-	@BeforeClass
+	@BeforeAll
 	public static void init() {
 		Bootstrap.register();
 	}

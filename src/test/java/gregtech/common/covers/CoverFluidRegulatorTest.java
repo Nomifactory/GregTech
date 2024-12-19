@@ -5,11 +5,12 @@ import net.minecraft.init.*;
 import net.minecraft.util.*;
 import net.minecraftforge.fluids.*;
 import net.minecraftforge.fluids.capability.*;
-import org.junit.*;
 
-import java.util.function.*;
+import org.junit.jupiter.api.*;
 
-import static org.junit.Assert.*;
+import java.util.function.Predicate;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CoverFluidRegulatorTest {
     public static final Predicate<FluidStack> isWater = fs -> fs.getFluid() == FluidRegistry.WATER;
@@ -17,7 +18,7 @@ public class CoverFluidRegulatorTest {
     /**
      * Required. Without this all item-related operations will fail because registries haven't been initialized.
      */
-    @BeforeClass
+    @BeforeAll
     public static void bootStrap() {
         Bootstrap.register();
     }
@@ -39,7 +40,7 @@ public class CoverFluidRegulatorTest {
         // Tell it to keep exact from a machine with an empty fluid tank and null target fluid tank
         int amountTransferred = cfr.doKeepExact(1000, source, null, isWater, 1000);
 
-        assertEquals("Unexpectedly moved fluids, nothing is supposed to happen", 0, amountTransferred);
+        assertEquals(0,  amountTransferred, "Unexpectedly moved fluids, nothing is supposed to happen");
     }
 
     @Test
@@ -63,7 +64,7 @@ public class CoverFluidRegulatorTest {
         // Tell it to keep exact from a machine with an empty fluid tank and no target fluid tank
         int amountTransferred = cfr.doKeepExact(1000, source, dest, isWater, 1000);
 
-        assertEquals("Wrong fluid amount moved", 1000, amountTransferred);
+        assertEquals(1000,  amountTransferred, "Wrong fluid amount moved");
     }
 
     @Test
@@ -84,7 +85,7 @@ public class CoverFluidRegulatorTest {
 
         int amountTransferred = cfr.doKeepExact(10000, source, dest, isWater, 10000);
 
-        assertEquals("Wrong fluid amount moved", 1234, amountTransferred);
+        assertEquals(1234,  amountTransferred, "Wrong fluid amount moved");
     }
 
     @Test
@@ -107,7 +108,7 @@ public class CoverFluidRegulatorTest {
 
         int amountTransferred = cfr.doKeepExact(10000, source, dest, isWater, 144);
 
-        assertEquals("Wrong fluid amount moved", 44, amountTransferred);
+        assertEquals(44,  amountTransferred, "Wrong fluid amount moved");
     }
 
     @Test
@@ -136,7 +137,7 @@ public class CoverFluidRegulatorTest {
         int amountTransferred = cfr.doKeepExact(10000, source, dest, fs -> true, 144);
 
         // expect that 44mB of water and 144mB of lava will be moved
-        assertEquals("Wrong fluid amount moved", 44+144, amountTransferred);
+        assertEquals(44+144,  amountTransferred, "Wrong fluid amount moved");
 
         // verify final fluid quantities
         assertEquals(2, dest.getTankProperties().length);
@@ -172,7 +173,7 @@ public class CoverFluidRegulatorTest {
         int amountTransferred = cfr.doKeepExact(100, source, dest, fs -> true, 144);
 
         // expect that at most 100mB of fluids total will be moved this tick, as if possible it would do 144mB
-        assertEquals("Wrong fluid amount moved", 100, amountTransferred);
+        assertEquals(100,  amountTransferred, "Wrong fluid amount moved");
     }
 
     @Test
@@ -201,7 +202,7 @@ public class CoverFluidRegulatorTest {
         int amountTransferred = cfr.doKeepExact(100, source, dest, fs -> true, 144);
 
         // expect that at most 100mB of fluids total will be moved this tick, as if possible it would do 188mB
-        assertEquals("Wrong fluid amount moved", 100, amountTransferred);
+        assertEquals(100, amountTransferred, "Wrong fluid amount moved");
     }
 
     @Test
@@ -230,7 +231,7 @@ public class CoverFluidRegulatorTest {
         int amountTransferred = cfr.doKeepExact(10000, source, dest, fs -> true, 144);
 
         // expect that no fluids are moved because Keep Exact levels are already met
-        assertEquals("Wrong fluid amount moved", 0, amountTransferred);
+        assertEquals(0, amountTransferred, "Wrong fluid amount moved");
     }
 
     @Test
@@ -258,6 +259,6 @@ public class CoverFluidRegulatorTest {
         int amountTransferred = cfr.doKeepExact(10000, source, dest, isWater, 144);
 
         // expect that no fluids are moved because already have enough water and lava isn't in the filter
-        assertEquals("Wrong fluid amount moved", 0, amountTransferred);
+        assertEquals(0, amountTransferred, "Wrong fluid amount moved");
     }
 }

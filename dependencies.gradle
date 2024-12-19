@@ -38,9 +38,6 @@
  * For more details, see https://docs.gradle.org/8.4/userguide/java_library_plugin.html#sec:java_library_configurations_graph
  */
 dependencies {
-    // Existing tests are written in JUnit 4
-    testImplementation("junit:junit:4.13.1")
-
     compileOnly rfg.deobf("curse.maven:forestry-59751:2684780") // Forestry 5.8.2.387
     api rfg.deobf("codechicken:ChickenASM:1.12-1.0.2.9")
     api("codechicken:codechickenlib:3.2.3.358")

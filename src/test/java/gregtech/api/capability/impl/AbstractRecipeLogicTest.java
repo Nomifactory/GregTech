@@ -11,13 +11,13 @@ import net.minecraft.item.*;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
-import org.junit.*;
+import org.junit.jupiter.api.*;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AbstractRecipeLogicTest {
 
-	@BeforeClass
+	@BeforeAll
 	public static void init() {
 		Bootstrap.register();
 	}

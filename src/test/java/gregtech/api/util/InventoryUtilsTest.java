@@ -4,29 +4,22 @@ import net.minecraft.init.*;
 import net.minecraft.item.*;
 import net.minecraft.nbt.*;
 import net.minecraftforge.items.*;
-import org.junit.*;
-import org.junit.rules.*;
+import org.junit.jupiter.api.*;
 
 import java.util.*;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class InventoryUtilsTest
 {
     /**
      * Required. Without this all item-related operations will fail because registries haven't been initialized.
      */
-    @BeforeClass
+    @BeforeAll
     public static void bootStrap()
     {
         Bootstrap.register();
     }
-
-    /**
-     * Used by tests where exception properties need to be verified.
-     */
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     @Test
     public void simulateItemStackMerge_succeeds_for_inserting_single_stack_into_empty_one_slot_inventory()
@@ -41,8 +34,8 @@ public class InventoryUtilsTest
             );
 
         assertTrue(
-            "Merging one full stack into a single empty slot failed.",
-            result
+            result,
+            "Merging one full stack into a single empty slot failed."
         );
     }
 
@@ -59,8 +52,8 @@ public class InventoryUtilsTest
             );
 
         assertTrue(
-            "Merging two half-stacks into an empty inventory with one slot failed.",
-            result
+            result,
+            "Merging two half-stacks into an empty inventory with one slot failed."
         );
     }
 
@@ -79,8 +72,8 @@ public class InventoryUtilsTest
             );
 
         assertTrue(
-            "Merging half a stack into an inventory with one slot containing half a stack of the same item failed.",
-            result
+            result,
+            "Merging half a stack into an inventory with one slot containing half a stack of the same item failed."
         );
     }
 
@@ -101,8 +94,8 @@ public class InventoryUtilsTest
             );
 
         assertTrue(
-            "Merging half a stack into an inventory with two three-quarter stacks of the same item failed.",
-            result
+            result,
+            "Merging half a stack into an inventory with two three-quarter stacks of the same item failed."
         );
     }
 
@@ -123,8 +116,8 @@ public class InventoryUtilsTest
             );
 
         assertTrue(
-            "Merging half a stack into an inventory with one three-quarter stack of the same item and one empty slot failed.",
-            result
+            result,
+            "Merging half a stack into an inventory with one three-quarter stack of the same item and one empty slot failed."
         );
     }
 
@@ -144,8 +137,8 @@ public class InventoryUtilsTest
             );
 
         assertFalse(
-            "Unexpectedly succeeded at merging an arrow into an inventory full of feathers.",
-            result
+            result,
+            "Unexpectedly succeeded at merging an arrow into an inventory full of feathers."
         );
     }
 
@@ -165,8 +158,8 @@ public class InventoryUtilsTest
             );
 
         assertFalse(
-            "Unexpectedly succeeded at merging feathers into an inventory full of feathers.",
-            result
+            result,
+            "Unexpectedly succeeded at merging feathers into an inventory full of feathers."
         );
     }
 
@@ -187,8 +180,8 @@ public class InventoryUtilsTest
             );
 
         assertFalse(
-            "Unexpectedly succeeded at merging feathers with NBT tags into a stack of plain feathers.",
-            result
+            result,
+            "Unexpectedly succeeded at merging feathers with NBT tags into a stack of plain feathers."
         );
     }
 
@@ -209,8 +202,8 @@ public class InventoryUtilsTest
             );
 
         assertFalse(
-            "Unexpectedly succeeded at merging damaged feathers into a stack of plain feathers.",
-            result
+            result,
+            "Unexpectedly succeeded at merging damaged feathers into a stack of plain feathers."
         );
     }
 
@@ -232,8 +225,8 @@ public class InventoryUtilsTest
             );
 
         assertFalse(
-            "Unexpectedly succeeded at merging a pickaxe into another one.",
-            result
+            result,
+            "Unexpectedly succeeded at merging a pickaxe into another one."
         );
     }
 
@@ -242,8 +235,8 @@ public class InventoryUtilsTest
     {
         List<ItemStack> result = InventoryUtils.normalizeItemStack(ItemStack.EMPTY);
         assertTrue(
-            "Unexpectedly got results when normalizing an empty ItemStack",
-            result.isEmpty()
+            result.isEmpty(),
+            "Unexpectedly got results when normalizing an empty ItemStack"
         );
     }
 
@@ -254,16 +247,16 @@ public class InventoryUtilsTest
         List<ItemStack> result = InventoryUtils.normalizeItemStack(stack);
 
         assertFalse(
-            "Unexpectedly got no results when normalizing an already normal ItemStack",
-            result.isEmpty()
+            result.isEmpty(),
+            "Unexpectedly got no results when normalizing an already normal ItemStack"
         );
         assertEquals(
-            "Unexpectedly got wrong number of resulting stacks when normalizing an already normal ItemStack",
-            1, result.size()
+            1, result.size(),
+            "Unexpectedly got wrong number of resulting stacks when normalizing an already normal ItemStack"
         );
         assertTrue(
-            "ItemStack was modified when it didn't need to be",
-            ItemStack.areItemStacksEqual(stack, result.get(0))
+            ItemStack.areItemStacksEqual(stack, result.get(0)),
+            "ItemStack was modified when it didn't need to be"
         );
     }
 
@@ -274,46 +267,49 @@ public class InventoryUtilsTest
         List<ItemStack> result = InventoryUtils.normalizeItemStack(stack);
 
         assertFalse(
-            "Unexpectedly got no results when normalizing an abnormal stack",
-            result.isEmpty()
+            result.isEmpty(),
+            "Unexpectedly got no results when normalizing an abnormal stack"
         );
         assertEquals(
-            "Unexpectedly got wrong number of resulting stacks when normalizing an abnormal ItemStack",
-            3, result.size()
+            3, result.size(),
+            "Unexpectedly got wrong number of resulting stacks when normalizing an abnormal ItemStack"
         );
 
         ItemStack expectedFull    = new ItemStack(Items.ENDER_PEARL, 16);
         ItemStack expectedPartial = new ItemStack(Items.ENDER_PEARL, 13);
-        assertTrue("First item stack does not match expected full stack",
-                   ItemStack.areItemStacksEqual(expectedFull, result.get(0)));
-        assertTrue("Second item stack does not match expected full stack",
-                   ItemStack.areItemStacksEqual(expectedFull, result.get(1)));
-        assertTrue("Third item stack does not match expected partial stack",
-                   ItemStack.areItemStacksEqual(expectedPartial, result.get(2)));
+        assertTrue(ItemStack.areItemStacksEqual(expectedFull, result.get(0)),
+                   "First item stack does not match expected full stack");
+        assertTrue(ItemStack.areItemStacksEqual(expectedFull, result.get(1)),
+                   "Second item stack does not match expected full stack");
+        assertTrue(ItemStack.areItemStacksEqual(expectedPartial, result.get(2)),
+                   "Third item stack does not match expected partial stack");
     }
 
     @Test
     public void apportionStack_throws_AssertionError_when_supplied_stack_is_empty()
     {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Cannot apportion an empty stack.");
-        InventoryUtils.apportionStack(ItemStack.EMPTY, 64);
+        IllegalArgumentException e =
+            assertThrows(IllegalArgumentException.class,
+                         () -> InventoryUtils.apportionStack(ItemStack.EMPTY, 64));
+        assertEquals("Cannot apportion an empty stack.", e.getMessage());
     }
 
     @Test
     public void apportionStack_throws_AssertionError_when_maxCount_is_zero()
     {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Count must be non-zero and positive.");
-        InventoryUtils.apportionStack(new ItemStack(Items.ARROW, 1), 0);
+        IllegalArgumentException e =
+            assertThrows(IllegalArgumentException.class,
+                         () -> InventoryUtils.apportionStack(new ItemStack(Items.ARROW, 1), 0));
+        assertEquals("Count must be non-zero and positive.", e.getMessage());
     }
 
     @Test
     public void apportionStack_throws_AssertionError_when_maxCount_is_negative()
     {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Count must be non-zero and positive.");
-        InventoryUtils.apportionStack(new ItemStack(Items.ARROW, 1), -1);
+        IllegalArgumentException e =
+            assertThrows(IllegalArgumentException.class,
+                         () -> InventoryUtils.apportionStack(new ItemStack(Items.ARROW, 1), -1));
+        assertEquals("Count must be non-zero and positive.", e.getMessage());
     }
 
     @Test

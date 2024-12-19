@@ -4,20 +4,20 @@ import gregtech.api.unification.material.*;
 import gregtech.api.unification.material.type.*;
 import gregtech.api.unification.ore.*;
 import net.minecraft.init.*;
-import org.junit.*;
+import org.junit.jupiter.api.*;
 
 import java.util.*;
 import java.util.function.*;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-@Ignore // remove this annotation to run the "tests" which just dump mapping info to STDOUT.
+@Disabled // remove this annotation to run the "tests" which just dump mapping info to STDOUT.
 public class MetaBlocksTest {
 
     /**
      * Required. Without this all item-related operations will fail because registries haven't been initialized.
      */
-    @BeforeClass
+    @BeforeAll
     public static void bootStrap() {
         Bootstrap.register();
         Materials.register();
