@@ -73,7 +73,7 @@ public class MetaTileEntityLargeTurbine extends RotorHolderMultiblockController 
     public IFluidHandler exportFluidHandler;
 
     public MetaTileEntityLargeTurbine(ResourceLocation metaTileEntityId, TurbineType turbineType) {
-        super(metaTileEntityId, turbineType.recipeMap, GTValues.V[4]);
+        super(metaTileEntityId, turbineType.recipeMap, GTValues.V[GTValues.EV]);
         this.turbineType = turbineType;
         reinitializeStructurePattern();
     }

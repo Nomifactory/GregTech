@@ -64,6 +64,7 @@ import java.util.Map;
 
 import static gregtech.api.gui.widgets.AdvancedTextWidget.withButton;
 import static gregtech.api.gui.widgets.AdvancedTextWidget.withHoverTextTranslate;
+import static gregtech.api.GTValues.*;
 
 public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase implements IFuelable {
 
@@ -306,23 +307,23 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
             FluidStack fuelStack = fluidTank.drain(Integer.MAX_VALUE, false);
             if (fuelStack == null || ModHandler.isWater(fuelStack))
                 continue; //ignore empty tanks and water
-            FuelRecipe dieselRecipe = RecipeMaps.DIESEL_GENERATOR_FUELS.findRecipe(GTValues.V[9], fuelStack);
+            FuelRecipe dieselRecipe = RecipeMaps.DIESEL_GENERATOR_FUELS.findRecipe(V[MAX], fuelStack);
             if (dieselRecipe != null) {
                 int fuelAmountToConsume = (int) Math.ceil(dieselRecipe.getRecipeFluid().amount * CONSUMPTION_MULTIPLIER * boilerType.fuelConsumptionMultiplier * getThrottleMultiplier());
                 if (fuelStack.amount >= fuelAmountToConsume) {
                     fluidTank.drain(fuelAmountToConsume, true);
                     long recipeVoltage = FuelRecipeLogic.getTieredVoltage(dieselRecipe.getMinVoltage());
-                    int voltageMultiplier = (int) Math.max(1L, recipeVoltage / GTValues.V[GTValues.LV]);
+                    int voltageMultiplier = (int) Math.max(1L, recipeVoltage / V[LV]);
                     return (int) Math.ceil(dieselRecipe.getDuration() * CONSUMPTION_MULTIPLIER / 2.0 * voltageMultiplier * getThrottleMultiplier());
                 } else continue;
             }
-            FuelRecipe denseFuelRecipe = RecipeMaps.SEMI_FLUID_GENERATOR_FUELS.findRecipe(GTValues.V[9], fuelStack);
+            FuelRecipe denseFuelRecipe = RecipeMaps.SEMI_FLUID_GENERATOR_FUELS.findRecipe(V[MAX], fuelStack);
             if (denseFuelRecipe != null) {
                 int fuelAmountToConsume = (int) Math.ceil(denseFuelRecipe.getRecipeFluid().amount * CONSUMPTION_MULTIPLIER * boilerType.fuelConsumptionMultiplier * getThrottleMultiplier());
                 if (fuelStack.amount >= fuelAmountToConsume) {
                     fluidTank.drain(fuelAmountToConsume, true);
                     long recipeVoltage = FuelRecipeLogic.getTieredVoltage(denseFuelRecipe.getMinVoltage());
-                    int voltageMultiplier = (int) Math.max(1L, recipeVoltage / GTValues.V[GTValues.LV]);
+                    int voltageMultiplier = (int) Math.max(1L, recipeVoltage / V[LV]);
                     return (int) Math.ceil(denseFuelRecipe.getDuration() * CONSUMPTION_MULTIPLIER * 2 * voltageMultiplier * getThrottleMultiplier());
                 }
             }
@@ -521,10 +522,10 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
             FluidStack fuelStack = fluidTank.drain(Integer.MAX_VALUE, false);
             if (fuelStack == null || ModHandler.isWater(fuelStack))
                 continue; 
-            FuelRecipe dieselRecipe = RecipeMaps.DIESEL_GENERATOR_FUELS.findRecipe(GTValues.V[9], fuelStack);
+            FuelRecipe dieselRecipe = RecipeMaps.DIESEL_GENERATOR_FUELS.findRecipe(V[MAX], fuelStack);
             if (dieselRecipe != null) {
                 long recipeVoltage = FuelRecipeLogic.getTieredVoltage(dieselRecipe.getMinVoltage());
-                int voltageMultiplier = (int) Math.max(1L, recipeVoltage / GTValues.V[GTValues.LV]);
+                int voltageMultiplier = (int) Math.max(1L, recipeVoltage / V[LV]);
                 int burnTime = (int) Math.ceil(dieselRecipe.getDuration() * CONSUMPTION_MULTIPLIER / 2.0 * voltageMultiplier * getThrottleMultiplier());
                 int fuelAmountToConsume = (int) Math.ceil(dieselRecipe.getRecipeFluid().amount * CONSUMPTION_MULTIPLIER * boilerType.fuelConsumptionMultiplier * getThrottleMultiplier());
                 final long fuelBurnTime = (fuelStack.amount * burnTime) / fuelAmountToConsume;
@@ -538,10 +539,10 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                     fluidFuelInfo.addFuelBurnTime(fuelBurnTime);
                 }
             }
-            FuelRecipe denseFuelRecipe = RecipeMaps.SEMI_FLUID_GENERATOR_FUELS.findRecipe(GTValues.V[9], fuelStack);
+            FuelRecipe denseFuelRecipe = RecipeMaps.SEMI_FLUID_GENERATOR_FUELS.findRecipe(V[MAX], fuelStack);
             if (denseFuelRecipe != null) {
                 long recipeVoltage = FuelRecipeLogic.getTieredVoltage(denseFuelRecipe.getMinVoltage());
-                int voltageMultiplier = (int) Math.max(1L, recipeVoltage / GTValues.V[GTValues.LV]);
+                int voltageMultiplier = (int) Math.max(1L, recipeVoltage / V[LV]);
                 int burnTime = (int) Math.ceil(denseFuelRecipe.getDuration() * CONSUMPTION_MULTIPLIER * 2 * voltageMultiplier * getThrottleMultiplier());
                 int fuelAmountToConsume = (int) Math.ceil(denseFuelRecipe.getRecipeFluid().amount * CONSUMPTION_MULTIPLIER * boilerType.fuelConsumptionMultiplier * getThrottleMultiplier());
                 final long fuelBurnTime = (fuelStack.amount * burnTime) / fuelAmountToConsume;
