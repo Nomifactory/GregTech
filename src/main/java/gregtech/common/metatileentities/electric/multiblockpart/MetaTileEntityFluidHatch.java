@@ -3,6 +3,7 @@ package gregtech.common.metatileentities.electric.multiblockpart;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.GTValues;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.NotifiableFluidTank;
 import gregtech.api.gui.GuiTextures;
@@ -96,7 +97,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
     }
 
     private int getInventorySize() {
-        return INITIAL_INVENTORY_SIZE * (1 << getTier());
+        return INITIAL_INVENTORY_SIZE * (1 << Math.min(GTValues.UHV, getTier()));
     }
 
     @Override

@@ -6,13 +6,14 @@ import gregtech.api.recipes.*;
 import gregtech.api.recipes.builders.*;
 import gregtech.api.render.*;
 import gregtech.api.util.world.DummyWorld;
+import gregtech.common.ConfigHolder;
 import net.minecraft.init.*;
 import net.minecraft.item.*;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 import org.junit.jupiter.api.*;
 
+import static gregtech.api.GTValues.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class AbstractRecipeLogicTest {
@@ -128,6 +129,18 @@ public class AbstractRecipeLogicTest {
 		assertFalse(arl.isOutputsFull);
 		assertTrue(AbstractRecipeLogic.areItemStacksEqual(arl.getOutputInventory().getStackInSlot(0),
 		                                                  new ItemStack(Blocks.STONE, 1)));
+
+		// overclocking tier is a floor value
+		assertEquals(IV, arl.getOverclockingTier(8192 * 2L));
+		assertEquals(IV, arl.getOverclockingTier(32_767L));
+
+		// ensure overclock clamping for MAX works appropriately
+		ConfigHolder.maxHatchOCTier = MAX;
+		assertEquals(MAX, arl.getOverclockingTier(Long.MAX_VALUE));
+		assertEquals(MAX, arl.getOverclockingTier(2L * Integer.MAX_VALUE));
+		ConfigHolder.maxHatchOCTier = UHV;
+		assertEquals(UHV, arl.getOverclockingTier(Integer.MAX_VALUE));
+		assertEquals(UHV, arl.getOverclockingTier(2L * Integer.MAX_VALUE));
 	}
 
 	@Test

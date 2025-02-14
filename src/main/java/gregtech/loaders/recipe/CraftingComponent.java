@@ -133,11 +133,11 @@ public class CraftingComponent {
 
     /** Tier-appropriate machine hull */
     public static final Component<ItemStack> HULL = tier ->
-        MetaTileEntities.HULL[tier].getStackForm();
+        MetaTileEntities.HULL[tier == MAX ? MAX_OLD : tier].getStackForm();
 
     /** Machine hull for one tier below the current tier */
     public static final Component<ItemStack> WORSE_HULL = tier ->
-        MetaTileEntities.HULL[tier - 1].getStackForm();
+        HULL.getIngredient(tier - 1);
 
     /** Pipes used as crafting ingredients in Extruders */
     public static final Component<UnificationEntry> PIPE = tier -> {
@@ -400,7 +400,7 @@ public class CraftingComponent {
      * Voltage-tiered machine casings
      */
     public static final Component<ItemStack> TIER_CASING = tier ->
-        BlockMachineCasing.MachineCasingType.getTiered()[tier].getStack();
+        BlockMachineCasing.MachineCasingType.getTiered()[tier == MAX ? MAX_OLD : tier].getStack();
 
     /** Transformer circuit tier. Can return {@code null}! */
     public static final Component<Material> XF_ITEM_TIER = tier -> switch(tier) {

@@ -627,7 +627,7 @@ public class MachineRecipeLoader {
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(4).inputs(new ItemStack(Blocks.SANDSTONE, 1, 2)).outputs(new ItemStack(Blocks.SANDSTONE, 1, 0)).circuitMeta(1).duration(50).buildAndRegister();
 
         // Tiered Machine Casings
-        for(int tier = ULV; tier <= MAX; tier++) {
+        for(int tier : RNO) {
             RecipeMaps.ASSEMBLER_RECIPES
                 .recipeBuilder()
                 .outputs(TIER_CASING.getIngredient(tier))
