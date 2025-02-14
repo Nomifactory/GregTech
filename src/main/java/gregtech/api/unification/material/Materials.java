@@ -15,6 +15,7 @@ import static gregtech.api.unification.material.type.IngotMaterial.MatFlags.*;
 import static gregtech.api.unification.material.type.Material.MatFlags.*;
 import static gregtech.api.unification.material.type.SolidMaterial.MatFlags.*;
 import static gregtech.api.unification.material.MaterialIconSet.*;
+import static gregtech.api.GTValues.*;
 
 @SuppressWarnings("WeakerAccess")
 public class Materials {
@@ -782,49 +783,49 @@ public class Materials {
         Invar.addEnchantmentForTools(Enchantments.BANE_OF_ARTHROPODS, 3);
         BismuthBronze.addEnchantmentForTools(Enchantments.BANE_OF_ARTHROPODS, 5);
 
-        RedAlloy.setCableProperties(GTValues.V[0], 1, 0);
-        Tin.setCableProperties(GTValues.V[1], 1, 1);
-        Copper.setCableProperties(GTValues.V[2], 1, 2);
+        RedAlloy.setCableProperties(V[ULV], 1, 0);
+        Tin.setCableProperties(V[LV], 1, 1);
+        Copper.setCableProperties(V[MV], 1, 2);
 
-        Cobalt.setCableProperties(GTValues.V[1], 2, 2);
-        Lead.setCableProperties(GTValues.V[1], 2, 2);
-        Tin.setCableProperties(GTValues.V[1], 1, 1);
-        Zinc.setCableProperties(GTValues.V[1], 1, 1);
-        SolderingAlloy.setCableProperties(GTValues.V[1], 1, 1);
+        Cobalt.setCableProperties(V[LV], 2, 2);
+        Lead.setCableProperties(V[LV], 2, 2);
+        Tin.setCableProperties(V[LV], 1, 1);
+        Zinc.setCableProperties(V[LV], 1, 1);
+        SolderingAlloy.setCableProperties(V[LV], 1, 1);
 
-        Iron.setCableProperties(GTValues.V[2], 2, 3);
-        Nickel.setCableProperties(GTValues.V[2], 3, 3);
-        Cupronickel.setCableProperties(GTValues.V[2], 2, 3);
-        Copper.setCableProperties(GTValues.V[2], 1, 2);
-        AnnealedCopper.setCableProperties(GTValues.V[2], 1, 1);
+        Iron.setCableProperties(V[MV], 2, 3);
+        Nickel.setCableProperties(V[MV], 3, 3);
+        Cupronickel.setCableProperties(V[MV], 2, 3);
+        Copper.setCableProperties(V[MV], 1, 2);
+        AnnealedCopper.setCableProperties(V[MV], 1, 1);
 
-        Kanthal.setCableProperties(GTValues.V[3], 4, 3);
-        Gold.setCableProperties(GTValues.V[3], 2, 2);
-        Electrum.setCableProperties(GTValues.V[3], 3, 2);
-        Silver.setCableProperties(GTValues.V[3], 1, 1);
+        Kanthal.setCableProperties(V[HV], 4, 3);
+        Gold.setCableProperties(V[HV], 2, 2);
+        Electrum.setCableProperties(V[HV], 3, 2);
+        Silver.setCableProperties(V[HV], 1, 1);
 
-        Nichrome.setCableProperties(GTValues.V[4], 4, 4);
-        Steel.setCableProperties(GTValues.V[4], 2, 2);
-        BlackSteel.setCableProperties(GTValues.V[4], 3, 2);
-        Titanium.setCableProperties(GTValues.V[4], 4, 2);
-        Aluminium.setCableProperties(GTValues.V[4], 1, 1);
+        Nichrome.setCableProperties(V[EV], 4, 4);
+        Steel.setCableProperties(V[EV], 2, 2);
+        BlackSteel.setCableProperties(V[EV], 3, 2);
+        Titanium.setCableProperties(V[EV], 4, 2);
+        Aluminium.setCableProperties(V[EV], 1, 1);
 
-        Graphene.setCableProperties(GTValues.V[5], 1, 1);
-        Osmium.setCableProperties(GTValues.V[5], 4, 2);
-        Platinum.setCableProperties(GTValues.V[5], 2, 1);
-        Palladium.setCableProperties(GTValues.V[5], 2, 1);
-        TungstenSteel.setCableProperties(GTValues.V[5], 3, 2);
-        Tungsten.setCableProperties(GTValues.V[5], 2, 2);
+        Graphene.setCableProperties(V[IV], 1, 1);
+        Osmium.setCableProperties(V[IV], 4, 2);
+        Platinum.setCableProperties(V[IV], 2, 1);
+        Palladium.setCableProperties(V[IV], 2, 1);
+        TungstenSteel.setCableProperties(V[IV], 3, 2);
+        Tungsten.setCableProperties(V[IV], 2, 2);
 
-        HSSG.setCableProperties(GTValues.V[6], 4, 2);
-        NiobiumTitanium.setCableProperties(GTValues.V[6], 4, 2);
-        VanadiumGallium.setCableProperties(GTValues.V[6], 4, 2);
-        YttriumBariumCuprate.setCableProperties(GTValues.V[6], 4, 4);
+        HSSG.setCableProperties(V[LuV], 4, 2);
+        NiobiumTitanium.setCableProperties(V[LuV], 4, 2);
+        VanadiumGallium.setCableProperties(V[LuV], 4, 2);
+        YttriumBariumCuprate.setCableProperties(V[LuV], 4, 4);
 
-        Naquadah.setCableProperties(GTValues.V[7], 2, 2);
+        Naquadah.setCableProperties(V[ZPM], 2, 2);
 
-        NaquadahAlloy.setCableProperties(GTValues.V[8], 2, 4);
-        Duranium.setCableProperties(GTValues.V[8], 1, 8);
+        NaquadahAlloy.setCableProperties(V[UV], 2, 4);
+        Duranium.setCableProperties(V[UV], 1, 8);
 
         Copper.setFluidPipeProperties(25, 1000, true);
         Bronze.setFluidPipeProperties(35, 2000, true);
