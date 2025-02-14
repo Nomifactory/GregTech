@@ -25,6 +25,8 @@ import net.minecraftforge.items.ItemStackHandler;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import static gregtech.api.GTValues.*;
+
 public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IItemHandlerModifiable> {
 
     private static final int[] INVENTORY_SIZES = {1, 4, 9, 16, 25, 36, 49};
@@ -63,7 +65,7 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     }
 
     private int getInventorySize() {
-        int sizeRoot = (1 + getTier());
+        int sizeRoot = 1 + Math.min(UHV, getTier());
         return sizeRoot * sizeRoot;
     }
 

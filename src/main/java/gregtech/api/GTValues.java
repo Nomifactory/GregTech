@@ -51,6 +51,11 @@ public class GTValues {
         32_768,
         131_072,
         524_288,
+        2_097_152,
+        8_388_608,
+        33_554_432,
+        134_217_728,
+        536_870_912,
         Integer.MAX_VALUE
     };
 
@@ -63,13 +68,31 @@ public class GTValues {
     public static final int LuV = 6;
     public static final int ZPM = 7;
     public static final int UV = 8;
-    public static final int MAX = 9;
+    public static final int UHV = 9;
+    public static final int UEV = 10;
+    public static final int UIV = 11;
+    public static final int UXV = 12;
+    public static final int OpV = 13;
+    public static final int MAX = 14;
+    /** The old ordinal for MAX, to prevent ID shifts during MetaItem registration */
+    public static final int MAX_OLD = 9;
+
+    /**
+     * Tier ordinals to be used during init instead of iterating over {@link #V} to avoid ID shifts for MAX tier.
+     */
+    public static final int[] RO = {ULV, LV, MV, HV, EV, IV, LuV, ZPM, UV, MAX_OLD};
+
+    /**
+     * Name ordinals to be used during init instead of iterating over {@link #VN} to avoid ID shifts for MAX tier.
+     */
+    public static final int[] RNO = {ULV, LV, MV, HV, EV, IV, LuV, ZPM, UV, MAX};
 
     /**
      * The short names for the voltages
      */
     public static final String[] VN = new String[] {
         "ULV", "LV", "MV", "HV", "EV", "IV", "LuV", "ZPM", "UV",
+        "UHV", "UEV", "UIV", "UXV", "OpV",
         "MAX"
     };
 
@@ -80,7 +103,8 @@ public class GTValues {
         DARK_GRAY + "ULV", GRAY + "LV", AQUA + "MV",
         GOLD + "HV", DARK_PURPLE + "EV", DARK_BLUE + "IV",
         LIGHT_PURPLE + "LuV", RED + "ZPM", DARK_AQUA + "UV",
-        RED + "" + BOLD + "MAX"};
+        DARK_RED + "UHV", GREEN + "UEV", DARK_GREEN + "UIV",
+        YELLOW + "UXV", BLUE + "OpV", RED + "" + BOLD + "MAX"};
 
     /**
      * Color values for the voltages
@@ -95,6 +119,11 @@ public class GTValues {
         0xF0F0F5,
         0xF0F0F5,
         0xF0F0F5,
+        0xBF74C0,
+        0x0B5CFE,
+        0x488748,
+        0x914E91,
+        0x8C0000,
         0xF0F0F5
     };
 
@@ -111,6 +140,11 @@ public class GTValues {
         "Ludicrous Voltage",
         "ZPM Voltage",
         "Ultimate Voltage",
+        "Ultra High Voltage",
+        "Ultra Excessive Voltage",
+        "Ultra Immense Voltage",
+        "Ultra Extreme Voltage",
+        "Overpowered Voltage",
         "Maximum Voltage"
     };
 

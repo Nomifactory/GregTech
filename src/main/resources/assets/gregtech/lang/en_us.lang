@@ -2181,6 +2181,11 @@ gregtech.machine.hull.iv.name=IV Machine Hull
 gregtech.machine.hull.luv.name=LuV Machine Hull
 gregtech.machine.hull.zpm.name=ZPM Machine Hull
 gregtech.machine.hull.uv.name=UV Machine Hull
+gregtech.machine.hull.uhv.name=UHV Machine Hull
+gregtech.machine.hull.uev.name=UEV Machine Hull
+gregtech.machine.hull.uiv.name=UIV Machine Hull
+gregtech.machine.hull.uxv.name=UXV Machine Hull
+gregtech.machine.hull.opv.name=OpV Machine Hull
 gregtech.machine.hull.max.name=Max Machine Hull
 
 # Battery buffers
@@ -2249,6 +2254,8 @@ gregtech.machine.transformer.iv.name=Insane Voltage Transformer
 gregtech.machine.transformer.luv.name=Ludicrous Voltage Transformer
 gregtech.machine.transformer.zpm.name=ZPM Voltage Transformer
 gregtech.machine.transformer.uv.name=Ultimate Voltage Transformer
+gregtech.machine.transformer.uhv.name=Ultra High Voltage Transformer
+gregtech.machine.transformer.uev.name=Ultra Excessive Voltage Transformer
 gregtech.machine.transformer.max.name=MAX Voltage Transformer
 
 # Chargers
