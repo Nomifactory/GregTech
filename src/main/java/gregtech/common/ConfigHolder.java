@@ -115,6 +115,10 @@ public class ConfigHolder {
     @Config.Comment("If true, all rock variants of ores will drop the stone variant unless the player uses Silk Touch. Default: false")
     public static boolean requireSilkTouchForRockVariants = false;
 
+    @Config.Comment("What tier ordinal does the MAX hatch overclock to? Default: " + GTValues.UHV + " (UHV)")
+    @Config.RangeInt(min = GTValues.UHV, max = GTValues.MAX)
+    public static int maxHatchOCTier = GTValues.UHV;
+
     public static class VanillaRecipes {
 
         @Config.Comment("Whether to nerf the paper crafting recipe. Default: true")
