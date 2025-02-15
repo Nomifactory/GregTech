@@ -288,7 +288,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
      */
     protected boolean setupAndConsumeRecipeInputs(Recipe recipe) {
         int[] resultOverclock = calculateOverclock(recipe);
-        int totalEUt = resultOverclock[0] * resultOverclock[1];
+        long totalEUt = (long) resultOverclock[0] * resultOverclock[1];
         IItemHandlerModifiable importInventory = getInputInventory();
         IItemHandlerModifiable exportInventory = getOutputInventory();
         IMultipleTankHandler importFluids = getInputTank();
