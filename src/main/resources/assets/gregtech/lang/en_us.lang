@@ -14,6 +14,9 @@ gregtech.top.energy_stored=Energy:
 gregtech.top.progress=Progress:
 gregtech.top.working_disabled=Working Disabled
 gregtech.top.muffled=Sound Muffled
+gregtech.top.energy_producing=Producing
+gregtech.top.energy_consuming=Using
+gregtech.top.crafting=Crafting:
 
 gregtech.top.transform_up=§cStep Up§r
 gregtech.top.transform_down=§aStep Down§r

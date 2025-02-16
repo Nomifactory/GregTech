@@ -1,13 +1,18 @@
 package gregtech.integration.theoneprobe.provider;
 
+import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IWorkable;
-import mcjty.theoneprobe.api.ElementAlignment;
+import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
-import mcjty.theoneprobe.api.TextStyleClass;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
+
+import static mcjty.theoneprobe.api.ElementAlignment.*;
+import static mcjty.theoneprobe.api.NumberFormat.*;
+import static mcjty.theoneprobe.apiimpl.elements.ElementProgress.*;
+import static mcjty.theoneprobe.api.TextStyleClass.*;
 
 public class WorkableInfoProvider extends CapabilityInfoProvider<IWorkable> {
 
@@ -18,23 +23,41 @@ public class WorkableInfoProvider extends CapabilityInfoProvider<IWorkable> {
 
     @Override
     public String getID() {
-        return "gregtech:workable_provider";
+        return GTValues.MODID + ":workable_provider";
     }
 
     @Override
-    protected void addProbeInfo(IWorkable capability, IProbeInfo probeInfo, TileEntity tileEntity, EnumFacing sideHit) {
+    protected void addProbeInfo(IWorkable capability, IProbeInfo probeInfo, EntityPlayer player,
+                                TileEntity tileEntity, IProbeHitData data) {
+        if(!capability.isActive())
+            return;
+
         int currentProgress = capability.getProgress();
         int maxProgress = capability.getMaxProgress();
-        if (maxProgress > 0) {
-            int progressScaled = maxProgress == 0 ? 0 : (int) Math.floor(currentProgress / (maxProgress * 1.0) * 100);
-            IProbeInfo horizontalPane = probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER));
-            horizontalPane.text(TextStyleClass.INFO + "{*gregtech.top.progress*} ");
-            horizontalPane.progress(progressScaled, 100, probeInfo.defaultProgressStyle()
-                .suffix("%")
-                .borderColor(0x00000000)
-                .backgroundColor(0x00000000)
-                .filledColor(0xFF000099)
-                .alternateFilledColor(0xFF000077));
+
+        int progressScaled = maxProgress == 0 ? 0 : (int) Math.floor(currentProgress / (maxProgress * 1.0) * 100);
+
+        // Switch to displaying seconds if the recipe is 1s or longer, otherwise show ticks.
+        String timeUnit = "t";
+        if(maxProgress >= 20) {
+            currentProgress = Math.round(currentProgress / 20.0f);
+            maxProgress = Math.round(maxProgress / 20.0f);
+            timeUnit = "s";
         }
+
+        IProbeInfo horizontalPane = probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ALIGN_CENTER));
+        horizontalPane.text(INFO + "{*gregtech.top.progress*} ");
+        String text = String.format(" %s / %s (%d%%)",
+                                    timeUnit,
+                                    format(maxProgress, COMMAS, timeUnit),
+                                    progressScaled);
+        horizontalPane.progress(currentProgress, maxProgress, probeInfo.defaultProgressStyle()
+            .suffix(text)
+            .borderColor(0x00000000)
+            .backgroundColor(0x00000000)
+            .filledColor(0xFF000099)
+            .alternateFilledColor(0xFF000077));
+
+        format(currentProgress, COMMAS, timeUnit);
     }
 }

@@ -10,6 +10,7 @@ public class TheOneProbeCompatibility {
         ITheOneProbe oneProbe = TheOneProbe.theOneProbeImp;
         oneProbe.registerProvider(new ElectricContainerInfoProvider());
         oneProbe.registerProvider(new FuelableInfoProvider());
+        oneProbe.registerProvider(new RecipeLogicInfoProvider());
         oneProbe.registerProvider(new WorkableInfoProvider());
         oneProbe.registerProvider(new ControllableInfoProvider());
         oneProbe.registerProvider(new DebugPipeNetInfoProvider());

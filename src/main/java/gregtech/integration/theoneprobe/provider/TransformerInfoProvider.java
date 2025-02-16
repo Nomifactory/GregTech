@@ -1,60 +1,62 @@
 package gregtech.integration.theoneprobe.provider;
 
-import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
-import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
-import gregtech.api.util.GTUtility;
 import gregtech.common.metatileentities.electric.MetaTileEntityTransformer;
-import mcjty.theoneprobe.api.ElementAlignment;
+import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
-import mcjty.theoneprobe.api.TextStyleClass;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import org.jetbrains.annotations.NotNull;
+
+import static gregtech.api.GTValues.*;
+import static mcjty.theoneprobe.api.ElementAlignment.*;
+import static mcjty.theoneprobe.api.TextStyleClass.*;
+import static net.minecraft.util.text.TextFormatting.*;
 
 public class TransformerInfoProvider extends ElectricContainerInfoProvider {
 
     @Override
     public String getID() {
-        return "gregtech:transformer_info_provider";
+        return MODID + ":transformer_info_provider";
     }
 
     @Override
-    protected void addProbeInfo(IEnergyContainer capability, IProbeInfo probeInfo, TileEntity tileEntity, EnumFacing sideHit) {
-        if (tileEntity instanceof MetaTileEntityHolder) {
-            MetaTileEntity metaTileEntity = ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
-            if (metaTileEntity instanceof MetaTileEntityTransformer) {
-                MetaTileEntityTransformer mteTransformer = (MetaTileEntityTransformer)metaTileEntity;
-                String inputVoltageN = GTValues.VN[GTUtility.getTierByVoltage(capability.getInputVoltage())];
-                String outputVoltageN = GTValues.VN[GTUtility.getTierByVoltage(capability.getOutputVoltage())];
+    protected void addProbeInfo(@NotNull IEnergyContainer capability, @NotNull IProbeInfo probeInfo, EntityPlayer player,
+                                @NotNull TileEntity tileEntity, @NotNull IProbeHitData data) {
+        if (tileEntity instanceof MetaTileEntityHolder mte) {
+            if (mte.getMetaTileEntity() instanceof MetaTileEntityTransformer mteTransformer) {
+                int tier = mteTransformer.getTier();
                 long inputAmperage = capability.getInputAmperage();
                 long outputAmperage = capability.getOutputAmperage();
-                IProbeInfo horizontalPane = probeInfo.vertical(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER));
-                String transformInfo;
+                IProbeInfo horizontalPane = probeInfo.vertical(probeInfo.defaultLayoutStyle().alignment(ALIGN_CENTER));
+                String mode;
 
+                String inputVoltageN, outputVoltageN;
                 // Step Up/Step Down line
                 if (mteTransformer.isInverted()) {
-                    transformInfo = "{*gregtech.top.transform_up*} ";
+                    mode = "up";
+                    inputVoltageN = VNF[tier - 1];
+                    outputVoltageN = VNF[tier];
                 } else {
-                    transformInfo = "{*gregtech.top.transform_down*} ";
+                    mode = "down";
+                    inputVoltageN = VNF[tier];
+                    outputVoltageN = VNF[tier - 1];
                 }
-                transformInfo += inputVoltageN + " (" + inputAmperage + "A) -> "
-                               + outputVoltageN + " (" + outputAmperage + "A)";
-                horizontalPane.text(TextStyleClass.INFO + transformInfo);
+
+                horizontalPane.text(String.format("%s{*gregtech.top.transform_%s*} %s%s (%dA) -> %s%s (%dA)",
+                                                  INFO, mode, inputVoltageN,
+                                                  RESET, inputAmperage, outputVoltageN,
+                                                  RESET, outputAmperage));
 
                 // Input/Output side line
-                horizontalPane = probeInfo.vertical(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER));
-                if (capability.inputsEnergy(sideHit)) {
-                    transformInfo = "{*gregtech.top.transform_input*} "
-                            + inputVoltageN + " (" + inputAmperage + "A)";
-                    horizontalPane.text(TextStyleClass.INFO + transformInfo);
-
-                } else if(capability.outputsEnergy(sideHit)) {
-                    transformInfo = "{*gregtech.top.transform_output*} "
-                            + outputVoltageN + " (" + outputAmperage + "A)";
-                    horizontalPane.text(TextStyleClass.INFO + transformInfo);
-                }
+                horizontalPane = probeInfo.vertical(probeInfo.defaultLayoutStyle().alignment(ALIGN_CENTER));
+                if (capability.inputsEnergy(data.getSideHit()))
+                    horizontalPane.text(String.format("%s{*gregtech.top.transform_input*} %s (%dA)",
+                                                      INFO, inputVoltageN, inputAmperage));
+                else if(capability.outputsEnergy(data.getSideHit()))
+                    horizontalPane.text(String.format("%s{*gregtech.top.transform_output*} %s (%dA)",
+                                                      INFO, outputVoltageN, outputAmperage));
             }
         }
     }

@@ -1,5 +1,6 @@
 package gregtech.integration.theoneprobe.provider;
 
+import gregtech.api.GTValues;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.pipenet.Node;
@@ -26,15 +27,15 @@ import java.util.Map;
 public class DebugPipeNetInfoProvider implements IProbeInfoProvider {
     @Override
     public String getID() {
-        return "gregtech:debug_pipe_net_provider";
+        return GTValues.MODID + ":debug_pipe_net_provider";
     }
 
     @Override
     public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
         if (mode == ProbeMode.DEBUG && ConfigHolder.debug) {
             TileEntity tileEntity = world.getTileEntity(data.getPos());
-            if (tileEntity instanceof MetaTileEntityHolder) {
-                MetaTileEntity metaTileEntity = ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
+            if (tileEntity instanceof MetaTileEntityHolder holder) {
+                MetaTileEntity metaTileEntity = holder.getMetaTileEntity();
                 if (metaTileEntity != null) {
                     ArrayList<String> arrayList = new ArrayList<>();
                     arrayList.add("MetaTileEntity Id: " + metaTileEntity.metaTileEntityId);
@@ -58,11 +59,8 @@ public class DebugPipeNetInfoProvider implements IProbeInfoProvider {
                     probeInfo.text(builder.toString());
                 }
                 probeInfo.text("tile blocked: " + pipeTile.getBlockedConnections());
-                if (blockPipe instanceof BlockFluidPipe) {
-                    if (pipeTile instanceof TileEntityFluidPipeTickable) {
-                        probeInfo.text("tile active: " + ((TileEntityFluidPipeTickable) pipeTile).isActive());
-                    }
-                }
+                if (blockPipe instanceof BlockFluidPipe && pipeTile instanceof TileEntityFluidPipeTickable tile)
+                    probeInfo.text("tile active: " + tile.isActive());
             }
         }
     }

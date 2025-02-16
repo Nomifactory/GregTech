@@ -1,14 +1,17 @@
 package gregtech.integration.theoneprobe.provider;
 
+import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
-import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IEnergyContainer;
-import mcjty.theoneprobe.api.ElementAlignment;
+import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
-import mcjty.theoneprobe.api.TextStyleClass;
+import mcjty.theoneprobe.apiimpl.elements.ElementProgress;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
+import org.jetbrains.annotations.NotNull;
+
+import static mcjty.theoneprobe.api.NumberFormat.*;
 
 public class ElectricContainerInfoProvider extends CapabilityInfoProvider<IEnergyContainer> {
 
@@ -19,7 +22,7 @@ public class ElectricContainerInfoProvider extends CapabilityInfoProvider<IEnerg
 
     @Override
     public String getID() {
-        return "gregtech:energy_container_provider";
+        return GTValues.MODID + ":energy_container_provider";
     }
 
     @Override
@@ -28,19 +31,20 @@ public class ElectricContainerInfoProvider extends CapabilityInfoProvider<IEnerg
     }
 
     @Override
-    protected void addProbeInfo(IEnergyContainer capability, IProbeInfo probeInfo, TileEntity tileEntity, EnumFacing sideHit) {
-        long energyStored = capability.getEnergyStored();
+    protected void addProbeInfo(@NotNull IEnergyContainer capability, @NotNull IProbeInfo probeInfo,
+                                EntityPlayer player, @NotNull TileEntity tileEntity, @NotNull IProbeHitData data) {
         long maxStorage = capability.getEnergyCapacity();
         if (maxStorage == 0) return; //do not add empty max storage progress bar
-        IProbeInfo horizontalPane = probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER));
-        String additionalSpacing = tileEntity.hasCapability(GregtechTileCapabilities.CAPABILITY_WORKABLE, sideHit) ? "   " : "";
-        horizontalPane.text(TextStyleClass.INFO + "{*gregtech.top.energy_stored*} " + additionalSpacing);
-        horizontalPane.progress(energyStored, maxStorage, probeInfo.defaultProgressStyle()
-            .suffix("/" + maxStorage + " EU")
+        long energyStored = capability.getEnergyStored();
+
+        probeInfo.progress(energyStored, maxStorage, probeInfo.defaultProgressStyle()
+            .numberFormat(player.isSneaking() || energyStored < 1_000 ? COMMAS : COMPACT)
+            .suffix(" / " + (player.isSneaking() || maxStorage < 10_000 ?
+                ElementProgress.format(maxStorage, COMMAS, " EU") :
+                ElementProgress.format(maxStorage, COMPACT, "EU")))
             .borderColor(0x00000000)
             .backgroundColor(0x00000000)
             .filledColor(0xFFFFE000)
             .alternateFilledColor(0xFFEED000));
     }
-
 }

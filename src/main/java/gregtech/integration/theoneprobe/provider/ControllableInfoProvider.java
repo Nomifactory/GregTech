@@ -1,12 +1,15 @@
 package gregtech.integration.theoneprobe.provider;
 
+import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
+import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
-import mcjty.theoneprobe.api.TextStyleClass;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
+
+import static mcjty.theoneprobe.api.TextStyleClass.*;
 
 public class ControllableInfoProvider extends CapabilityInfoProvider<IControllable> {
 
@@ -17,13 +20,14 @@ public class ControllableInfoProvider extends CapabilityInfoProvider<IControllab
 
     @Override
     public String getID() {
-        return "gregtech:controllable_provider";
+        return GTValues.MODID + ":controllable_provider";
     }
 
     @Override
-    protected void addProbeInfo(IControllable capability, IProbeInfo probeInfo, TileEntity tileEntity, EnumFacing sideHit) {
+    protected void addProbeInfo(IControllable capability, IProbeInfo probeInfo, EntityPlayer player,
+                                TileEntity tileEntity, IProbeHitData data) {
         if (!capability.isWorkingEnabled()) {
-            probeInfo.text(TextStyleClass.INFOIMP + "{*gregtech.top.working_disabled*}");
+            probeInfo.text(INFOIMP + "{*gregtech.top.working_disabled*}");
         }
     }
 }

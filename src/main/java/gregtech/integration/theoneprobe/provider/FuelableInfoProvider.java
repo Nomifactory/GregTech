@@ -1,17 +1,20 @@
 package gregtech.integration.theoneprobe.provider;
 
-import java.util.Collection;
-
+import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IFuelInfo;
 import gregtech.api.capability.IFuelable;
 import gregtech.api.capability.impl.ItemFuelInfo;
-import mcjty.theoneprobe.api.ElementAlignment;
+import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
-import mcjty.theoneprobe.api.TextStyleClass;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
+
+import java.util.Collection;
+
+import static mcjty.theoneprobe.api.ElementAlignment.*;
+import static mcjty.theoneprobe.api.TextStyleClass.*;
 
 public class FuelableInfoProvider extends CapabilityInfoProvider<IFuelable> {
 
@@ -22,7 +25,7 @@ public class FuelableInfoProvider extends CapabilityInfoProvider<IFuelable> {
 
     @Override
     public String getID() {
-        return "gregtech:fuelable_provider";
+        return GTValues.MODID + ":fuelable_provider";
     }
 
     @Override
@@ -31,10 +34,11 @@ public class FuelableInfoProvider extends CapabilityInfoProvider<IFuelable> {
     }
 
     @Override
-    protected void addProbeInfo(IFuelable capability, IProbeInfo probeInfo, TileEntity tileEntity, EnumFacing sideHit) {
+    protected void addProbeInfo(IFuelable capability, IProbeInfo probeInfo, EntityPlayer player,
+                                TileEntity tileEntity, IProbeHitData data) {
         Collection<IFuelInfo> fuels = capability.getFuels();
         if (fuels == null || fuels.isEmpty()) {
-            probeInfo.text(TextStyleClass.WARNING + "{*gregtech.top.fuel_none*}");
+            probeInfo.text(WARNING + "{*gregtech.top.fuel_none*}");
             return;
         }
         for (IFuelInfo fuelInfo : fuels) {
@@ -44,24 +48,24 @@ public class FuelableInfoProvider extends CapabilityInfoProvider<IFuelable> {
             final int fuelMinConsumed = fuelInfo.getFuelMinConsumed();
             final long burnTime = fuelInfo.getFuelBurnTimeLong() / 20;
 
-            IProbeInfo horizontalPane = probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER));
-            if (fuelInfo instanceof ItemFuelInfo) {
-                horizontalPane.text(TextStyleClass.INFO + "{*gregtech.top.fuel_name*} ").itemLabel(((ItemFuelInfo) fuelInfo).getItemStack());
-            } else {
-                horizontalPane.text(TextStyleClass.INFO + "{*gregtech.top.fuel_name*} {*" + fuelName + "*}");
-            }
-
-            horizontalPane = probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER));
-            horizontalPane.progress(fuelRemaining, fuelCapacity, probeInfo.defaultProgressStyle()
-                .suffix("/" + fuelCapacity + " ")
-                .borderColor(0x00000000)
-                .backgroundColor(0x00000000)
-                .filledColor(0xFFFFE000)
-                .alternateFilledColor(0xFFEED000));
-            if (fuelRemaining < fuelMinConsumed)
-                horizontalPane.text("{*gregtech.top.fuel_min_consume*} " + fuelMinConsumed);
+            IProbeInfo horizontalPane = probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ALIGN_CENTER));
+            if (fuelInfo instanceof ItemFuelInfo ifo)
+                horizontalPane.text(INFO + "{*gregtech.top.fuel_name*} ").itemLabel(ifo.getItemStack());
             else
-                horizontalPane.text("{*gregtech.top.fuel_burn*} " + burnTime + " {*gregtech.top.fuel_time*}");
+                horizontalPane.text(String.format("%s{*gregtech.top.fuel_name*} {*%s*}", INFO, fuelName));
+
+            horizontalPane = probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ALIGN_CENTER));
+            horizontalPane.progress(fuelRemaining, fuelCapacity,
+                                    probeInfo.defaultProgressStyle()
+                                             .suffix(String.format(" / %d ", fuelCapacity))
+                                             .borderColor(0x00000000)
+                                             .backgroundColor(0x00000000)
+                                             .filledColor(0xFFFFE000)
+                                             .alternateFilledColor(0xFFEED000));
+            if (fuelRemaining < fuelMinConsumed)
+                horizontalPane.text(String.format("{*gregtech.top.fuel_min_consume*} %d", fuelMinConsumed));
+            else
+                horizontalPane.text(String.format("{*gregtech.top.fuel_burn*} %d {*gregtech.top.fuel_time*}", burnTime));
         }
     }
 

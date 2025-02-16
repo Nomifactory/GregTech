@@ -121,7 +121,11 @@ public class EnergyContainerBatteryBuffer extends MTETrait implements IEnergyCon
             ItemStack batteryStack = inventory.getStackInSlot(i);
             IElectricItem electricItem = getBatteryContainer(batteryStack);
             if (electricItem == null) continue;
-            energyCapacity += electricItem.getMaxCharge();
+            // Fix Long overflow arising from using very high capacity batteries
+            long maxCharge = electricItem.getMaxCharge();
+            if(maxCharge > Long.MAX_VALUE - energyCapacity)
+                return Long.MAX_VALUE;
+            energyCapacity += maxCharge;
         }
         return energyCapacity;
     }
@@ -134,7 +138,11 @@ public class EnergyContainerBatteryBuffer extends MTETrait implements IEnergyCon
             ItemStack batteryStack = inventory.getStackInSlot(i);
             IElectricItem electricItem = getBatteryContainer(batteryStack);
             if (electricItem == null) continue;
-            energyStored += electricItem.getCharge();
+            // Fix Long overflow arising from using very high capacity batteries
+            long charge = electricItem.getCharge();
+            if(charge > Long.MAX_VALUE - energyStored)
+                return Long.MAX_VALUE;
+            energyStored += charge;
         }
         return energyStored;
     }

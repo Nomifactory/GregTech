@@ -24,8 +24,10 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.function.LongSupplier;
@@ -344,6 +346,24 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         } else {
             this.setActive(true);
         }
+    }
+
+    /**
+     * @return a copy of the currently active recipe's item outputs.
+     */
+    public @NotNull List<ItemStack> getItemOutputs() {
+        if(itemOutputs == null)
+            return Collections.emptyList();
+        return GTUtility.copyStackList(itemOutputs);
+    }
+
+    /**
+     * @return a copy of the currently active recipe's fluid outputs.
+     */
+    public @NotNull List<FluidStack> getFluidOutputs() {
+        if(fluidOutputs == null)
+            return Collections.emptyList();
+        return GTUtility.copyFluidList(fluidOutputs);
     }
 
     protected int getMachineTierForRecipe(Recipe recipe) {
