@@ -14,6 +14,7 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTUtility;
 import gregtech.common.items.MetaItems;
+import gregtech.common.pipelike.cable.WireProperties;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
@@ -23,6 +24,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static gregtech.api.GTValues.M;
+import static gregtech.api.unification.material.MarkerMaterials.Tier.Superconductor;
+import static gregtech.api.unification.material.MarkerMaterials.Tier.scWireProps;
 
 public class WireRecipeHandler {
 
@@ -37,7 +40,8 @@ public class WireRecipeHandler {
     public static void register() {
         OrePrefix.wireGtSingle.addProcessingHandler(IngotMaterial.class, WireRecipeHandler::processWireSingle);
         for (OrePrefix wirePrefix : WIRE_DOUBLING_ORDER) {
-            wirePrefix.addProcessingHandler(IngotMaterial.class, WireRecipeHandler::generateWireRecipe);
+            wirePrefix.addProcessingHandler(IngotMaterial.class, (orePrefix, material) -> WireRecipeHandler.generateWireRecipe(orePrefix, material, material.cableProperties));
+            wirePrefix.addProcessingHandler((Material t) -> t == Superconductor, scWireProps, WireRecipeHandler::generateWireRecipe);
             wirePrefix.addProcessingHandler(Material.class, WireRecipeHandler::generateWireCombiningRecipe);
         }
 
@@ -77,13 +81,13 @@ public class WireRecipeHandler {
         }
     }
 
-    public static void generateWireRecipe(OrePrefix wirePrefix, IngotMaterial material) {
+    public static void generateWireRecipe(OrePrefix wirePrefix, Material material, WireProperties cableProperties) {
         int cableAmount = (int) (wirePrefix.materialAmount * 2 / M);
         OrePrefix cablePrefix = OrePrefix.valueOf("cable" + wirePrefix.name().substring(4));
         ItemStack cableStack = OreDictUnifier.get(cablePrefix, material);
-        if (material.cableProperties == null) return;
+        if (cableProperties == null) return;
 
-        if (isPaperInsulatedCable(material)) {
+        if (isPaperInsulatedCable(cableProperties)) {
             if (cableAmount <= 7) {
                 Object[] ingredients = new Object[2 + cableAmount];
                 ingredients[0] = new UnificationEntry(wirePrefix, material);
@@ -95,7 +99,7 @@ public class WireRecipeHandler {
             }
         }
 
-        if (isPaperInsulatedCable(material)) {
+        if (isPaperInsulatedCable(cableProperties)) {
             ItemStack carpetStack = new ItemStack(Blocks.CARPET, cableAmount, EnumDyeColor.BLACK.getMetadata());
             RecipeMaps.PACKER_RECIPES.recipeBuilder()
                 .input(wirePrefix, material)
@@ -106,7 +110,7 @@ public class WireRecipeHandler {
         }
 
         for(FluidMaterial insulationMaterial : INSULATION_MATERIALS.keySet()) {
-            int cableTier = GTUtility.getTierByVoltage(material.cableProperties.voltage);
+            int cableTier = GTUtility.getTierByVoltage(cableProperties.voltage);
             int materialAmount = getMaterialAmount(cableTier, INSULATION_MATERIALS.get(insulationMaterial));
             if (materialAmount == -1) continue;
 
@@ -188,8 +192,8 @@ public class WireRecipeHandler {
         return Math.max(36, 144 / (1 + insulationDiscount));
     }
 
-    public static boolean isPaperInsulatedCable(IngotMaterial material) {
-        return material.cableProperties != null && GTUtility.getTierByVoltage(material.cableProperties.voltage) <= 1;
+    public static boolean isPaperInsulatedCable(WireProperties cableProperties) {
+        return cableProperties != null && GTUtility.getTierByVoltage(cableProperties.voltage) <= 1;
     }
 
     private static int getVoltageMultiplier(Material material) {
