@@ -35,7 +35,7 @@ public class MetaTileEntities {
 
     //HULLS
     public static MetaTileEntityHull[] HULL = new MetaTileEntityHull[GTValues.RO.length];
-    public static MetaTileEntityTransformer[] TRANSFORMER = new MetaTileEntityTransformer[GTValues.RO.length - 2];
+    public static MetaTileEntityTransformer[] TRANSFORMER = new MetaTileEntityTransformer[GTValues.RO.length];
     public static MetaTileEntityBatteryBuffer[][] BATTERY_BUFFER = new MetaTileEntityBatteryBuffer[GTValues.RO.length][4];
     public static MetaTileEntityCharger[] CHARGER = new MetaTileEntityCharger[GTValues.RO.length];
 
