@@ -3,6 +3,7 @@ package gregtech.api.unification.material;
 import com.google.common.collect.HashBiMap;
 import gregtech.api.unification.material.type.MarkerMaterial;
 import gregtech.api.unification.material.type.Material;
+import gregtech.common.pipelike.cable.WireProperties;
 import net.minecraft.item.EnumDyeColor;
 
 import static com.google.common.collect.ImmutableList.of;
@@ -87,17 +88,18 @@ public class MarkerMaterials {
      * Circuitry, batteries and other technical things
      */
     public static class Tier {
-        public static Material Primitive = new MarkerMaterial("primitive");
-        public static Material Basic = new MarkerMaterial("basic");
-        public static Material Good = new MarkerMaterial("good");
-        public static Material Advanced = new MarkerMaterial("advanced");
-        public static Material Extreme = new MarkerMaterial("extreme");
-        public static Material Elite = new MarkerMaterial("elite");
-        public static Material Master = new MarkerMaterial("master");
-        public static Material Ultimate = new MarkerMaterial("ultimate");
-        public static Material Superconductor = new Material(354, "superconductor", 0xFFFFFF, MaterialIconSet.NONE, of(), 0L, null) {
+        public static final Material Primitive = new MarkerMaterial("primitive");
+        public static final Material Basic = new MarkerMaterial("basic");
+        public static final Material Good = new MarkerMaterial("good");
+        public static final Material Advanced = new MarkerMaterial("advanced");
+        public static final Material Extreme = new MarkerMaterial("extreme");
+        public static final Material Elite = new MarkerMaterial("elite");
+        public static final Material Master = new MarkerMaterial("master");
+        public static final Material Ultimate = new MarkerMaterial("ultimate");
+        public static final Material Superconductor = new Material(354, "superconductor", 0xFFFFFF, MaterialIconSet.NONE, of(), 0L, null) {
         };
-        public static Material Infinite = new MarkerMaterial("infinite");
+        public static final Material Infinite = new MarkerMaterial("infinite");
+        public static final WireProperties scWireProps = new WireProperties(Integer.MAX_VALUE, 4, 0);
     }
 
 }

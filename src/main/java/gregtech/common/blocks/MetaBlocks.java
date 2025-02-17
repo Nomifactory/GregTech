@@ -1,7 +1,6 @@
 package gregtech.common.blocks;
 
 import com.google.common.collect.ImmutableMap;
-import gnu.trove.map.TIntObjectMap;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.BlockMachine;
@@ -9,7 +8,6 @@ import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.render.MetaTileEntityRenderer;
 import gregtech.api.render.MetaTileEntityTESR;
 import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.type.DustMaterial;
 import gregtech.api.unification.material.type.DustMaterial.MatFlags;
@@ -30,7 +28,6 @@ import gregtech.common.blocks.wood.BlockGregLog;
 import gregtech.common.blocks.wood.BlockGregSapling;
 import gregtech.common.pipelike.cable.BlockCable;
 import gregtech.common.pipelike.cable.Insulation;
-import gregtech.common.pipelike.cable.WireProperties;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
 import gregtech.common.pipelike.cable.tile.TileEntityCableTickable;
 import gregtech.common.pipelike.fluidpipe.BlockFluidPipe;
@@ -73,6 +70,7 @@ import java.util.stream.Collectors;
 
 import static gregtech.api.unification.material.type.SolidMaterial.MatFlags.GENERATE_FRAME;
 import static gregtech.common.ClientProxy.*;
+import static gregtech.api.unification.material.MarkerMaterials.Tier.*;
 
 public class MetaBlocks {
 
@@ -178,17 +176,16 @@ public class MetaBlocks {
             MetaBlocks::createSurfaceRockBlock);
 
         for (Material material : Material.MATERIAL_REGISTRY) {
-            if (material instanceof DustMaterial &&
-                material.hasFlag(DustMaterial.MatFlags.GENERATE_ORE)) {
-                createOreBlock((DustMaterial) material);
+            if (material instanceof DustMaterial dm &&
+                dm.hasFlag(DustMaterial.MatFlags.GENERATE_ORE)) {
+                createOreBlock(dm);
             }
-            if (material instanceof SolidMaterial && material.hasFlag(GENERATE_FRAME)) {
-                BlockFrame blockFrame = new BlockFrame((SolidMaterial) material);
-                blockFrame.setRegistryName("frame_" + material.toString());
-                FRAMES.put((SolidMaterial) material, blockFrame);
+            if (material instanceof SolidMaterial sm && material.hasFlag(GENERATE_FRAME)) {
+                BlockFrame blockFrame = new BlockFrame(sm);
+                blockFrame.setRegistryName("frame_" + sm.toString());
+                FRAMES.put(sm, blockFrame);
             }
-            if (material instanceof IngotMaterial) {
-                IngotMaterial metalMaterial = (IngotMaterial) material;
+            if (material instanceof IngotMaterial metalMaterial) {
                 if (metalMaterial.cableProperties != null) {
                     CABLE.addCableMaterial(metalMaterial, metalMaterial.cableProperties);
                 }
@@ -198,7 +195,7 @@ public class MetaBlocks {
             }
         }
         FLUID_PIPE.addPipeMaterial(Materials.Wood, new FluidPipeProperties(310, 20, false));
-        CABLE.addCableMaterial(MarkerMaterials.Tier.Superconductor, new WireProperties(Integer.MAX_VALUE, 4, 0));
+        CABLE.addCableMaterial(Superconductor, scWireProps);
         registerTileEntity();
 
         //not sure if that's a good place for that, but i don't want to make a dedicated method for that

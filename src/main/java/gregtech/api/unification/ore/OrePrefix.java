@@ -403,11 +403,36 @@ public enum OrePrefix {
         return oreProcessingHandlers.addAll(Arrays.asList(processingHandler));
     }
 
+    /**
+     * Filters for materials assignable to a specific Material class, invoking {@code handler} on matches.
+     * @param materialFilter the Class to filter on
+     * @param handler a handler function to invoke on matching Materials
+     */
     public <T extends Material> void addProcessingHandler(Class<T> materialFilter, BiConsumer<OrePrefix, T> handler) {
         addProcessingHandler((orePrefix, material) -> {
             if (materialFilter.isAssignableFrom(material.getClass())) {
                 //noinspection unchecked
                 handler.accept(orePrefix, (T) material);
+            }
+        });
+    }
+
+    @FunctionalInterface
+    public interface TriConsumer<A, B, C> {
+        void accept(A a, B b, C c);
+    }
+
+    /**
+     * Creates an {@link IOreRegistrationHandler} which will be invoked on all Materials passing a supplied Predicate.
+     * {@code handler} is invoked on all matching Materials, and the provided {@code data} are forwarded to {@code handler}.
+     * @param materialFilter the Class to filter on
+     * @param data an additional argument to pass into {@code handler}
+     * @param handler a handler function to invoke on matching Materials, with both arguments passed
+     */
+    public <T> void addProcessingHandler(Predicate<Material> materialFilter, T data, TriConsumer<OrePrefix, Material, T> handler) {
+        addProcessingHandler((orePrefix, material) -> {
+            if(materialFilter.test(material)) {
+                handler.accept(orePrefix, material, data);
             }
         });
     }
