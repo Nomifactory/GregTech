@@ -93,16 +93,21 @@ public class MetaTileEntityTransformer extends TieredMetaTileEntity {
 
     @Override
     protected void reinitializeEnergyContainer() {
-        long tierVoltage = GTValues.V[getTier()];
-        if (isTransformUp) {
+        int tier = getTier();
+
+        // Make post-UV transformers 16A instead of 4A
+        int M = tier >= GTValues.UHV ? 4 : 1;
+        long tierVoltage = M * GTValues.V[tier];
+        if (isTransformUp)
             //storage = 1 amp high; input = tier / 4; amperage = 4; output = tier; amperage = 1
-            this.energyContainer = new EnergyContainerHandler(this, tierVoltage * 8L, tierVoltage / 4, 4, tierVoltage, 1);
-        } else {
+            this.energyContainer = new EnergyContainerHandler(this, tierVoltage * M * 8L, tierVoltage / 4, 4*M, tierVoltage, M);
+        else
             //storage = 1 amp high; input = tier; amperage = 1; output = tier / 4; amperage = 4
-            this.energyContainer = new EnergyContainerHandler(this, tierVoltage * 8L, tierVoltage, 1, tierVoltage / 4, 4);
-        }
-        ((EnergyContainerHandler) this.energyContainer).setSideInputCondition(s -> s == getFrontFacing());
-        ((EnergyContainerHandler) this.energyContainer).setSideOutputCondition(s -> s == getFrontFacing().getOpposite());
+            this.energyContainer = new EnergyContainerHandler(this, tierVoltage * M * 8L, tierVoltage, M, tierVoltage / 4, 4*M);
+
+        EnergyContainerHandler ech = (EnergyContainerHandler) this.energyContainer;
+        ech.setSideInputCondition(s -> s == getFrontFacing());
+        ech.setSideOutputCondition(s -> s == getFrontFacing().getOpposite());
     }
 
     @Override
