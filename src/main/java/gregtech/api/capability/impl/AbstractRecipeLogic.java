@@ -24,6 +24,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -42,6 +43,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
     private static final String RECIPE_EUT = "RecipeEUt";
     private static final String ITEM_OUTPUTS = "ItemOutputs";
     private static final String FLUID_OUTPUTS = "FluidOutputs";
+    private static final String CHANCE = "Chance";
+    private static final String CHANCED_ITEM_OUTPUTS = "ChancedItemOutputs";
+    private static final String NON_CHANCED_ITEM_AMOUNT = "NonChancedItemAmt";
 
     public final RecipeMap<?> recipeMap;
 
@@ -63,6 +67,14 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
     protected boolean wasActiveAndNeedsUpdate;
     protected boolean isOutputsFull;
     protected boolean invalidInputsForRecipes;
+    protected int nonChancedItemAmt;
+
+    /**
+     * A list containing all possible chanced item outputs from the active recipe, paired with their
+     * overclock-boosted chance value.
+     */
+    protected List<Pair<ItemStack, Integer>> chancedItemOutputs;
+
 
     public AbstractRecipeLogic(MetaTileEntity tileEntity, RecipeMap<?> recipeMap) {
         super(tileEntity);
@@ -350,6 +362,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         this.recipeEUt = resultOverclock[0];
         this.fluidOutputs = GTUtility.copyFluidList(recipe.getFluidOutputs());
         int overclocks = getMachineTierForRecipe(recipe) - recipe.getBaseTier();
+        this.nonChancedItemAmt = recipe.getOutputs().size();
+        this.chancedItemOutputs = recipe.getChancedRecipeOutputsAtTier(overclocks);
         this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(getOutputInventory().getSlots(), random, overclocks));
         if (this.wasActiveAndNeedsUpdate) {
             this.wasActiveAndNeedsUpdate = false;
@@ -376,6 +390,15 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         return GTUtility.copyFluidList(fluidOutputs);
     }
 
+    /**
+     * @return all possible chanced item outputs paired with their computed chances for the currently active recipe
+     */
+    public List<Pair<ItemStack, Integer>> getChancedItemOutputs() {
+        if(itemOutputs == null)
+            return Collections.emptyList();
+        return chancedItemOutputs;
+    }
+
     protected int getMachineTierForRecipe(Recipe recipe) {
         return GTUtility.getTierByVoltage(getMaxVoltage());
     }
@@ -388,6 +411,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         this.recipeEUt = 0;
         this.fluidOutputs = null;
         this.itemOutputs = null;
+        this.chancedItemOutputs = null;
+        this.nonChancedItemAmt = 0;
         setHasNotEnoughEnergy(false);
         this.wasActiveAndNeedsUpdate = true;
     }
@@ -412,6 +437,13 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
 
     public int getRecipeEUt() {
         return recipeEUt;
+    }
+
+    /**
+     * @return the number of non-chanced item outputs this recipe produces
+     */
+    public int getNonChancedItemAmt() {
+        return nonChancedItemAmt;
     }
 
     public void setMaxProgress(int maxProgress) {
@@ -562,6 +594,16 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
             }
             compound.setTag(ITEM_OUTPUTS, itemOutputsList);
             compound.setTag(FLUID_OUTPUTS, fluidOutputsList);
+
+            NBTTagList chancedItemOutputsList = new NBTTagList();
+            for(var entry : chancedItemOutputs) {
+                NBTTagCompound tag = entry.getKey().writeToNBT(new NBTTagCompound());
+                tag.setInteger(CHANCE, entry.getValue());
+                chancedItemOutputsList.appendTag(tag);
+            }
+
+            compound.setTag(CHANCED_ITEM_OUTPUTS, chancedItemOutputsList);
+            compound.setInteger(NON_CHANCED_ITEM_AMOUNT, nonChancedItemAmt);
         }
         return compound;
     }
@@ -596,6 +638,14 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
             for(var f : fluidOutputsList)
                 if(f instanceof NBTTagCompound tag)
                     this.fluidOutputs.add(FluidStack.loadFluidStackFromNBT(tag));
+
+            NBTTagList chancedItemOutputsList = compound.getTagList(CHANCED_ITEM_OUTPUTS, Constants.NBT.TAG_COMPOUND);
+            this.chancedItemOutputs = new ArrayList<>();
+            for(var ci : chancedItemOutputsList)
+                if(ci instanceof NBTTagCompound tag)
+                    this.chancedItemOutputs.add(Pair.of(new ItemStack(tag), tag.getInteger(CHANCE)));
+
+            this.nonChancedItemAmt = compound.getInteger(NON_CHANCED_ITEM_AMOUNT);
         }
     }
 }
