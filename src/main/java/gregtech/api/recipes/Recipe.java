@@ -12,9 +12,9 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.util.Arrays.binarySearch;
 import static net.minecraft.util.math.MathHelper.abs;
@@ -262,41 +262,69 @@ public class Recipe {
         if(maxOutputSlots == 0)
             return Collections.emptyList();
 
-        // Get fixed and chanced outputs
+        // Get the non-chanced outputs
         ArrayList<ItemStack> outputs = new ArrayList<>(GTUtility.copyStackList(getOutputs()));
-        List<ChanceEntry> chancedOutputsList = getChancedOutputs();
 
         // If there's enough fixed outputs to reach the max, return as many as will fit.
         if (outputs.size() >= maxOutputSlots)
             return outputs.subList(0, maxOutputSlots);
 
-        // if there are no chanced outputs, then we can just return the standard outputs.
-        if(chancedOutputsList.isEmpty())
-            return outputs;
+        // See how many chanced outputs we have room for
+        int chancedSlots = maxOutputSlots - outputs.size();
 
-        // Truncate the chanced outputs list to fit remaining available space
-        int maxChancedSlots = maxOutputSlots - outputs.size();
-        if (chancedOutputsList.size() > maxChancedSlots)
-            chancedOutputsList = chancedOutputsList.subList(0, maxChancedSlots);
+        // compute the chanced outputs
+        List<Pair<ItemStack, Integer>> chancedOutputs = getChancedRecipeOutputsAtTier(overclocks);
 
         // Roll each chanced output to see if it is actually produced
-        final RecipeMap.IChanceFunction cf = RecipeMap.getChanceFunction();
-        for (ChanceEntry chancedOutput : chancedOutputsList) {
-            int outputChance = cf.chanceFor(chancedOutput.getChance(), chancedOutput.getBoostPerTier(), overclocks);
-            if (random.nextInt(Recipe.getMaxChancedValue()) <= outputChance) {
-                outputs.add(chancedOutput.getItemStack().copy());
+        for(var chancedOutput : chancedOutputs) {
+            // stop if no space left
+            if(chancedSlots == 0) break;
+
+            if (random.nextInt(Recipe.getMaxChancedValue()) <= chancedOutput.getValue()) {
+                outputs.add(chancedOutput.getKey());
+                chancedSlots--;
             }
         }
         return outputs;
     }
 
-    public List<ItemStack> getAllItemOutputs(int maxOutputSlots) {
-        List<ItemStack> outputs = new ArrayList<>();
-        outputs.addAll(GTUtility.copyStackList(getOutputs()));
-        outputs.addAll(getChancedOutputs().stream().map(ChanceEntry::getItemStack).collect(Collectors.toList()));
-        if (outputs.size() > maxOutputSlots) {
-            outputs = outputs.subList(0, maxOutputSlots);
+    /** Cache last chance-at-tier result to avoid recomputing if called repeatedly */
+    @Nullable
+    private Pair<List<Pair<ItemStack, Integer>>, Integer> cachedChance = null;
+
+    /**
+     * @param overclocks the number of tiers above the base recipe tier
+     * @return a list containing all chanced outputs paired with their chance value at the given overclock tier
+     */
+    public List<Pair<ItemStack, Integer>> getChancedRecipeOutputsAtTier(int overclocks) {
+        assert overclocks >= 0;
+
+        if(cachedChance != null && cachedChance.getValue() == overclocks)
+            return cachedChance.getLeft();
+
+        List<Pair<ItemStack, Integer>> result = new ArrayList<>();
+        var cf = RecipeMap.getChanceFunction();
+        for(ChanceEntry entry : getChancedOutputs()) {
+            int computedChance = cf.chanceFor(entry.getChance(), entry.getBoostPerTier(), overclocks);
+            result.add(Pair.of(entry.getItemStack().copy(), Math.min(Recipe.getMaxChancedValue(), computedChance)));
         }
+
+        cachedChance = Pair.of(result, overclocks);
+
+        return result;
+    }
+
+    /**
+     * @param maxOutputSlots the maximum number of outputs
+     * @return a list of all guaranteed and chanced items produced by this recipe,
+     * truncated if necessary to contain at most {@code maxOutputSlots} items.
+     */
+    public List<ItemStack> getAllItemOutputs(int maxOutputSlots) {
+        List<ItemStack> outputs = new ArrayList<>(GTUtility.copyStackList(getOutputs()));
+        for(var co : getChancedOutputs())
+            outputs.add(co.getItemStack());
+        if (outputs.size() > maxOutputSlots)
+            outputs = outputs.subList(0, maxOutputSlots);
         return outputs;
     }
 

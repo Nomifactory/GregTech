@@ -36,6 +36,12 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
 
     private static final String ALLOW_OVERCLOCKING = "AllowOverclocking";
     private static final String OVERCLOCK_VOLTAGE = "OverclockVoltage";
+    private static final String WORK_ENABLED = "WorkEnabled";
+    private static final String PROGRESS = "Progress";
+    private static final String MAX_PROGRESS = "MaxProgress";
+    private static final String RECIPE_EUT = "RecipeEUt";
+    private static final String ITEM_OUTPUTS = "ItemOutputs";
+    private static final String FLUID_OUTPUTS = "FluidOutputs";
 
     public final RecipeMap<?> recipeMap;
 
@@ -268,6 +274,10 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         IItemHandlerModifiable exportInventory = getOutputInventory();
         IMultipleTankHandler importFluids = getInputTank();
         IMultipleTankHandler exportFluids = getOutputTank();
+        /*
+           Ensure standard recipes have enough EU to perform either the first tick of work, or the whole craft if the
+           total EU is at most half the capacity. Recipes generating EU must be able to store the first tick of energy.
+         */
         if (!(totalEUt >= 0 ? getEnergyStored() >= (totalEUt > getEnergyCapacity() / 2 ? resultOverclock[0] : totalEUt) :
             (getEnergyStored() - resultOverclock[0] <= getEnergyCapacity()))) {
             return false;
@@ -535,13 +545,13 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound compound = new NBTTagCompound();
-        compound.setBoolean("WorkEnabled", workingEnabled);
+        compound.setBoolean(WORK_ENABLED, workingEnabled);
         compound.setBoolean(ALLOW_OVERCLOCKING, allowOverclocking);
         compound.setLong(OVERCLOCK_VOLTAGE, this.overclockVoltage);
         if (progressTime > 0) {
-            compound.setInteger("Progress", progressTime);
-            compound.setInteger("MaxProgress", maxProgressTime);
-            compound.setInteger("RecipeEUt", this.recipeEUt);
+            compound.setInteger(PROGRESS, progressTime);
+            compound.setInteger(MAX_PROGRESS, maxProgressTime);
+            compound.setInteger(RECIPE_EUT, this.recipeEUt);
             NBTTagList itemOutputsList = new NBTTagList();
             for (ItemStack itemOutput : itemOutputs) {
                 itemOutputsList.appendTag(itemOutput.writeToNBT(new NBTTagCompound()));
@@ -550,16 +560,16 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
             for (FluidStack fluidOutput : fluidOutputs) {
                 fluidOutputsList.appendTag(fluidOutput.writeToNBT(new NBTTagCompound()));
             }
-            compound.setTag("ItemOutputs", itemOutputsList);
-            compound.setTag("FluidOutputs", fluidOutputsList);
+            compound.setTag(ITEM_OUTPUTS, itemOutputsList);
+            compound.setTag(FLUID_OUTPUTS, fluidOutputsList);
         }
         return compound;
     }
 
     @Override
     public void deserializeNBT(NBTTagCompound compound) {
-        this.workingEnabled = compound.getBoolean("WorkEnabled");
-        this.progressTime = compound.getInteger("Progress");
+        this.workingEnabled = compound.getBoolean(WORK_ENABLED);
+        this.progressTime = compound.getInteger(PROGRESS);
         if(compound.hasKey(ALLOW_OVERCLOCKING)) {
             this.allowOverclocking = compound.getBoolean(ALLOW_OVERCLOCKING);
         }
@@ -572,19 +582,20 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         this.isActive = false;
         if (progressTime > 0) {
             this.isActive = true;
-            this.maxProgressTime = compound.getInteger("MaxProgress");
-            this.recipeEUt = compound.getInteger("RecipeEUt");
-            NBTTagList itemOutputsList = compound.getTagList("ItemOutputs", Constants.NBT.TAG_COMPOUND);
+            this.maxProgressTime = compound.getInteger(MAX_PROGRESS);
+            this.recipeEUt = compound.getInteger(RECIPE_EUT);
+
+            NBTTagList itemOutputsList = compound.getTagList(ITEM_OUTPUTS, Constants.NBT.TAG_COMPOUND);
             this.itemOutputs = NonNullList.create();
-            for (int i = 0; i < itemOutputsList.tagCount(); i++) {
-                this.itemOutputs.add(new ItemStack(itemOutputsList.getCompoundTagAt(i)));
-            }
-            NBTTagList fluidOutputsList = compound.getTagList("FluidOutputs", Constants.NBT.TAG_COMPOUND);
+            for(var i : itemOutputsList)
+                if(i instanceof NBTTagCompound tag)
+                    this.itemOutputs.add(new ItemStack(tag));
+
+            NBTTagList fluidOutputsList = compound.getTagList(FLUID_OUTPUTS, Constants.NBT.TAG_COMPOUND);
             this.fluidOutputs = new ArrayList<>();
-            for (int i = 0; i < fluidOutputsList.tagCount(); i++) {
-                this.fluidOutputs.add(FluidStack.loadFluidStackFromNBT(fluidOutputsList.getCompoundTagAt(i)));
-            }
+            for(var f : fluidOutputsList)
+                if(f instanceof NBTTagCompound tag)
+                    this.fluidOutputs.add(FluidStack.loadFluidStackFromNBT(tag));
         }
     }
-
 }
