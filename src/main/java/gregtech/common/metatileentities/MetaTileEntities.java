@@ -444,7 +444,7 @@ public class MetaTileEntities {
         COKE_OVEN_HATCH = GregTechAPI.registerMetaTileEntity(527, new MetaTileEntityCokeOvenHatch(gregtechId("coke_oven_hatch")));
 
         int[] batteryBufferSlots = new int[]{1, 4, 9, 16};
-        for (int i = 1; i < TRANSFORMER.length; i++) {
+        for (int i = 1; i <= TRANSFORMER.length; i++) {
             MetaTileEntityTransformer transformer = new MetaTileEntityTransformer(gregtechId("transformer." + GTValues.VN[i].toLowerCase()), i);
             TRANSFORMER[i - 1] = GregTechAPI.registerMetaTileEntity(600 + (i - 1), transformer);
         }
