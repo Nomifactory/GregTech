@@ -1577,7 +1577,7 @@ behavior.magnifying_glass.inspect=这个岩石包含%s
 behaviour.hoe=可以耕作泥土
 behaviour.lighter.tooltip=可以点火
 behaviour.lighter.uses=剩余次数: %d
-behavior.plunger.description=右键机器以清除1000升流体输出./nShift+右键机器以清除1000升流体输入./n仅限清除GTCE机器的流体输入!
+behavior.plunger.description=右键机器以清除1000升流体输出./nShift+右键机器以清除1000升流体输入./n仅限清除GTNE机器的流体输入!
 
 enchantment.damage.endermen=末影离析
 enchantment.damage.radioactivity=辐射

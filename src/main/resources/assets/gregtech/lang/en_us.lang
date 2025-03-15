@@ -1647,7 +1647,7 @@ recipemap.plasma_generator.name=Plasma Generator
 behaviour.hoe=Can till dirt
 behaviour.lighter.tooltip=Can light things on fire
 behaviour.lighter.uses=Remaining uses: %,d
-behavior.plunger.description=Use to clear 1000 mb out of a machine's output tank./nUse while sneaking to clear 1000 mb out of a machine's input tank./nInput tank clearing works only on GTCE machines!
+behavior.plunger.description=Use to clear 1000 mb out of a machine's output tank./nUse while sneaking to clear 1000 mb out of a machine's input tank./nInput tank clearing works only on GTNE machines!
 behavior.toggle_energy_consumer.tooltip=Use to toggle mode
 
 enchantment.damage.endermen=Disjunction
@@ -1775,9 +1775,9 @@ tile.multiblock_casing.fusion.name=Fusion Machine Casing
 tile.multiblock_casing.fusion_mk2.name=Fusion Machine Casing MK II
 
 # Creative tabs
-itemGroup.gregtech.main=GregTech CE
-itemGroup.gregtech.materials=Materials (GTCE)
-itemGroup.gregtech.ores=Ores (GTCE)
+itemGroup.gregtech.main=GregTech NE
+itemGroup.gregtech.materials=Materials (GTNE)
+itemGroup.gregtech.ores=Ores (GTNE)
 
 # Chests
 gregtech.machine.small_wooden_chest.name=Small Wooden Chest

@@ -1589,7 +1589,7 @@ behavior.magnifying_glass.inspect=Этот камень содержит %s
 behaviour.hoe=Может до грязи
 behaviour.lighter.tooltip=Может поджечь предметы
 behaviour.lighter.uses=Осталось использований: %d
-behavior.plunger.description=Щелкните правой кнопкой мыши на машине, чтобы очистить 1000 мВ из его выходного бака./nкрадитесь, чтобы очистить 1000 мВ от входного бака машины./nОчистка входного бака работает только на машинах GTCE!
+behavior.plunger.description=Щелкните правой кнопкой мыши на машине, чтобы очистить 1000 мВ из его выходного бака./nкрадитесь, чтобы очистить 1000 мВ от входного бака машины./nОчистка входного бака работает только на машинах GTNE!
 behavior.toggle_energy_consumer.tooltip=Щелкните для переключения режима
 
 enchantment.damage.endermen=Дизъюнкция
@@ -2620,9 +2620,9 @@ achievement.whatnow=Что теперь?
 achievement.whatnow.desc=Создайте лучшую батарейку
 
 # Креативные вкладки
-itemGroup.gregtech.main=Главная (GTCE)
-itemGroup.gregtech.materials=Материалы (GTCE)
-itemGroup.gregtech.ores=Руды (GTCE)
+itemGroup.gregtech.main=Главная (GTNE)
+itemGroup.gregtech.materials=Материалы (GTNE)
+itemGroup.gregtech.ores=Руды (GTNE)
 
 for.bees.species.clay=Глина
 for.bees.species.slimeball=Сгусток слизи
