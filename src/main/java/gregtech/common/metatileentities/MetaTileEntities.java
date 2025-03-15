@@ -34,7 +34,7 @@ import net.minecraft.util.ResourceLocation;
 public class MetaTileEntities {
 
     //HULLS
-    public static MetaTileEntityHull[] HULL = new MetaTileEntityHull[GTValues.RO.length];
+    public static MetaTileEntityHull[] HULL = new MetaTileEntityHull[GTValues.V.length];
     public static MetaTileEntityTransformer[] TRANSFORMER = new MetaTileEntityTransformer[GTValues.RO.length];
     public static MetaTileEntityBatteryBuffer[][] BATTERY_BUFFER = new MetaTileEntityBatteryBuffer[GTValues.RO.length][4];
     public static MetaTileEntityCharger[] CHARGER = new MetaTileEntityCharger[GTValues.RO.length];
@@ -424,6 +424,13 @@ public class MetaTileEntities {
             var metaTileEntity = new MetaTileEntityHull(gregtechId("hull." + GTValues.VN[tier].toLowerCase()), tier);
             GregTechAPI.registerMetaTileEntity(500 + i, metaTileEntity);
             HULL[i] = metaTileEntity;
+        }
+
+        // post-UV hulls
+        for(int tier = GTValues.UHV; tier < GTValues.MAX; tier++) {
+            MetaTileEntityHull metaTileEntity = new MetaTileEntityHull(gregtechId("hull." + GTValues.VN[tier].toLowerCase()), tier);
+            GregTechAPI.registerMetaTileEntity(1035 + (tier - GTValues.UHV), metaTileEntity);
+            HULL[tier + 1] = metaTileEntity;
         }
 
         PRIMITIVE_BLAST_FURNACE = GregTechAPI.registerMetaTileEntity(510, new MetaTileEntityPrimitiveBlastFurnace(gregtechId("primitive_blast_furnace.bronze")));

@@ -1664,6 +1664,11 @@ tile.machine_casing.insane_voltage.name=IV机器外壳
 tile.machine_casing.ludicrous_voltage.name=LuV机器外壳
 tile.machine_casing.zero_point_module.name=ZPM机器外壳
 tile.machine_casing.ultra_voltage.name=UV机器外壳
+tile.machine_casing.ultra_high_voltage.name=UHV机器外壳
+tile.machine_casing.ultra_excessive_voltage.name=UEV机器外壳
+tile.machine_casing.ultra_immense_voltage.name=UIV机器外壳
+tile.machine_casing.ultra_extreme_voltage.name=UXV机器外壳
+tile.machine_casing.overpowered_voltage.name=OpV机器外壳
 tile.machine_casing.maximum_voltage.name=MAX机器外壳
 
 tile.machine_casing.bronze_hull.name=青铜外壳
@@ -2083,6 +2088,11 @@ gregtech.machine.hull.iv.name=IV机械方块
 gregtech.machine.hull.luv.name=LuV机械方块
 gregtech.machine.hull.zpm.name=ZPM机械方块
 gregtech.machine.hull.uv.name=UV机械方块
+gregtech.machine.hull.uhv.name=UHV机械方块
+gregtech.machine.hull.uev.name=UEV机械方块
+gregtech.machine.hull.uiv.name=UIV机械方块
+gregtech.machine.hull.uxv.name=UXV机械方块
+gregtech.machine.hull.opv.name=OpV机械方块
 gregtech.machine.hull.max.name=MAX机械方块
 
 # Battery buffers
