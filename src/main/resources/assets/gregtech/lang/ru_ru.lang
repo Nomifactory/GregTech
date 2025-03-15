@@ -1677,6 +1677,11 @@ tile.machine_casing.insane_voltage.name=Корпус машины (IV)
 tile.machine_casing.ludicrous_voltage.name=Корпус машины (LuV)
 tile.machine_casing.zero_point_module.name=Корпус машины (ZPM)
 tile.machine_casing.ultra_voltage.name=Корпус машины (UV)
+tile.machine_casing.ultra_extreme_voltage.name=Корпус машины (UXV)
+tile.machine_casing.ultra_high_voltage.name=Корпус машины (UHV)
+tile.machine_casing.ultra_excessive_voltage.name=Корпус машины (UEV)
+tile.machine_casing.ultra_immense_voltage.name=Корпус машины (UIV)
+tile.machine_casing.overpowered_voltage.name=Корпус машины (OpV)
 tile.machine_casing.maximum_voltage.name=Корпус машины (Макс.)
 
 tile.machine_casing.bronze_hull.name=Бронзовый корпус
@@ -2092,6 +2097,11 @@ gregtech.machine.hull.iv.name=Корпус машины (IV)
 gregtech.machine.hull.luv.name=Корпус машины (LuV)
 gregtech.machine.hull.zpm.name=Корпус машины (ZPM)
 gregtech.machine.hull.uv.name=Корпус машины (UV)
+gregtech.machine.hull.uhv.name=Корпус машины (UHV)
+gregtech.machine.hull.uev.name=Корпус машины (UEV)
+gregtech.machine.hull.uiv.name=Корпус машины (UIV)
+gregtech.machine.hull.uxv.name=Корпус машины (UXV)
+gregtech.machine.hull.opv.name=Корпус машины (OpV)
 gregtech.machine.hull.max.name=Корпус машины (Макс.)
 
 # Батарейные буферы
