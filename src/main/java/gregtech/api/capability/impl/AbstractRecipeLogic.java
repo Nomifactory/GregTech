@@ -279,8 +279,15 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
                 ItemStack.areItemStackTagsEqual(stackA, stackB));
     }
 
+    /**
+     * Attempts to start the specified recipe. A recipe will fail to start if there is insufficient energy,
+     * the output inventories are full, or the required ingredients are not present.
+     *
+     * @param recipe the recipe to start
+     * @return {@code true} if the recipe was started and inputs consumed, {@code false} otherwise.
+     */
     protected boolean setupAndConsumeRecipeInputs(Recipe recipe) {
-        int[] resultOverclock = calculateOverclock(recipe.getEUt(), recipe.getDuration());
+        int[] resultOverclock = calculateOverclock(recipe);
         int totalEUt = resultOverclock[0] * resultOverclock[1];
         IItemHandlerModifiable importInventory = getInputInventory();
         IItemHandlerModifiable exportInventory = getOutputInventory();
@@ -306,11 +313,32 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         return recipe.matches(true, importInventory, importFluids);
     }
 
-    protected int[] calculateOverclock(int EUt, int duration) {
-        return calculateOverclock(EUt, this.overclockPolicy.getAsLong(), duration);
+    /**
+     * Performs overclocking with voltage using {@link #overclockPolicy} for the voltage.
+     * @see #calculateOverclock(Recipe, long)
+     */
+    protected int[] calculateOverclock(@NotNull Recipe recipe) {
+        return calculateOverclock(recipe, this.overclockPolicy.getAsLong());
     }
 
-    protected int[] calculateOverclock(int EUt, long voltage, int duration) {
+    /**
+     * Attempts to overclock a given recipe.
+     * <ul>
+     * <li>Recipes at or below 16 EU/t overclock by halving duration and quadrupling energy consumption, until the duration
+     * reaches a single game tick or the EU/t can no longer be increased.</li>
+     * <li>Recipes above 16 EU/t overclock by dividing duration by 2.8 and quadrupling energy consumption, until the duration
+     * reaches fewer than 3 game ticks or the EU/t can no longer be increased.</li>
+     * </ul>
+     * @param recipe the Recipe to overclock
+     * @param voltage the maximum EU/t to use for overclocking. This value must be positive.
+     * @return an {@code int[]} of length 2, where [0] is the computed EU/t and [1] the duration.
+     */
+    protected int[] calculateOverclock(@NotNull final Recipe recipe, final long voltage) {
+        assert(voltage >= 0);
+
+        int EUt = recipe.getEUt();
+        int duration = recipe.getDuration();
+
         if (!allowOverclocking) {
             return new int[] {EUt, duration};
         }
@@ -322,19 +350,22 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
             EUt = -EUt;
         if (EUt <= 16) {
             int multiplier = EUt <= 8 ? tier : tier - 1;
-            int resultEUt = EUt * (1 << multiplier) * (1 << multiplier);
-            int resultDuration = duration / (1 << multiplier);
-            return new int[]{negativeEU ? -resultEUt : resultEUt, resultDuration};
+            // Restrict the maximum number of overclocks to how many times the duration can be halved
+            int speedCap = (31 - Integer.numberOfLeadingZeros(duration));
+            if(multiplier > speedCap) multiplier = speedCap;
+            EUt *= (1 << 2 * multiplier);
+            duration /= (1 << multiplier);
         } else {
-            int resultEUt = EUt;
-            double resultDuration = duration;
-            //do not overclock further if duration is already too small
-            while (resultDuration >= 3 && resultEUt <= GTValues.V[tier - 1]) {
-                resultEUt *= 4;
-                resultDuration /= 2.8;
+            // Restrict the maximum number of overclocks to how many times the duration is divisible by 2.8
+            int speedCap = (int) (Math.log(duration) / Math.log(2.8));
+            int dt = tier - recipe.getBaseTier();
+            if(dt > speedCap) dt = speedCap;
+            if(dt > 0) {
+                EUt *= Math.pow(4, dt);
+                duration /= Math.pow(2.8, dt);
             }
-            return new int[]{negativeEU ? -resultEUt : resultEUt, (int) Math.ceil(resultDuration)};
         }
+        return new int[]{negativeEU ? -EUt : EUt, duration};
     }
 
     protected int getOverclockingTier(long voltage) {
@@ -356,7 +387,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
     }
 
     protected void setupRecipe(Recipe recipe) {
-        int[] resultOverclock = calculateOverclock(recipe.getEUt(), recipe.getDuration());
+        int[] resultOverclock = calculateOverclock(recipe);
         this.progressTime = 1;
         setMaxProgress(resultOverclock[1]);
         this.recipeEUt = resultOverclock[0];
@@ -399,8 +430,13 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         return chancedItemOutputs;
     }
 
+    /**
+     * <b>This is NOT for energy calculations. Use {@link #getOverclockingTier(long)} for energy.</b><br />
+     * Used to override the machine's tier for the purposes of determining chanced outputs.
+     * The default implementation simply returns the overclocking tier of the maximum voltage of the machine.
+     */
     protected int getMachineTierForRecipe(Recipe recipe) {
-        return GTUtility.getTierByVoltage(getMaxVoltage());
+        return getOverclockingTier(getMaxVoltage());
     }
 
     protected void completeRecipe() {

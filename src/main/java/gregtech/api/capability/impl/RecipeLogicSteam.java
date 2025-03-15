@@ -19,6 +19,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fluids.IFluidTank;
+import org.jetbrains.annotations.NotNull;
 
 public class RecipeLogicSteam extends AbstractRecipeLogic {
 
@@ -159,12 +160,12 @@ public class RecipeLogicSteam extends AbstractRecipeLogic {
     }
 
     @Override
-    protected int[] calculateOverclock(int EUt, long voltage, int duration) {
+    protected int[] calculateOverclock(@NotNull final Recipe recipe) {
         if (!isHighPressure) {
             //disallow overclocking for low pressure bronze machines
-            return new int[]{EUt, duration};
+            return new int[]{recipe.getEUt(), recipe.getDuration()};
         }
-        return super.calculateOverclock(EUt, voltage, duration);
+        return super.calculateOverclock(recipe);
     }
 
     @Override

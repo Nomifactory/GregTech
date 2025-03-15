@@ -129,4 +129,73 @@ public class AbstractRecipeLogicTest {
 		assertTrue(AbstractRecipeLogic.areItemStacksEqual(arl.getOutputInventory().getStackInSlot(0),
 		                                                  new ItemStack(Blocks.STONE, 1)));
 	}
+
+	@Test
+	public void ulv_recipe_overclock_test() {
+
+		World world = DummyWorld.INSTANCE;
+
+		// Create an empty recipe map to work with
+		RecipeMap<SimpleRecipeBuilder> map = new RecipeMap<>("chemical_reactor_2",
+		                                                     0,
+		                                                     2,
+		                                                     0,
+		                                                     2,
+		                                                     0,
+		                                                     3,
+		                                                     0,
+		                                                     2,
+		                                                     new SimpleRecipeBuilder().EUt(30),
+		                                                     false);
+
+		MetaTileEntity at =
+			GregTechAPI.registerMetaTileEntity(198,
+			                                   new SimpleMachineMetaTileEntity(
+				                                   new ResourceLocation(GTValues.MODID, "chemical_reactor.uv"),
+				                                   map,
+				                                   Textures.CHEMICAL_REACTOR_OVERLAY,
+				                                   1));
+
+		MetaTileEntity atte = new MetaTileEntityHolder().setMetaTileEntity(at);
+		atte.getHolder().setWorld(world);
+
+		// Recipe that will reach maximum speed (1t) at ZPM
+		map.recipeBuilder()
+		   .inputs(new ItemStack(Blocks.COBBLESTONE))
+		   .outputs(new ItemStack(Blocks.STONE))
+		   .EUt(4).duration(128)
+		   .buildAndRegister();
+
+		// UV-tier machine
+		AbstractRecipeLogic arl = new AbstractRecipeLogic(atte, map) {
+			@Override
+			protected long getEnergyStored() {
+				return Long.MAX_VALUE;
+			}
+
+			@Override
+			protected long getEnergyCapacity() {
+				return Long.MAX_VALUE;
+			}
+
+			@Override
+			protected boolean drawEnergy(int recipeEUt) {
+				return true;
+			}
+
+			@Override
+			protected long getMaxVoltage() {
+				return GTValues.V[GTValues.UV];
+			}
+		};
+
+		arl.getInputInventory().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 16), false);
+		Recipe recipe = arl.findRecipe(arl.getMaxVoltage(), arl.getInputInventory(), arl.getInputTank());
+		int[] oc = arl.calculateOverclock(recipe);
+
+		// Expect seven overclocks to a half-amp of ZPM and capped 1t duration, instead of previous behavior where
+		// the energy consumption increased as though an eighth overclock was performed
+		assertEquals(GTValues.V[GTValues.ZPM] / 2, oc[0]);
+		assertEquals(1, oc[1]);
+	}
 }
