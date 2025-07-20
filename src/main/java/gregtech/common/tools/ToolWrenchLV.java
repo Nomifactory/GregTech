@@ -8,6 +8,11 @@ import net.minecraft.item.ItemStack;
 public class ToolWrenchLV extends ToolWrench {
 
     @Override
+    public float getBaseDamage(ItemStack stack) {
+        return 4.0F;
+    }
+
+    @Override
     public int getToolDamagePerBlockBreak(ItemStack stack) {
         return 1;
     }
@@ -19,7 +24,7 @@ public class ToolWrenchLV extends ToolWrench {
 
     @Override
     public float getMaxDurabilityMultiplier(ItemStack stack) {
-        return 10.0f;
+        return 5.0f;
     }
 
     @Override

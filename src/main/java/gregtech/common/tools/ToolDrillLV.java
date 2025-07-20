@@ -13,7 +13,8 @@ public class ToolDrillLV extends ToolBase {
 
     @Override
     public boolean canApplyEnchantment(ItemStack stack, Enchantment enchantment) {
-        return enchantment.type.canEnchantItem(Items.IRON_PICKAXE) ||
+        return enchantment.type != null &&
+            enchantment.type.canEnchantItem(Items.IRON_PICKAXE) ||
             enchantment.type.canEnchantItem(Items.IRON_SHOVEL);
     }
 

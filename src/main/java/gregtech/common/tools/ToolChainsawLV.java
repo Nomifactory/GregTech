@@ -15,11 +15,6 @@ public class ToolChainsawLV extends ToolSaw {
     }
 
     @Override
-    public int getToolDamagePerContainerCraft(ItemStack stack) {
-        return 8;
-    }
-
-    @Override
     public float getBaseDamage(ItemStack stack) {
         return 4.0F;
     }
@@ -31,7 +26,7 @@ public class ToolChainsawLV extends ToolSaw {
 
     @Override
     public float getMaxDurabilityMultiplier(ItemStack stack) {
-        return 10.0f;
+        return 5.0f;
     }
 
     @Override
