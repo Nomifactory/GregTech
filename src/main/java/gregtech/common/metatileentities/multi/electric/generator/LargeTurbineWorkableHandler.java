@@ -1,5 +1,6 @@
 package gregtech.common.metatileentities.multi.electric.generator;
 
+import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.FuelRecipeLogic;
@@ -13,8 +14,8 @@ import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityRo
 import gregtech.common.metatileentities.multi.electric.generator.MetaTileEntityLargeTurbine.TurbineType;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.IFluidTank;
 
 import java.util.function.Supplier;
 
@@ -140,5 +141,12 @@ public class LargeTurbineWorkableHandler extends FuelRecipeLogic {
     @Override
     protected boolean shouldVoidExcessiveEnergy() {
         return true;
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability) {
+        if (largeTurbine.isStructureFormed() || capability != GregtechCapabilities.CAPABILITY_FUELABLE)
+            return super.getCapability(capability);
+        return null;
     }
 }
