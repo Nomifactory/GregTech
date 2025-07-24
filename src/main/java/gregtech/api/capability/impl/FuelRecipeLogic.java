@@ -105,6 +105,9 @@ public class FuelRecipeLogic extends MTETrait implements IControllable, IFuelabl
         if(capability == GregtechCapabilities.CAPABILITY_FUELABLE) {
             return GregtechCapabilities.CAPABILITY_FUELABLE.cast(this);
         }
+        if(capability == GregtechTileCapabilities.CAPABILITY_MUFFLEABLE) {
+            return GregtechTileCapabilities.CAPABILITY_MUFFLEABLE.cast(getMetaTileEntity());
+        }
         return null;
     }
 

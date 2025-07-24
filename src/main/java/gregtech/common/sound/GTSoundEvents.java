@@ -41,5 +41,7 @@ public class GTSoundEvents {
         GregTechAPI.soundManager.registerSound(CUTTING);
         GregTechAPI.soundManager.registerSound(COOLING);
         GregTechAPI.soundManager.registerSound(INTERRUPTED);
+        GregTechAPI.soundManager.registerSound(COMBUSTION);
+        GregTechAPI.soundManager.registerSound(TURBINE);
     }
 }

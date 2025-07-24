@@ -46,13 +46,6 @@ public abstract class RotorHolderMultiblockController extends FueledMultiblockCo
         return isStructureFormed() && getAbilities(ABILITY_ROTOR_HOLDER).get(0).isFrontFaceFree();
     }
 
-    /**
-     * @return true if structure formed, workable is active and front face is free
-     */
-    public boolean isActive() {
-        return isRotorFaceFree() && workableHandler.isActive() && workableHandler.isWorkingEnabled();
-    }
-
     public abstract int getRotorSpeedIncrement();
 
     public abstract int getRotorSpeedDecrement();
