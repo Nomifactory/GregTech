@@ -417,20 +417,17 @@ public class MetaTileEntities {
         ITEM_COLLECTOR[2] = GregTechAPI.registerMetaTileEntity(496, new MetaTileEntityItemCollector(gregtechId("item_collector.hv"), 3, 32));
         ITEM_COLLECTOR[3] = GregTechAPI.registerMetaTileEntity(497, new MetaTileEntityItemCollector(gregtechId("item_collector.ev"), 4, 64));
 
-        // Hulls: IDs 500 - 509
-        for (int tier : GTValues.RNO) {
-            // prevent ID shifting for MAX by keeping it at its original ordinal
-            int i = tier == GTValues.MAX ? GTValues.MAX_OLD : tier;
-            var metaTileEntity = new MetaTileEntityHull(gregtechId("hull." + GTValues.VN[tier].toLowerCase()), tier);
-            GregTechAPI.registerMetaTileEntity(500 + i, metaTileEntity);
-            HULL[i] = metaTileEntity;
-        }
-
-        // post-UV hulls
-        for(int tier = GTValues.UHV; tier < GTValues.MAX; tier++) {
+        // Hulls: IDs 500 - 509 for ULV through UV and MAX, 1035 - 1039 for UHV through OpV
+        for (int tier = GTValues.ULV; tier <= GTValues.MAX; tier++) {
             MetaTileEntityHull metaTileEntity = new MetaTileEntityHull(gregtechId("hull." + GTValues.VN[tier].toLowerCase()), tier);
-            GregTechAPI.registerMetaTileEntity(1035 + (tier - GTValues.UHV), metaTileEntity);
-            HULL[tier + 1] = metaTileEntity;
+            if(tier < GTValues.MAX_OLD)
+                GregTechAPI.registerMetaTileEntity(500 + tier, metaTileEntity);
+            else if(tier == GTValues.MAX)
+                // prevent ID shifting for MAX by keeping it at its original ordinal
+                GregTechAPI.registerMetaTileEntity(500 + GTValues.MAX_OLD, metaTileEntity);
+            else // newer UHV - OpV hulls assigned to open ID block
+                GregTechAPI.registerMetaTileEntity(1035 + (tier - GTValues.UHV), metaTileEntity);
+            HULL[tier] = metaTileEntity;
         }
 
         PRIMITIVE_BLAST_FURNACE = GregTechAPI.registerMetaTileEntity(510, new MetaTileEntityPrimitiveBlastFurnace(gregtechId("primitive_blast_furnace.bronze")));
