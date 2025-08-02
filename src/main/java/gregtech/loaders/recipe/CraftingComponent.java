@@ -11,7 +11,8 @@ import gregtech.api.unification.material.type.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.common.blocks.BlockMachineCasing;
-import gregtech.common.blocks.BlockMetalCasing;
+import gregtech.common.blocks.BlockMachineCasing2;
+import gregtech.common.blocks.LookupBlock;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.init.Blocks;
@@ -90,6 +91,7 @@ public class CraftingComponent {
         case LuV -> Materials.NiobiumTitanium;
         case ZPM -> Materials.Naquadah;
         case UV -> Materials.NaquadahAlloy;
+        case UHV -> Materials.Europium;
         default -> MarkerMaterials.Tier.Superconductor;
     };
     
@@ -133,7 +135,7 @@ public class CraftingComponent {
 
     /** Tier-appropriate machine hull */
     public static final Component<ItemStack> HULL = tier ->
-        MetaTileEntities.HULL[tier == MAX ? MAX_OLD : tier].getStackForm();
+        MetaTileEntities.HULL[tier].getStackForm();
 
     /** Machine hull for one tier below the current tier */
     public static final Component<ItemStack> WORSE_HULL = tier ->
@@ -399,14 +401,21 @@ public class CraftingComponent {
     /**
      * Voltage-tiered machine casings
      */
-    public static final Component<ItemStack> TIER_CASING = tier ->
-        BlockMachineCasing.MachineCasingType.getTiered()[tier == MAX ? MAX_OLD : tier].getStack();
+    public static final Component<ItemStack> TIER_CASING = tier -> {
+        LookupBlock<?> block = switch(tier) {
+            case MAX -> BlockMachineCasing.MachineCasingType.MAX;
+            case UHV, UEV, UIV, UXV, OpV -> BlockMachineCasing2.MachineCasingType.byTier(tier);
+            default -> BlockMachineCasing.MachineCasingType.getTiered()[tier];
+        };
+        return block.getStack();
+    };
 
     /** Transformer circuit tier. Can return {@code null}! */
     public static final Component<Material> XF_ITEM_TIER = tier -> switch(tier) {
         case EV, IV -> Tier.Advanced;
         case LuV, ZPM -> Tier.Extreme;
-        case UV -> Tier.Elite;
+        case UV, UHV -> Tier.Elite;
+        case UEV -> Tier.Master;
         default -> null;
     };
 
@@ -425,10 +434,17 @@ public class CraftingComponent {
         default -> CABLE_MATERIALS.getIngredient(tier);
     };
 
+    /** Overrides for cable types used in Transformer recipes. */
+    public static final Component<OrePrefix> XF_CABLE_TYPE = tier -> switch(tier) {
+        case UHV -> OrePrefix.cableGtQuadruple;
+        case UEV -> OrePrefix.wireGtQuadruple;
+        default -> CABLE_TYPE.getIngredient(tier);
+    };
+
     /** Cables at tier; used in transformer recipes */
     public static final Component<UnificationEntry> XF_CABLE = tier -> {
         var material = XF_CABLE_MATERIAL.getIngredient(tier);
-        var kind = CABLE_TYPE.getIngredient(tier);
+        var kind = XF_CABLE_TYPE.getIngredient(tier);
         return new UnificationEntry(kind, material);
     };
 

@@ -827,6 +827,8 @@ public class Materials {
         NaquadahAlloy.setCableProperties(V[UV], 2, 4);
         Duranium.setCableProperties(V[UV], 1, 8);
 
+        Europium.setCableProperties(V[UHV], 2, 32);
+
         Copper.setFluidPipeProperties(25, 1000, true);
         Bronze.setFluidPipeProperties(35, 2000, true);
         Steel.setFluidPipeProperties(50, 2500, true);
