@@ -686,6 +686,8 @@ public class MachineRecipeLoader {
         // Machine Hulls
         for(var hull : MetaTileEntities.HULL) {
             int tier = hull.getTier();
+            if(tier < MAX && tier > UV)
+                continue;
             var builder = RecipeMaps.ASSEMBLER_RECIPES
                 .recipeBuilder().EUt(16).duration(tier == ULV ? 25 : 50)
                 .outputs(hull.getStackForm())

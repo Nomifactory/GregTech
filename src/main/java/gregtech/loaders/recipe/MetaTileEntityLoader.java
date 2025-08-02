@@ -19,6 +19,7 @@ import gregtech.common.blocks.BlockWireCoil.CoilType;
 import gregtech.common.blocks.LookupBlock;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
+import gregtech.common.metatileentities.electric.MetaTileEntityHull;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 
@@ -48,7 +49,7 @@ public class MetaTileEntityLoader {
         // Tiered Machine Casings
         registerTieredShapedRecipes(MachineCasingType.getTiered(),
                                     x -> "casing_%1$s",
-                                    Enum::ordinal,
+                                    MachineCasingType::getTier,
                                     LookupBlock::getStack,
                                     new String[] {
                                         "PPP",
@@ -209,9 +210,14 @@ public class MetaTileEntityLoader {
             ModHandler.addShapelessRecipe(sign.getName() + "_to_steel_solid_casing", STEEL_SOLID.getStack(), sign.getStack());
 
         // Machine Hulls
+        // only register recipes for ULV - UV and MAX
+        final MetaTileEntityHull[] hulls =
+            Arrays.stream(MetaTileEntities.HULL)
+                  .filter(x -> x.getTier() == GTValues.MAX || x.getTier() < GTValues.UHV)
+                  .toArray(MetaTileEntityHull[]::new);
         if (ConfigHolder.harderMachineHulls)
             registerTieredShapedRecipes("hull_",
-                                        MetaTileEntities.HULL,
+                                        hulls,
                                         new String[] {
                                             "PHP",
                                             "CMC"
@@ -222,7 +228,7 @@ public class MetaTileEntityLoader {
                                         sub('P', HULL_PLATE_2));
         else
             registerTieredShapedRecipes("hull_",
-                                        MetaTileEntities.HULL,
+                                        hulls,
                                         new String[] {
                                             "CMC"
                                         },

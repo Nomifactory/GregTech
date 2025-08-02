@@ -1,5 +1,6 @@
 package gregtech.common.blocks;
 
+import gregtech.api.GTValues;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -7,6 +8,7 @@ import net.minecraft.entity.EntityLiving.SpawnPlacementType;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import org.jetbrains.annotations.NotNull;
 
 public class BlockMachineCasing2 extends VariantBlock<BlockMachineCasing2.MachineCasingType> {
 
@@ -25,7 +27,7 @@ public class BlockMachineCasing2 extends VariantBlock<BlockMachineCasing2.Machin
         return false;
     }
 
-    public enum MachineCasingType implements IStringSerializable {
+    public enum MachineCasingType implements IStringSerializable, LookupBlock<MachineCasingType> {
 
         //Voltage-tiered casings
         UHV("ultra_high_voltage"),
@@ -45,6 +47,18 @@ public class BlockMachineCasing2 extends VariantBlock<BlockMachineCasing2.Machin
             return this.name;
         }
 
+        /**
+         * @param tier a {@link gregtech.api.GTValues} tier ordinal between {@link GTValues#UHV}
+         *             and {@link GTValues#OpV}
+         */
+        public static MachineCasingType byTier(int tier) {
+            return values()[tier - GTValues.UHV];
+        }
+
+        @Override
+        public @NotNull VariantBlock<MachineCasingType> getVariantBlock() {
+            return MetaBlocks.MACHINE_CASING2;
+        }
     }
 
 }

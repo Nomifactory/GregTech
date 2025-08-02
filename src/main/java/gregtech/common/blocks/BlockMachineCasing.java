@@ -1,5 +1,6 @@
 package gregtech.common.blocks;
 
+import gregtech.api.GTValues;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.type.Material;
 import net.minecraft.block.SoundType;
@@ -32,16 +33,16 @@ public class BlockMachineCasing extends VariantBlock<BlockMachineCasing.MachineC
     public enum MachineCasingType implements IStringSerializable, MaterialLookupBlock<MachineCasingType> {
 
         //Voltage-tiered casings
-        ULV("ultra_low_voltage"),
-        LV("low_voltage"),
-        MV("medium_voltage"),
-        HV("high_voltage"),
-        EV("extreme_voltage"),
-        IV("insane_voltage"),
-        LuV("ludicrous_voltage"),
-        ZPM("zero_point_module"),
-        UV("ultra_voltage"),
-        MAX("maximum_voltage"),
+        ULV("ultra_low_voltage", GTValues.ULV),
+        LV("low_voltage", GTValues.LV),
+        MV("medium_voltage", GTValues.MV),
+        HV("high_voltage", GTValues.HV),
+        EV("extreme_voltage", GTValues.EV),
+        IV("insane_voltage", GTValues.IV),
+        LuV("ludicrous_voltage", GTValues.LuV),
+        ZPM("zero_point_module", GTValues.ZPM),
+        UV("ultra_voltage", GTValues.UV),
+        MAX("maximum_voltage", GTValues.MAX),
         BRONZE_HULL("bronze_hull", Materials.Bronze),
         BRONZE_BRICKS_HULL("bronze_bricks_hull", Materials.Bronze),
         STEEL_HULL("steel_hull", Materials.Steel),
@@ -49,14 +50,20 @@ public class BlockMachineCasing extends VariantBlock<BlockMachineCasing.MachineC
 
         private final String name;
         private final Material material;
+        private final int tier;
 
-        MachineCasingType(String name) {
-            this(name, null);
+        MachineCasingType(String name, int tier) {
+            this(name, null, tier);
         }
 
         MachineCasingType(String name, Material material) {
+            this(name, material, -1);
+        }
+
+        MachineCasingType(String name, Material material, int tier) {
             this.name = name;
             this.material = material;
+            this.tier = tier;
         }
 
         @Override
@@ -66,7 +73,14 @@ public class BlockMachineCasing extends VariantBlock<BlockMachineCasing.MachineC
 
         /** Returns the subset of this VariantBlock consisting of tiered machine casings  */
         public static MachineCasingType[] getTiered() {
-            return Arrays.copyOfRange(values(), ULV.ordinal(), MAX.ordinal() + 1);
+            return Arrays.stream(values())
+                         .filter(x -> x.getTier() > -1)
+                         .toArray(MachineCasingType[]::new);
+        }
+
+        /** @return the tier of this element, or {@code -1} if there is no tier. */
+        public int getTier() {
+            return tier;
         }
 
         @Override
