@@ -15,30 +15,28 @@ public class GTUtilsTest {
 
 	private static Stream<Arguments> voltageTestArgs() {
 		final long[] voltages = {
-			2, 4, 8,
-			9, 16, 17, 31, 32,
-			33, 127, 128,
-			129, 256, 257, 511, 512,
-			513, 2047, 2048,
-			2049, 4096,
-			32767, 32768,
-			32769,
+			2, 4, 8, 9, 16, 17, 31,
+			32, 33, 127,
+			128, 129, 256, 257, 511,
+			512, 513, 2047,
+			2048, 2049, 4096,
+			32767,
+			32768, 32769,
 			1_000_000, 2_000_000,
 			3_000_000,
 			Integer.MAX_VALUE, Long.MAX_VALUE / 4, Long.MAX_VALUE
 		};
 
 		final int[] expectedTiers = {
-			ULV, ULV, ULV,
-			LV, LV, LV, LV, LV,
-			MV, MV, MV,
-			HV, HV, HV, HV, HV,
+			ULV, ULV, ULV, ULV, ULV, ULV, ULV,
+			LV, LV, LV,
+			MV, MV, MV, MV, MV,
+			HV, HV, HV,
 			EV, EV, EV,
-			IV, IV,
+			IV,
 			LuV, LuV,
-			ZPM,
-			UHV, UHV,
-			UEV,
+			UV, UV,
+			UHV,
 			MAX, MAX, MAX
 		};
 
@@ -61,8 +59,11 @@ public class GTUtilsTest {
 			tier = 0;
 		else if(voltage > V[MAX])
 			tier = MAX;
-		else
+		else {
 			tier = (byte) ((62 - Long.numberOfLeadingZeros(voltage - 1)) >> 1);
+			if(voltage < V[tier])
+				tier--;
+		}
 
 		assertEquals(expected, tier, "Incorrect voltage for input value " + voltage);
 	}
@@ -73,7 +74,7 @@ public class GTUtilsTest {
 		int tier = getTierByVoltage(voltage);
 		if(tier > ULV && tier < MAX && voltage > V[tier]) {
 			System.out.printf("%d => %d (%s)%n", voltage, V[tier], VN[tier]);
-			assertEquals(expected, tier + 1);
+			assertEquals(expected, tier);
 		}
 	}
 
