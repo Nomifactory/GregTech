@@ -106,14 +106,14 @@ public class MetaTileEntities {
     public static MetaTileEntityMagicEnergyAbsorber MAGIC_ENERGY_ABSORBER;
 
     //MULTIBLOCK PARTS SECTION
-    public static MetaTileEntityItemBus[] ITEM_IMPORT_BUS = new MetaTileEntityItemBus[GTValues.RO.length];
-    public static MetaTileEntityItemBus[] ITEM_EXPORT_BUS = new MetaTileEntityItemBus[GTValues.RO.length];
-    public static MetaTileEntityFluidHatch[] FLUID_IMPORT_HATCH = new MetaTileEntityFluidHatch[GTValues.RO.length];
+    public static MetaTileEntityItemBus[] ITEM_IMPORT_BUS = new MetaTileEntityItemBus[GTValues.V.length];
+    public static MetaTileEntityItemBus[] ITEM_EXPORT_BUS = new MetaTileEntityItemBus[GTValues.V.length];
+    public static MetaTileEntityFluidHatch[] FLUID_IMPORT_HATCH = new MetaTileEntityFluidHatch[GTValues.V.length];
     public static MetaTileEntityMultiFluidHatch[] FLUID_MULTI_IMPORT_HATCH = new MetaTileEntityMultiFluidHatch[2];
     public static MetaTileEntityMultiFluidHatch[] FLUID_MULTI_EXPORT_HATCH = new MetaTileEntityMultiFluidHatch[2];
-    public static MetaTileEntityFluidHatch[] FLUID_EXPORT_HATCH = new MetaTileEntityFluidHatch[GTValues.RO.length];
-    public static MetaTileEntityEnergyHatch[] ENERGY_INPUT_HATCH = new MetaTileEntityEnergyHatch[GTValues.RO.length];
-    public static MetaTileEntityEnergyHatch[] ENERGY_OUTPUT_HATCH = new MetaTileEntityEnergyHatch[GTValues.RO.length];
+    public static MetaTileEntityFluidHatch[] FLUID_EXPORT_HATCH = new MetaTileEntityFluidHatch[GTValues.V.length];
+    public static MetaTileEntityEnergyHatch[] ENERGY_INPUT_HATCH = new MetaTileEntityEnergyHatch[GTValues.V.length];
+    public static MetaTileEntityEnergyHatch[] ENERGY_OUTPUT_HATCH = new MetaTileEntityEnergyHatch[GTValues.V.length];
     public static MetaTileEntityRotorHolder[] ROTOR_HOLDER = new MetaTileEntityRotorHolder[3]; //HV, LuV, MAX
     public static MetaTileEntityCokeOvenHatch COKE_OVEN_HATCH;
 
@@ -484,24 +484,35 @@ public class MetaTileEntities {
 
         // NOTE: 690-699 unused
 
-        // Item Buses and Fluid Hatches: IDs 700 - 705, 710 - 715, ..., 790 - 795
-        for (int tier : GTValues.RNO) {
-            // prevent ID shifting for MAX by keeping it at its original ordinal
-            int i = tier == GTValues.MAX ? GTValues.MAX_OLD : tier;
-            String voltageName = GTValues.VN[tier].toLowerCase();
-            ITEM_IMPORT_BUS[i] = new MetaTileEntityItemBus(gregtechId("item_bus.import." + voltageName), tier, false);
-            ITEM_EXPORT_BUS[i] = new MetaTileEntityItemBus(gregtechId("item_bus.export." + voltageName), tier, true);
-            FLUID_IMPORT_HATCH[i] = new MetaTileEntityFluidHatch(gregtechId("fluid_hatch.import." + voltageName), tier, false);
-            FLUID_EXPORT_HATCH[i] = new MetaTileEntityFluidHatch(gregtechId("fluid_hatch.export." + voltageName), tier, true);
-            ENERGY_INPUT_HATCH[i] = new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.input." + voltageName), tier, false);
-            ENERGY_OUTPUT_HATCH[i] = new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.output." + voltageName), tier, true);
+        // Item Buses and Fluid Hatches: IDs 700 - 705, 710 - 715, ..., 790 - 795; 1040 - 1045, ..., 1080 - 1085
+        for (int i = GTValues.ULV; i < GTValues.V.length; i++) {
+            String voltageName = GTValues.VN[i].toLowerCase();
 
-            GregTechAPI.registerMetaTileEntity(700 + 10 * i + 0, ITEM_IMPORT_BUS[i]);
-            GregTechAPI.registerMetaTileEntity(700 + 10 * i + 1, ITEM_EXPORT_BUS[i]);
-            GregTechAPI.registerMetaTileEntity(700 + 10 * i + 2, FLUID_IMPORT_HATCH[i]);
-            GregTechAPI.registerMetaTileEntity(700 + 10 * i + 3, FLUID_EXPORT_HATCH[i]);
-            GregTechAPI.registerMetaTileEntity(700 + 10 * i + 4, ENERGY_INPUT_HATCH[i]);
-            GregTechAPI.registerMetaTileEntity(700 + 10 * i + 5, ENERGY_OUTPUT_HATCH[i]);
+            ITEM_IMPORT_BUS[i] = new MetaTileEntityItemBus(gregtechId("item_bus.import." + voltageName), i, false);
+            ITEM_EXPORT_BUS[i] = new MetaTileEntityItemBus(gregtechId("item_bus.export." + voltageName), i, true);
+            FLUID_IMPORT_HATCH[i] = new MetaTileEntityFluidHatch(gregtechId("fluid_hatch.import." + voltageName), i, false);
+            FLUID_EXPORT_HATCH[i] = new MetaTileEntityFluidHatch(gregtechId("fluid_hatch.export." + voltageName), i, true);
+            ENERGY_INPUT_HATCH[i] = new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.input." + voltageName), i, false);
+            ENERGY_OUTPUT_HATCH[i] = new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.output." + voltageName), i, true);
+
+            // Register ULV through UV, then MAX tier, starting at ID 700 and ending at 795.
+            // This currently leaves four unused IDs in each ten's range, from 7_6 through 7_9.
+            // Quadruple and Nonuple hatches were squeezed into the 7_6 and 7_7 positions in the ULV and LV gaps.
+            int id = 700, tier = i;
+            // prevent ID shifting for MAX by keeping it at its original ordinal
+            if(i == GTValues.MAX)
+                tier = GTValues.MAX_OLD;
+            else if (i > GTValues.UV) {
+                // Since there's no more room in 700s, register higher tier parts starting at 1040, ending at 1085.
+                id = 1040;
+                tier = i - GTValues.UHV; // UHV = 0, UEV = 1, UIV = 2, UXV = 3, OpV = 4
+            }
+            GregTechAPI.registerMetaTileEntity(id + 10 * tier + 0, ITEM_IMPORT_BUS[i]);
+            GregTechAPI.registerMetaTileEntity(id + 10 * tier + 1, ITEM_EXPORT_BUS[i]);
+            GregTechAPI.registerMetaTileEntity(id + 10 * tier + 2, FLUID_IMPORT_HATCH[i]);
+            GregTechAPI.registerMetaTileEntity(id + 10 * tier + 3, FLUID_EXPORT_HATCH[i]);
+            GregTechAPI.registerMetaTileEntity(id + 10 * tier + 4, ENERGY_INPUT_HATCH[i]);
+            GregTechAPI.registerMetaTileEntity(id + 10 * tier + 5, ENERGY_OUTPUT_HATCH[i]);
         }
 
         // Multi Fluid Hatches: squeezed in after ULV and LV bus/hatch IDs.
