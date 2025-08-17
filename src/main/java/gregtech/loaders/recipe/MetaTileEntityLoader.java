@@ -414,11 +414,9 @@ public class MetaTileEntityLoader {
     }
 
     private static Object[] prepareRecipe(int tier, Object... recipe) {
-        for (int i = 3; i < recipe.length; i++) {
-            if (recipe[i] instanceof CraftingComponent) {
-                recipe[i] = ((CraftingComponent) recipe[i]).getIngredient(tier);
-            }
-        }
+        for (int i = 1; i < recipe.length; i++)
+            if (recipe[i] instanceof Component c)
+                recipe[i] = c.getIngredient(tier);
         return recipe;
     }
 
