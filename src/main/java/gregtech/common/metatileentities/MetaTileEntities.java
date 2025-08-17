@@ -36,7 +36,7 @@ public class MetaTileEntities {
     //HULLS
     public static MetaTileEntityHull[] HULL = new MetaTileEntityHull[GTValues.V.length];
     public static MetaTileEntityTransformer[] TRANSFORMER = new MetaTileEntityTransformer[GTValues.V.length - 2];
-    public static MetaTileEntityBatteryBuffer[][] BATTERY_BUFFER = new MetaTileEntityBatteryBuffer[GTValues.V.length][];
+    public static MetaTileEntityBatteryBuffer[][] BATTERY_BUFFER = new MetaTileEntityBatteryBuffer[GTValues.V.length][4];
     public static MetaTileEntityCharger[] CHARGER = new MetaTileEntityCharger[GTValues.V.length];
 
     //BRONZE MACHINES SECTION
@@ -413,8 +413,9 @@ public class MetaTileEntities {
         ITEM_COLLECTOR[2] = GregTechAPI.registerMetaTileEntity(496, new MetaTileEntityItemCollector(gregtechId("item_collector.hv"), 3, 32));
         ITEM_COLLECTOR[3] = GregTechAPI.registerMetaTileEntity(497, new MetaTileEntityItemCollector(gregtechId("item_collector.ev"), 4, 64));
 
+        // Hulls: IDs 500 - 509
         for (int i = 0; i < HULL.length; i++) {
-            MetaTileEntityHull metaTileEntity = new MetaTileEntityHull(gregtechId("hull." + GTValues.VN[i].toLowerCase()), i);
+            var metaTileEntity = new MetaTileEntityHull(gregtechId("hull." + GTValues.VN[i].toLowerCase()), i);
             GregTechAPI.registerMetaTileEntity(500 + i, metaTileEntity);
             HULL[i] = metaTileEntity;
         }
@@ -441,23 +442,35 @@ public class MetaTileEntities {
         COKE_OVEN = GregTechAPI.registerMetaTileEntity(526, new MetaTileEntityCokeOven(gregtechId("coke_oven")));
         COKE_OVEN_HATCH = GregTechAPI.registerMetaTileEntity(527, new MetaTileEntityCokeOvenHatch(gregtechId("coke_oven_hatch")));
 
-        int[] batteryBufferSlots = new int[]{1, 4, 9, 16};
-        for (int i = 0; i < GTValues.V.length; i++) {
-            if (i > 0 && i <= TRANSFORMER.length) {
-                MetaTileEntityTransformer transformer = new MetaTileEntityTransformer(gregtechId("transformer." + GTValues.VN[i].toLowerCase()), i);
-                TRANSFORMER[i - 1] = GregTechAPI.registerMetaTileEntity(600 + (i - 1), transformer);
+        // Transformers: IDs 600-607
+        for (int i = 0; i < TRANSFORMER.length; i++) {
+            var transformer = new MetaTileEntityTransformer(gregtechId("transformer." + GTValues.VN[i + 1].toLowerCase()), i + 1);
+            TRANSFORMER[i] = GregTechAPI.registerMetaTileEntity(600 + i, transformer);
+        }
+
+        // NOTE: 608, 609 unused
+
+        // Battery Buffers: IDs 610 - 649
+        for(int i = 0; i < BATTERY_BUFFER.length; i++) {
+            for(int slot = 0; slot < BATTERY_BUFFER[i].length; slot++) {
+                int size = (slot + 1) * (slot + 1);
+                String transformerId = String.format("battery_buffer.%s.%s", GTValues.VN[i].toLowerCase(), size);
+                var batteryBuffer = new MetaTileEntityBatteryBuffer(gregtechId(transformerId), i, size);
+                BATTERY_BUFFER[i][slot] = GregTechAPI.registerMetaTileEntity(610 + 4 * i + slot, batteryBuffer);
             }
-            BATTERY_BUFFER[i] = new MetaTileEntityBatteryBuffer[batteryBufferSlots.length];
-            for (int slot = 0; slot < batteryBufferSlots.length; slot++) {
-                String transformerId = "battery_buffer." + GTValues.VN[i].toLowerCase() + "." + batteryBufferSlots[slot];
-                MetaTileEntityBatteryBuffer batteryBuffer = new MetaTileEntityBatteryBuffer(gregtechId(transformerId), i, batteryBufferSlots[slot]);
-                BATTERY_BUFFER[i][slot] = GregTechAPI.registerMetaTileEntity(610 + batteryBufferSlots.length * i + slot, batteryBuffer);
-            }
-            String chargerId = "charger." + GTValues.VN[i].toLowerCase();
-            MetaTileEntityCharger charger = new MetaTileEntityCharger(gregtechId(chargerId), i, 4);
+        }
+
+        // NOTE: 650 - 679 unused
+
+        // Chargers: IDs 680 - 689
+        for (int i = 0; i < CHARGER.length; i++) {
+            var charger = new MetaTileEntityCharger(gregtechId("charger." + GTValues.VN[i].toLowerCase()), i, 4);
             CHARGER[i] = GregTechAPI.registerMetaTileEntity(680 + i, charger);
         }
 
+        // NOTE: 690-699 unused
+
+        // Item Buses and Fluid Hatches: IDs 700 - 705, 710 - 715, ..., 790 - 795
         for (int i = 0; i < GTValues.V.length; i++) {
             String voltageName = GTValues.VN[i].toLowerCase();
             ITEM_IMPORT_BUS[i] = new MetaTileEntityItemBus(gregtechId("item_bus.import." + voltageName), i, false);
@@ -475,6 +488,7 @@ public class MetaTileEntities {
             GregTechAPI.registerMetaTileEntity(700 + 10 * i + 5, ENERGY_OUTPUT_HATCH[i]);
         }
 
+        // Multi Fluid Hatches: squeezed in after ULV and LV bus/hatch IDs.
         FLUID_MULTI_IMPORT_HATCH[0] = new MetaTileEntityMultiFluidHatch(gregtechId("fluid_multi_hatch.import.4x"), 2, false);
         FLUID_MULTI_EXPORT_HATCH[0] = new MetaTileEntityMultiFluidHatch(gregtechId("fluid_multi_hatch.export.4x"), 2, true);
         FLUID_MULTI_IMPORT_HATCH[1] = new MetaTileEntityMultiFluidHatch(gregtechId("fluid_multi_hatch.import.9x"), 3, false);
@@ -512,29 +526,49 @@ public class MetaTileEntities {
         WORKBENCH = GregTechAPI.registerMetaTileEntity(825, new MetaTileEntityWorkbench(gregtechId("workbench")));
         ARMOR_TABLE = GregTechAPI.registerMetaTileEntity(826, new MetaTileEntityArmorTable(gregtechId("armor_table")));
 
-        for (int i = 1; i < 5; i++) {
-            String voltageName = GTValues.VN[i].toLowerCase();
-            PUMP[i - 1] = new MetaTileEntityPump(gregtechId("pump." + voltageName), i);
-            AIR_COLLECTOR[i - 1] = new MetaTileEntityAirCollector(gregtechId("air_collector." + voltageName), i);
-            GregTechAPI.registerMetaTileEntity(900 + 10 * (i - 1), PUMP[i - 1]);
-            GregTechAPI.registerMetaTileEntity(950 + 10 * (i - 1), AIR_COLLECTOR[i - 1]);
+        // Pumps: IDs 900, 910, 920, 930
+        for(int i = 0; i < PUMP.length; i++) {
+            PUMP[i] = new MetaTileEntityPump(gregtechId("pump." + GTValues.VN[i + 1].toLowerCase()), i + 1);
+            GregTechAPI.registerMetaTileEntity(900 + 10 * i, PUMP[i]);
         }
+
+        // NOTE: 901-909, 911-919, 921-929 are unused
+
+        // Air Collectors: IDs 950, 960, 970, 980
+        for (int i = 0; i < AIR_COLLECTOR.length; i++) {
+            String voltageName = GTValues.VN[i + 1].toLowerCase();
+            AIR_COLLECTOR[i] = new MetaTileEntityAirCollector(gregtechId("air_collector." + voltageName), i + 1);
+            GregTechAPI.registerMetaTileEntity(950 + 10 * i, AIR_COLLECTOR[i]);
+        }
+
+        // NOTE: 951-959, 961-969, 971-979 are unused
 
         TESLA_COIL = new MetaTileEntityTeslaCoil(gregtechId("tesla_coil"));
         GregTechAPI.registerMetaTileEntity(1001, TESLA_COIL);
 
-        for (int i = 2; i < 6; i++) {
-            String voltageName = GTValues.VN[i].toLowerCase();
-            QUANTUM_CHEST[i - 2] = new MetaTileEntityQuantumChest(gregtechId("quantum_chest." + voltageName), i, 64 * 64000 * (i - 1));
-            QUANTUM_TANK[i - 2] = new MetaTileEntityQuantumTank(gregtechId("quantum_tank." + voltageName), i, 1000 * 64000 * (i - 1));
-            GregTechAPI.registerMetaTileEntity(1010 + (i - 2), QUANTUM_CHEST[i - 2]);
-            GregTechAPI.registerMetaTileEntity(1020 + (i - 2), QUANTUM_TANK[i - 2]);
+        // Quantum Chests: IDs 1010 - 1013
+        for (int i = 0; i < QUANTUM_CHEST.length; i++) {
+            int tier = i + 2;
+            QUANTUM_CHEST[i] = new MetaTileEntityQuantumChest(gregtechId("quantum_chest." + GTValues.VN[tier].toLowerCase()),
+                                                              tier, 64 * 64_000 * (tier - 1L));
+            GregTechAPI.registerMetaTileEntity(1010 + i, QUANTUM_CHEST[i]);
         }
 
-        for (int i = 1; i < 5; i++) {
-            String voltageName = GTValues.VN[i].toLowerCase();
-            BLOCK_BREAKER[i - 1] = new MetaTileEntityBlockBreaker(gregtechId("block_breaker." + voltageName), i);
-            GregTechAPI.registerMetaTileEntity(1030 + (i - 1), BLOCK_BREAKER[i - 1]);
+        // NOTE: 1014 - 1019 are unused
+
+        // Quantum Tanks: IDs 1020 - 1023
+        for (int i = 0; i < QUANTUM_TANK.length; i++) {
+            int tier = i + 2;
+            QUANTUM_TANK[i] = new MetaTileEntityQuantumTank(gregtechId("quantum_tank." + GTValues.VN[tier].toLowerCase()),
+                                                            tier, 1_000 * 64_000 * (tier - 1));
+            GregTechAPI.registerMetaTileEntity(1020 + i, QUANTUM_TANK[i]);
+        }
+
+        // Block Breakers: IDs 1030 - 1033
+        for (int i = 0; i < BLOCK_BREAKER.length; i++) {
+            String voltageName = GTValues.VN[i + 1].toLowerCase();
+            BLOCK_BREAKER[i] = new MetaTileEntityBlockBreaker(gregtechId("block_breaker." + voltageName), i + 1);
+            GregTechAPI.registerMetaTileEntity(1030 + i, BLOCK_BREAKER[i]);
         }
     }
 
