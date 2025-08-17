@@ -2,8 +2,10 @@ package gregtech.loaders.recipe;
 
 import gregtech.api.items.OreDictNames;
 import gregtech.api.items.metaitem.MetaItem;
+import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.MarkerMaterials.Tier;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.material.type.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.common.items.MetaItems;
@@ -13,20 +15,31 @@ import net.minecraft.item.ItemStack;
 
 import static gregtech.api.GTValues.*;
 
+/**
+ * Holder of {@link Component} used for programmatic recipe generation of voltage-tiered items.
+ */
 public class CraftingComponent {
 
-    public static final Component<UnificationEntry> CIRCUIT = tier -> switch(tier) {
-        case ULV -> new UnificationEntry(OrePrefix.circuit, Tier.Primitive);
-        case LV -> new UnificationEntry(OrePrefix.circuit, Tier.Basic);
-        case MV -> new UnificationEntry(OrePrefix.circuit, Tier.Good);
-        case HV -> new UnificationEntry(OrePrefix.circuit, Tier.Advanced);
-        case EV -> new UnificationEntry(OrePrefix.circuit, Tier.Extreme);
-        case IV -> new UnificationEntry(OrePrefix.circuit, Tier.Elite);
-        case LuV -> new UnificationEntry(OrePrefix.circuit, Tier.Master);
-        case ZPM -> new UnificationEntry(OrePrefix.circuit, Tier.Ultimate);
-        default -> new UnificationEntry(OrePrefix.circuit, Tier.Infinite);
+    /** Tier-marker Materials for things like circuits */
+    public static final Component<Material> TIER = tier -> switch(tier) {
+        case ULV -> Tier.Primitive;
+        case LV -> Tier.Basic;
+        case MV -> Tier.Good;
+        case HV -> Tier.Advanced;
+        case EV -> Tier.Extreme;
+        case IV -> Tier.Elite;
+        case LuV -> Tier.Master;
+        case ZPM -> Tier.Ultimate;
+        default -> Tier.Infinite;
     };
 
+    /** Standard circuits for the current tier */
+    public static final Component<UnificationEntry> CIRCUIT = tier -> {
+        var material = TIER.getIngredient(tier);
+        return new UnificationEntry(OrePrefix.circuit, material);
+    };
+
+    /** Tiered pump components */
     public static final Component<MetaItem<?>.MetaValueItem> PUMP = tier -> switch(tier) {
         case ULV, LV -> MetaItems.ELECTRIC_PUMP_LV;
         case MV -> MetaItems.ELECTRIC_PUMP_MV;
@@ -38,66 +51,102 @@ public class CraftingComponent {
         default -> MetaItems.ELECTRIC_PUMP_UV;
     };
 
-    public static final Component<UnificationEntry> CABLE = tier -> switch(tier) {
-        case ULV -> new UnificationEntry(OrePrefix.cableGtSingle, Materials.Lead);
-        case LV -> new UnificationEntry(OrePrefix.cableGtSingle, Materials.Tin);
-        case MV -> new UnificationEntry(OrePrefix.cableGtSingle, Materials.Copper);
-        case HV -> new UnificationEntry(OrePrefix.cableGtSingle, Materials.Gold);
-        case EV -> new UnificationEntry(OrePrefix.cableGtSingle, Materials.Aluminium);
-        case IV -> new UnificationEntry(OrePrefix.cableGtSingle, Materials.Platinum);
-        case LuV -> new UnificationEntry(OrePrefix.cableGtSingle, Materials.NiobiumTitanium);
-        case ZPM -> new UnificationEntry(OrePrefix.cableGtSingle, Materials.Naquadah);
-        case UV -> new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.NaquadahAlloy);
-        default -> new UnificationEntry(OrePrefix.wireGtSingle, Tier.Superconductor);
+    /** Tiered materials for generic cables used in most crafting recipes. */
+    public static final Component<Material> CABLE_MATERIALS = tier -> switch(tier) {
+        case ULV -> Materials.Lead;
+        case LV -> Materials.Tin;
+        case MV -> Materials.Copper;
+        case HV -> Materials.Gold;
+        case EV -> Materials.Aluminium;
+        case IV -> Materials.Platinum;
+        case LuV -> Materials.NiobiumTitanium;
+        case ZPM -> Materials.Naquadah;
+        case UV -> Materials.NaquadahAlloy;
+        default -> MarkerMaterials.Tier.Superconductor;
+    };
+    
+    /** OrePrefixes for tiered cables used in most crafting recipes */
+    public static final Component<OrePrefix> CABLE_TYPE = tier -> switch(tier) {
+        case MAX -> OrePrefix.wireGtSingle;
+        case UV -> OrePrefix.wireGtQuadruple;
+        default -> OrePrefix.cableGtSingle;
+    }; 
+
+    /** Cables used in most crafting recipes */
+    public static final Component<UnificationEntry> CABLE = tier -> {
+        var material = CABLE_MATERIALS.getIngredient(tier);
+        OrePrefix kind = CABLE_TYPE.getIngredient(tier);
+        return new UnificationEntry(kind, material);
     };
 
-    public static final Component<UnificationEntry> WIRE = tier -> switch(tier) {
-        case ULV, LV -> new UnificationEntry(OrePrefix.wireGtSingle, Materials.Gold);
-        case MV -> new UnificationEntry(OrePrefix.wireGtSingle, Materials.Silver);
-        case HV -> new UnificationEntry(OrePrefix.wireGtSingle, Materials.Electrum);
-        case EV -> new UnificationEntry(OrePrefix.wireGtSingle, Materials.Platinum);
-        default -> new UnificationEntry(OrePrefix.wireGtSingle, Materials.Osmium);
+    /** Wires used in Electrolyzer crafting recipes */
+    public static final Component<UnificationEntry> WIRE = tier -> {
+        var material = switch(tier) {
+            case ULV, LV -> Materials.Gold;
+            case MV -> Materials.Silver;
+            case HV -> Materials.Electrum;
+            case EV -> Materials.Platinum;
+            default -> Materials.Osmium;
+        };
+
+        return new UnificationEntry(OrePrefix.wireGtSingle, material);
     };
 
-    public static final Component<UnificationEntry> CABLE_QUAD = tier -> switch(tier) {
-        case ULV -> new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.Lead);
-        case LV -> new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.Tin);
-        case MV -> new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.Copper);
-        case HV -> new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.Gold);
-        case EV -> new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.Aluminium);
-        case IV -> new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.Platinum);
-        case LuV -> new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.NiobiumTitanium);
-        case ZPM -> new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.Naquadah);
-        case UV -> new UnificationEntry(OrePrefix.cableGtSingle, Tier.Superconductor);
-        default -> new UnificationEntry(OrePrefix.wireGtQuadruple, Tier.Superconductor);
+    /** Quadruple cables, used in Arc furnace recipes. */
+    public static final Component<UnificationEntry> CABLE_QUAD = tier -> {
+        var material = CABLE_MATERIALS.getIngredient(tier);
+        OrePrefix kind = switch(tier) {
+            case MAX -> OrePrefix.wireGtQuadruple;
+            case UV -> OrePrefix.cableGtSingle;
+            default -> OrePrefix.cableGtQuadruple;
+        };
+        return new UnificationEntry(kind, material);
     };
 
-    public static final Component<ItemStack> HULL = tier -> MetaTileEntities.HULL[tier].getStackForm();
+    /** Tier-appropriate machine hull */
+    public static final Component<ItemStack> HULL = tier ->
+        MetaTileEntities.HULL[tier].getStackForm();
 
-    public static final Component<ItemStack> WORSE_HULL = tier -> MetaTileEntities.HULL[tier - 1].getStackForm();
+    /** Machine hull for one tier below the current tier */
+    public static final Component<ItemStack> WORSE_HULL = tier ->
+        MetaTileEntities.HULL[tier - 1].getStackForm();
 
-    public static final Component<UnificationEntry> PIPE = tier -> switch(tier) {
-        case ULV, LV -> new UnificationEntry(OrePrefix.pipeMedium, Materials.Bronze);
-        case MV -> new UnificationEntry(OrePrefix.pipeMedium, Materials.Steel);
-        case HV -> new UnificationEntry(OrePrefix.pipeMedium, Materials.StainlessSteel);
-        case EV -> new UnificationEntry(OrePrefix.pipeMedium, Materials.Titanium);
-        default -> new UnificationEntry(OrePrefix.pipeMedium, Materials.TungstenSteel);
+    /** Pipes used as crafting ingredients in Extruders */
+    public static final Component<UnificationEntry> PIPE = tier -> {
+        var material = switch(tier) {
+            case ULV, LV -> Materials.Bronze;
+            case MV -> Materials.Steel;
+            case HV -> Materials.StainlessSteel;
+            case EV -> Materials.Titanium;
+            default -> Materials.TungstenSteel;
+        };
+        return new UnificationEntry(OrePrefix.pipeMedium, material);
     };
 
-    public static final Component<ItemStack> GLASS = tier -> new ItemStack(Blocks.GLASS, 1, W);
+    /** Tier-appropriate glass */
+    public static final Component<ItemStack> GLASS = tier ->
+        new ItemStack(Blocks.GLASS, 1, W);
 
-    public static final Component<UnificationEntry> PLATE = tier -> switch(tier) {
-        case ULV, LV -> new UnificationEntry(OrePrefix.plate, Materials.Steel);
-        case MV -> new UnificationEntry(OrePrefix.plate, Materials.Aluminium);
-        case HV -> new UnificationEntry(OrePrefix.plate, Materials.StainlessSteel);
-        case EV -> new UnificationEntry(OrePrefix.plate, Materials.Titanium);
-        case IV -> new UnificationEntry(OrePrefix.plate, Materials.TungstenSteel);
-        case LuV -> new UnificationEntry(OrePrefix.plate, Materials.HSSG);
-        case ZPM -> new UnificationEntry(OrePrefix.plate, Materials.HSSE);
-        case UV -> new UnificationEntry(OrePrefix.plate, Materials.Darmstadtium);
-        default -> new UnificationEntry(OrePrefix.plate, Materials.TungstenSteel);
+    /** Materials of tiered plates used in select machine recipes */
+    public static final Component<Material> PLATE_MATERIAL = tier -> switch(tier) {
+        case ULV, LV -> Materials.Steel;
+        case MV -> Materials.Aluminium;
+        case HV -> Materials.StainlessSteel;
+        case EV -> Materials.Titanium;
+        case IV -> Materials.TungstenSteel;
+        case LuV -> Materials.HSSG;
+        case ZPM -> Materials.HSSE;
+        case UV -> Materials.Darmstadtium;
+        default -> Materials.TungstenSteel;
+    };
+    
+    /** Tiered plates used in select machine recipes */
+    public static final Component<UnificationEntry> PLATE = tier -> {
+        var material = PLATE_MATERIAL.getIngredient(tier);
+        return new UnificationEntry(OrePrefix.plate, material);
     };
 
+    /** Tiered Motors */
     public static final Component<MetaItem<?>.MetaValueItem> MOTOR = tier -> switch(tier) {
         case ULV, LV -> MetaItems.ELECTRIC_MOTOR_LV;
         case MV -> MetaItems.ELECTRIC_MOTOR_MV;
@@ -109,17 +158,22 @@ public class CraftingComponent {
         default -> MetaItems.ELECTRIC_MOTOR_UV;
     };
 
-    public static final Component<UnificationEntry> ROTOR = tier -> switch(tier) {
-        case ULV, LV -> new UnificationEntry(OrePrefix.rotor, Materials.Tin);
-        case MV -> new UnificationEntry(OrePrefix.rotor, Materials.Bronze);
-        case HV -> new UnificationEntry(OrePrefix.rotor, Materials.Steel);
-        case EV -> new UnificationEntry(OrePrefix.rotor, Materials.StainlessSteel);
-        case IV -> new UnificationEntry(OrePrefix.rotor, Materials.TungstenSteel);
-        case LuV -> new UnificationEntry(OrePrefix.rotor, Materials.Chrome);
-        case ZPM -> new UnificationEntry(OrePrefix.rotor, Materials.Iridium);
-        default -> new UnificationEntry(OrePrefix.rotor, Materials.Osmium);
+    /** Tiered Rotors */
+    public static final Component<UnificationEntry> ROTOR = tier -> {
+        var material = switch(tier) {
+            case ULV, LV -> Materials.Tin;
+            case MV -> Materials.Bronze;
+            case HV -> Materials.Steel;
+            case EV -> Materials.StainlessSteel;
+            case IV -> Materials.TungstenSteel;
+            case LuV -> Materials.Chrome;
+            case ZPM -> Materials.Iridium;
+            default -> Materials.Osmium;
+        };
+        return new UnificationEntry(OrePrefix.rotor, material);
     };
 
+    /** Tiered Sensors. ULV uses LV. */
     public static final Component<MetaItem<?>.MetaValueItem> SENSOR = tier -> switch(tier) {
         case ULV, LV -> MetaItems.SENSOR_LV;
         case MV -> MetaItems.SENSOR_MV;
@@ -131,13 +185,17 @@ public class CraftingComponent {
         default -> MetaItems.SENSOR_UV;
     };
 
+    /** Tiered grinding heads for macerators */
     public static final Component<?> GRINDER = tier -> switch(tier) {
         case ULV, LV, MV -> new UnificationEntry(OrePrefix.gem, Materials.Diamond);
         default -> OreDictNames.craftingGrinder;
     };
 
-    public static final Component<?> DIAMOND = tier -> new UnificationEntry(OrePrefix.gem, Materials.Diamond);
+    /** Diamond, used in Lathe recipes */
+    public static final Component<?> DIAMOND = tier ->
+        new UnificationEntry(OrePrefix.gem, Materials.Diamond);
 
+    /** Tiered Pistons. ULV uses LV. */
     public static final Component<MetaItem<?>.MetaValueItem> PISTON = tier -> switch(tier) {
         case ULV, LV -> MetaItems.ELECTRIC_PISTON_LV;
         case MV -> MetaItems.ELECTRIC_PISTON_MV;
@@ -149,6 +207,7 @@ public class CraftingComponent {
         default -> MetaItems.ELECTRIC_PISTON_UV;
     };
 
+    /** Tiered Emitters. ULV uses LV. */
     public static final Component<MetaItem<?>.MetaValueItem> EMITTER = tier -> switch(tier) {
         case ULV, LV -> MetaItems.EMITTER_LV;
         case MV -> MetaItems.EMITTER_MV;
@@ -160,6 +219,7 @@ public class CraftingComponent {
         default -> MetaItems.EMITTER_UV;
     };
 
+    /** Tiered Conveyors. ULV uses LV. */
     public static final Component<MetaItem<?>.MetaValueItem> CONVEYOR = tier -> switch(tier) {
         case ULV, LV -> MetaItems.CONVEYOR_MODULE_LV;
         case MV -> MetaItems.CONVEYOR_MODULE_MV;
@@ -171,6 +231,7 @@ public class CraftingComponent {
         default -> MetaItems.CONVEYOR_MODULE_UV;
     };
 
+    /** Tiered Robot Arms. ULV uses LV. */
     public static final Component<MetaItem<?>.MetaValueItem> ROBOT_ARM = tier -> switch(tier) {
         case ULV, LV -> MetaItems.ROBOT_ARM_LV;
         case MV -> MetaItems.ROBOT_ARM_MV;
@@ -182,18 +243,29 @@ public class CraftingComponent {
         default -> MetaItems.ROBOT_ARM_UV;
     };
 
-    public static final Component<UnificationEntry> COIL_HEATING = tier -> switch(tier) {
-        case ULV, LV -> new UnificationEntry(OrePrefix.wireGtDouble, Materials.Copper);
-        case MV -> new UnificationEntry(OrePrefix.wireGtDouble, Materials.Cupronickel);
-        case HV -> new UnificationEntry(OrePrefix.wireGtDouble, Materials.Kanthal);
-        case EV -> new UnificationEntry(OrePrefix.wireGtDouble, Materials.Nichrome);
-        case IV -> new UnificationEntry(OrePrefix.wireGtDouble, Materials.TungstenSteel);
-        case LuV -> new UnificationEntry(OrePrefix.wireGtDouble, Materials.HSSG);
-        case ZPM -> new UnificationEntry(OrePrefix.wireGtDouble, Materials.Naquadah);
-        case UV -> new UnificationEntry(OrePrefix.wireGtDouble, Materials.NaquadahAlloy);
-        default -> new UnificationEntry(OrePrefix.wireGtOctal, Materials.Nichrome);
+    /** Tiered materials for Electric Furnace heating coils */
+    public static final Component<Material> COIL_MATERIAL = tier -> switch(tier) {
+        case ULV, LV -> Materials.Copper;
+        case MV -> Materials.Cupronickel;
+        case HV -> Materials.Kanthal;
+        case EV -> Materials.Nichrome;
+        case IV -> Materials.TungstenSteel;
+        case LuV -> Materials.HSSG;
+        case ZPM -> Materials.Naquadah;
+        case UV -> Materials.NaquadahAlloy;
+        default -> Materials.Nichrome;
+    };
+    
+    /** Electric Furnace heating coils */
+    public static final Component<UnificationEntry> COIL_HEATING = tier -> {
+        OrePrefix kind = OrePrefix.wireGtDouble;
+        if(tier > UV)
+            kind = OrePrefix.wireGtOctal;
+        var material = COIL_MATERIAL.getIngredient(tier);
+        return new UnificationEntry(kind, material);
     };
 
+    /** Electric coils used for Polarizers and Electromagnetic Separators */
     public static final Component<UnificationEntry> COIL_ELECTRIC = tier -> switch(tier) {
         case ULV -> new UnificationEntry(OrePrefix.wireGtSingle, Materials.Tin);
         case LV -> new UnificationEntry(OrePrefix.wireGtDouble, Materials.Tin);
@@ -205,6 +277,7 @@ public class CraftingComponent {
         default -> new UnificationEntry(OrePrefix.wireGtHex, Tier.Superconductor);
     };
 
+    /** Magnetic rods. Currently unused. */
     public static final Component<UnificationEntry> STICK_MAGNETIC = tier -> switch(tier) {
         case ULV, LV -> new UnificationEntry(OrePrefix.stick, Materials.IronMagnetic);
         case MV, HV -> new UnificationEntry(OrePrefix.stick, Materials.SteelMagnetic);
@@ -213,9 +286,11 @@ public class CraftingComponent {
         default -> new UnificationEntry(OrePrefix.block, Materials.NeodymiumMagnetic);
     };
 
+    /** Blaze rod. Used in Brewery and Distillery recipes. */
     public static final Component<UnificationEntry> STICK_DISTILLATION =
         tier -> new UnificationEntry(OrePrefix.stick, Materials.Blaze);
 
+    /** Tiered Field Generators. ULV uses LV. */
     public static final Component<MetaItem<?>.MetaValueItem> FIELD_GENERATOR = tier -> switch(tier) {
         case ULV, LV -> MetaItems.FIELD_GENERATOR_LV;
         case MV -> MetaItems.FIELD_GENERATOR_MV;
@@ -227,22 +302,66 @@ public class CraftingComponent {
         default -> MetaItems.FIELD_GENERATOR_UV;
     };
 
-    public static final Component<UnificationEntry> COIL_HEATING_DOUBLE = tier -> switch(tier) {
-        case ULV, LV -> new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Copper);
-        case MV -> new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Cupronickel);
-        case HV -> new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Kanthal);
-        case EV -> new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Nichrome);
-        case IV -> new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.TungstenSteel);
-        case LuV -> new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.HSSG);
-        case ZPM -> new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Naquadah);
-        case UV -> new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.NaquadahAlloy);
-        default -> new UnificationEntry(OrePrefix.wireGtHex, Materials.Nichrome);
+    /** Double-sized heating coils, used in various machines. */
+    public static final Component<UnificationEntry> COIL_HEATING_DOUBLE = tier -> {
+        var material = COIL_MATERIAL.getIngredient(tier);
+        OrePrefix kind = OrePrefix.wireGtQuadruple;
+        if(tier > UV)
+            kind = OrePrefix.wireGtHex;
+        return new UnificationEntry(kind, material);
     };
 
-    public static final Component<UnificationEntry> STICK_ELECTROMAGNETIC = tier -> switch(tier) {
-        case ULV, LV -> new UnificationEntry(OrePrefix.stick, Materials.Iron);
-        case MV, HV -> new UnificationEntry(OrePrefix.stick, Materials.Steel);
-        case EV -> new UnificationEntry(OrePrefix.stick, Materials.Neodymium);
-        default -> new UnificationEntry(OrePrefix.stick, Materials.VanadiumGallium);
+    /** Metal rods of magnetizable materials, used for Polarizers and Electromagnetic Separators */
+    public static final Component<UnificationEntry> STICK_ELECTROMAGNETIC = tier -> {
+        var material = switch(tier) {
+            case ULV, LV -> Materials.Iron;
+            case MV, HV -> Materials.Steel;
+            case EV -> Materials.Neodymium;
+            default -> Materials.VanadiumGallium;
+        };
+        return new UnificationEntry(OrePrefix.stick, material);
     };
+
+    /** Tiered primary plates for machine hulls. Differs somewhat from normal crafting plates. */
+    public static final Component<UnificationEntry> HULL_PLATE_1 = tier -> {
+        var material = switch(tier) {
+            case ULV -> Materials.WroughtIron;
+            case LuV -> Materials.Chrome;
+            case ZPM -> Materials.Iridium;
+            case UV -> Materials.Osmium;
+            case MAX -> Materials.Darmstadtium;
+            default -> PLATE_MATERIAL.getIngredient(tier);
+        };
+        return new UnificationEntry(OrePrefix.plate, material);
+    };
+
+    /** Tiered plastic */
+    public static final Component<Material> PLASTIC = tier -> {
+        if(tier < ZPM)
+            return Materials.Plastic;
+        return Materials.Polytetrafluoroethylene;
+    };
+
+    /** Tiered secondary plates for machine hulls (crafting table recipes) */
+    public static final Component<UnificationEntry> HULL_PLATE_2 = tier -> {
+        var material = switch(tier) {
+            case ULV -> Materials.Wood;
+            case LV, MV -> Materials.WroughtIron;
+            default -> PLASTIC.getIngredient(tier);
+        };
+        return new UnificationEntry(OrePrefix.plate, material);
+    };
+
+    /** Cables used for making Energy Hatches. Differs somewhat from usual cable materials. */
+    public static final Component<UnificationEntry> ENERGY_HATCH_CABLE = tier -> {
+        var material = switch(tier) {
+            case ULV -> Materials.RedAlloy;
+            case IV -> Materials.Tungsten;
+            case LuV -> Materials.VanadiumGallium;
+            default -> CABLE_MATERIALS.getIngredient(tier);
+        };
+        OrePrefix kind = CABLE_TYPE.getIngredient(tier);
+        return new UnificationEntry(kind, material);
+    };
+
 }
