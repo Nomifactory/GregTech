@@ -1,17 +1,17 @@
 package gregtech.common.blocks;
 
 import net.minecraft.block.SoundType;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLiving.SpawnPlacementType;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import org.jetbrains.annotations.NotNull;
 
 public class BlockMultiblockCasing extends VariantBlock<BlockMultiblockCasing.MultiblockCasingType> {
 
     public BlockMultiblockCasing() {
-        super(Material.IRON);
+        super(net.minecraft.block.material.Material.IRON);
         setTranslationKey("multiblock_casing");
         setHardness(5.0f);
         setResistance(10.0f);
@@ -25,7 +25,7 @@ public class BlockMultiblockCasing extends VariantBlock<BlockMultiblockCasing.Mu
         return false;
     }
 
-    public enum MultiblockCasingType implements IStringSerializable {
+    public enum MultiblockCasingType implements IStringSerializable, LookupBlock<MultiblockCasingType> {
 
         ENGINE_INTAKE_CASING("engine_intake"),
         GRATE_CASING("grate"),
@@ -44,6 +44,11 @@ public class BlockMultiblockCasing extends VariantBlock<BlockMultiblockCasing.Mu
             return this.name;
         }
 
+        @Override
+        @NotNull
+        public VariantBlock<MultiblockCasingType> getVariantBlock() {
+            return MetaBlocks.MUTLIBLOCK_CASING;
+        }
     }
 
 }

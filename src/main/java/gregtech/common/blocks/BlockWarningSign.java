@@ -1,13 +1,13 @@
 package gregtech.common.blocks;
 
 import net.minecraft.block.SoundType;
-import net.minecraft.block.material.Material;
 import net.minecraft.util.IStringSerializable;
+import org.jetbrains.annotations.NotNull;
 
 public class BlockWarningSign extends VariantBlock<BlockWarningSign.SignType> {
 
     public BlockWarningSign() {
-        super(Material.IRON);
+        super(net.minecraft.block.material.Material.IRON);
         setTranslationKey("warning_sign");
         setHardness(2.0f);
         setResistance(3.0f);
@@ -16,7 +16,7 @@ public class BlockWarningSign extends VariantBlock<BlockWarningSign.SignType> {
         setDefaultState(getState(SignType.YELLOW_STRIPES));
     }
 
-    public enum SignType implements IStringSerializable {
+    public enum SignType implements IStringSerializable, LookupBlock<SignType> {
 
         YELLOW_STRIPES("yellow_stripes"),
         SMALL_YELLOW_STRIPES("small_yellow_stripes"),
@@ -40,6 +40,11 @@ public class BlockWarningSign extends VariantBlock<BlockWarningSign.SignType> {
             return this.name;
         }
 
+        @Override
+        @NotNull
+        public VariantBlock<SignType> getVariantBlock() {
+            return MetaBlocks.WARNING_SIGN;
+        }
     }
 
 }

@@ -15,6 +15,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -35,8 +36,8 @@ public class BlockWireCoil extends VariantBlock<BlockWireCoil.CoilType> {
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack itemStack, @Nullable World worldIn, List<String> lines, ITooltipFlag tooltipFlag) {
         super.addInformation(itemStack, worldIn, lines, tooltipFlag);
-
-        VariantItemBlock itemBlock = (VariantItemBlock<CoilType, BlockWireCoil>) itemStack.getItem();
+        //noinspection unchecked
+        var itemBlock = (VariantItemBlock<CoilType, BlockWireCoil>) itemStack.getItem();
         IBlockState stackState = itemBlock.getBlockState(itemStack);
         CoilType coilType = getState(stackState);
 
@@ -53,7 +54,7 @@ public class BlockWireCoil extends VariantBlock<BlockWireCoil.CoilType> {
         return false;
     }
 
-    public enum CoilType implements IStringSerializable {
+    public enum CoilType implements IStringSerializable, MaterialLookupBlock<CoilType> {
 
         CUPRONICKEL("cupronickel", 1800, 1, 1, Materials.Cupronickel),
         KANTHAL("kanthal", 2700, 2, 1, Materials.Kanthal),
@@ -98,8 +99,15 @@ public class BlockWireCoil extends VariantBlock<BlockWireCoil.CoilType> {
             return energyDiscount;
         }
 
+        @Override
         public Material getMaterial() {
             return material;
+        }
+
+        @Override
+        @NotNull
+        public VariantBlock<CoilType> getVariantBlock() {
+            return MetaBlocks.WIRE_COIL;
         }
     }
 }

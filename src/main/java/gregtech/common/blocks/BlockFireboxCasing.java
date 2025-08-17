@@ -1,8 +1,9 @@
 package gregtech.common.blocks;
 
+import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.material.type.Material;
 import gregtech.common.blocks.BlockFireboxCasing.FireboxCasingType;
 import net.minecraft.block.SoundType;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -10,13 +11,14 @@ import net.minecraft.entity.EntityLiving.SpawnPlacementType;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import org.jetbrains.annotations.NotNull;
 
 public class BlockFireboxCasing extends VariantBlock<FireboxCasingType> {
 
     public static final PropertyBool ACTIVE = PropertyBool.create("active");
 
     public BlockFireboxCasing() {
-        super(Material.IRON);
+        super(net.minecraft.block.material.Material.IRON);
         setTranslationKey("boiler_casing");
         setHardness(5.0f);
         setResistance(10.0f);
@@ -56,17 +58,19 @@ public class BlockFireboxCasing extends VariantBlock<FireboxCasingType> {
         return false;
     }
 
-    public enum FireboxCasingType implements IStringSerializable {
+    public enum FireboxCasingType implements IStringSerializable, MaterialLookupBlock<FireboxCasingType> {
 
-        BRONZE_FIREBOX("bronze_firebox"),
-        STEEL_FIREBOX("steel_firebox"),
-        TITANIUM_FIREBOX("titanium_firebox"),
-        TUNGSTENSTEEL_FIREBOX("tungstensteel_firebox");
+        BRONZE_FIREBOX("bronze_firebox", Materials.Bronze),
+        STEEL_FIREBOX("steel_firebox", Materials.Steel),
+        TITANIUM_FIREBOX("titanium_firebox", Materials.Titanium),
+        TUNGSTENSTEEL_FIREBOX("tungstensteel_firebox", Materials.TungstenSteel);
 
         private final String name;
+        private final Material material;
 
-        FireboxCasingType(String name) {
+        FireboxCasingType(String name, Material material) {
             this.name = name;
+            this.material = material;
         }
 
         @Override
@@ -74,6 +78,16 @@ public class BlockFireboxCasing extends VariantBlock<FireboxCasingType> {
             return this.name;
         }
 
+        @Override
+        public Material getMaterial() {
+            return this.material;
+        }
+
+        @Override
+        @NotNull
+        public VariantBlock<FireboxCasingType> getVariantBlock() {
+            return MetaBlocks.BOILER_FIREBOX_CASING;
+        }
     }
 
 }
