@@ -284,6 +284,7 @@ public class ModHandler {
 
     private static boolean validateRecipe(String regName, Object... recipe) {
         boolean skip = false;
+        List<Object> rl;
         if (recipe == null) {
             GTLog.logger.error("Recipe cannot be null", new IllegalArgumentException());
             GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
@@ -292,7 +293,7 @@ public class ModHandler {
             GTLog.logger.error("Recipe cannot be empty", new IllegalArgumentException());
             GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
             skip = true;
-        } else if (Arrays.asList(recipe).contains(null) || Arrays.asList(recipe).contains(ItemStack.EMPTY)) {
+        } else if ((rl = Arrays.asList(recipe)).contains(null) || rl.contains(ItemStack.EMPTY)) {
             GTLog.logger.error("Recipe cannot contain null elements or Empty ItemStacks. Recipe: {}",
                 Arrays.stream(recipe)
                     .map(o -> o == null ? "NULL" : o)
@@ -325,7 +326,8 @@ public class ModHandler {
             StringBuilder s = new StringBuilder((String) recipe[idx++]);
             while (s.length() < 3) s.append(" ");
             if (s.length() > 3) throw new IllegalArgumentException();
-            for (char c : s.toString().toCharArray()) {
+            for(int i = 0; i < s.length(); i++) {
+                char c = s.charAt(i);
                 String toolName = getToolNameByCharacter(c);
                 if (toolName != null) {
                     recipeList.add(c);
@@ -337,12 +339,12 @@ public class ModHandler {
     }
     
     public static Object finalizeIngredient(Object ingredient) {
-        if (ingredient instanceof MetaItem.MetaValueItem) {
-            ingredient = ((MetaItem<?>.MetaValueItem) ingredient).getStackForm();
-        } else if (ingredient instanceof Enum) {
-            ingredient = ((Enum<?>) ingredient).name();
-        } else if (ingredient instanceof UnificationEntry) {
-            ingredient = ingredient.toString();
+        if (ingredient instanceof MetaItem.MetaValueItem mvi) {
+            ingredient = mvi.getStackForm();
+        } else if (ingredient instanceof Enum e) {
+            ingredient = e.name();
+        } else if (ingredient instanceof UnificationEntry ue) {
+            ingredient = ue.toString();
         } else if (!(ingredient instanceof ItemStack
             || ingredient instanceof Item
             || ingredient instanceof Block
@@ -371,14 +373,14 @@ public class ModHandler {
         }
 
         for (byte i = 0; i < recipe.length; i++) {
-            if (recipe[i] instanceof MetaItem.MetaValueItem) {
-                recipe[i] = ((MetaItem<?>.MetaValueItem) recipe[i]).getStackForm();
-            } else if (recipe[i] instanceof Enum) {
-                recipe[i] = ((Enum<?>) recipe[i]).name();
-            } else if (recipe[i] instanceof UnificationEntry) {
-                recipe[i] = recipe[i].toString();
-            } else if (recipe[i] instanceof Character) {
-                String toolName = getToolNameByCharacter((char) recipe[i]);
+            if (recipe[i] instanceof MetaItem.MetaValueItem mvi) {
+                recipe[i] = mvi.getStackForm();
+            } else if (recipe[i] instanceof Enum e) {
+                recipe[i] = e.name();
+            } else if (recipe[i] instanceof UnificationEntry ue) {
+                recipe[i] = ue.toString();
+            } else if (recipe[i] instanceof Character c) {
+                String toolName = getToolNameByCharacter(c);
                 if (toolName == null) {
                     throw new IllegalArgumentException("Tool name is not found for char " + recipe[i]);
                 }
@@ -409,38 +411,23 @@ public class ModHandler {
 
     private @Nullable
     static String getToolNameByCharacter(char character) {
-        switch (character) {
-            case 'b':
-                return ToolDictNames.craftingToolBlade.name();
-            case 'c':
-                return ToolDictNames.craftingToolCrowbar.name();
-            case 'd':
-                return ToolDictNames.craftingToolScrewdriver.name();
-            case 'f':
-                return ToolDictNames.craftingToolFile.name();
-            case 'h':
-                return ToolDictNames.craftingToolHardHammer.name();
-            case 'i':
-                return ToolDictNames.craftingToolSolderingIron.name();
-            case 'j':
-                return ToolDictNames.craftingToolSolderingMetal.name();
-            case 'k':
-                return ToolDictNames.craftingToolKnife.name();
-            case 'm':
-                return ToolDictNames.craftingToolMortar.name();
-            case 'p':
-                return ToolDictNames.craftingToolDrawplate.name();
-            case 'r':
-                return ToolDictNames.craftingToolSoftHammer.name();
-            case 's':
-                return ToolDictNames.craftingToolSaw.name();
-            case 'w':
-                return ToolDictNames.craftingToolWrench.name();
-            case 'x':
-                return ToolDictNames.craftingToolWireCutter.name();
-            default:
-                return null;
-        }
+        return switch(character) {
+            case 'b' -> ToolDictNames.craftingToolBlade.name();
+            case 'c' -> ToolDictNames.craftingToolCrowbar.name();
+            case 'd' -> ToolDictNames.craftingToolScrewdriver.name();
+            case 'f' -> ToolDictNames.craftingToolFile.name();
+            case 'h' -> ToolDictNames.craftingToolHardHammer.name();
+            case 'i' -> ToolDictNames.craftingToolSolderingIron.name();
+            case 'j' -> ToolDictNames.craftingToolSolderingMetal.name();
+            case 'k' -> ToolDictNames.craftingToolKnife.name();
+            case 'm' -> ToolDictNames.craftingToolMortar.name();
+            case 'p' -> ToolDictNames.craftingToolDrawplate.name();
+            case 'r' -> ToolDictNames.craftingToolSoftHammer.name();
+            case 's' -> ToolDictNames.craftingToolSaw.name();
+            case 'w' -> ToolDictNames.craftingToolWrench.name();
+            case 'x' -> ToolDictNames.craftingToolWireCutter.name();
+            default -> null;
+        };
     }
 
     public static Collection<ItemStack> getAllSubItems(ItemStack item) {
