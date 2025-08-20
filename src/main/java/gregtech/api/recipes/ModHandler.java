@@ -1,5 +1,6 @@
 package gregtech.api.recipes;
 
+import com.github.bsideup.jabel.Desugar;
 import com.google.common.base.Preconditions;
 import gregtech.api.GTValues;
 import gregtech.api.items.ToolDictNames;
@@ -210,6 +211,31 @@ public class ModHandler {
             .setMirrored(true)
             .setRegistryName(regName);
         ForgeRegistries.RECIPES.register(shapedOreRecipe);
+    }
+
+    @Desugar
+    public record Substitution<T>(char key, @Nullable T value) {
+        public static <T> Substitution<T> sub(char k, T v) {
+            return new Substitution<>(k, v);
+        }
+    }
+
+    /**
+     * Alternative option separating the recipe definition from the substitution mappings,
+     * and using a record for mappings to mitigate format errors.
+     *
+     * Currently just unpacks it into the other format anyway.
+     *
+     * @see #addShapedRecipe(String, ItemStack, Object...)
+     */
+    public static void addShapedRecipe(String regName, ItemStack result, String[] def, Substitution<?>... subs) {
+        Object[] arr = new Object[def.length + 2 * subs.length];
+        System.arraycopy(def, 0, arr, 0, def.length);
+        for(int i = 0; i < subs.length; i++) {
+            arr[def.length + 2*i]     = subs[i].key;
+            arr[def.length + 2*i + 1] = subs[i].value;
+        }
+        addShapedRecipe(regName, result, arr);
     }
 
     /**
