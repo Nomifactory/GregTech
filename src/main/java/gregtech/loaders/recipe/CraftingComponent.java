@@ -1,5 +1,6 @@
 package gregtech.loaders.recipe;
 
+import gregtech.api.GTValues;
 import gregtech.api.items.OreDictNames;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.unification.material.MarkerMaterials;
@@ -8,6 +9,8 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.type.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
+import gregtech.common.blocks.BlockMachineCasing;
+import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.init.Blocks;
@@ -33,11 +36,22 @@ public class CraftingComponent {
         default -> Tier.Infinite;
     };
 
-    /** Standard circuits for the current tier */
-    public static final Component<UnificationEntry> CIRCUIT = tier -> {
-        var material = TIER.getIngredient(tier);
-        return new UnificationEntry(OrePrefix.circuit, material);
+    /** The primary metal associated with each tier of progression */
+    public static final Component<Material> TIER_MATERIAL = tier -> switch(tier) {
+        case ULV -> Materials.WroughtIron;
+        case LV -> Materials.Steel;
+        case MV -> Materials.Aluminium;
+        case HV -> Materials.StainlessSteel;
+        case EV -> Materials.Titanium;
+        case IV -> Materials.TungstenSteel;
+        case LuV -> Materials.Chrome;
+        case ZPM -> Materials.Iridium;
+        case UV -> Materials.Osmium;
+        default -> Materials.Darmstadtium;
     };
+
+    /** Standard circuits for the current tier */
+    public static final Component<UnificationEntry> CIRCUIT = bind(OrePrefix.circuit, TIER);
 
     /** Tiered pump components */
     public static final Component<MetaItem<?>.MetaValueItem> PUMP = tier -> switch(tier) {
@@ -192,7 +206,7 @@ public class CraftingComponent {
     };
 
     /** Diamond, used in Lathe recipes */
-    public static final Component<?> DIAMOND = tier ->
+    public static final Component<UnificationEntry> DIAMOND = tier ->
         new UnificationEntry(OrePrefix.gem, Materials.Diamond);
 
     /** Tiered Pistons. ULV uses LV. */
@@ -352,16 +366,151 @@ public class CraftingComponent {
         return new UnificationEntry(OrePrefix.plate, material);
     };
 
-    /** Cables used for making Energy Hatches. Differs somewhat from usual cable materials. */
-    public static final Component<UnificationEntry> ENERGY_HATCH_CABLE = tier -> {
-        var material = switch(tier) {
-            case ULV -> Materials.RedAlloy;
-            case IV -> Materials.Tungsten;
-            case LuV -> Materials.VanadiumGallium;
-            default -> CABLE_MATERIALS.getIngredient(tier);
-        };
+    /**
+     * Materials used for the cables in machine hull recipes.
+     */
+    public static final Component<Material> HULL_CABLE_MATERIAL = tier -> switch(tier) {
+        case ULV -> Materials.RedAlloy;
+        case IV -> Materials.Tungsten;
+        case LuV -> Materials.VanadiumGallium;
+        default -> CABLE_MATERIALS.getIngredient(tier);
+    };
+
+    /** Cables used for making Hulls. Differs somewhat from usual cable materials. */
+    public static final Component<UnificationEntry> HULL_CABLE = tier -> {
+        var material = HULL_CABLE_MATERIAL.getIngredient(tier);
         OrePrefix kind = CABLE_TYPE.getIngredient(tier);
         return new UnificationEntry(kind, material);
     };
+
+    /**
+     * Voltage-tiered machine casings
+     */
+    public static final Component<ItemStack> TIER_CASING = tier ->
+        BlockMachineCasing.MachineCasingType.getTiered()[tier].getStack();
+
+    /** Transformer circuit tier. Can return {@code null}! */
+    public static final Component<Material> XF_ITEM_TIER = tier -> switch(tier) {
+        case EV, IV -> Tier.Advanced;
+        case LuV, ZPM -> Tier.Extreme;
+        case UV -> Tier.Elite;
+        default -> null;
+    };
+
+    /** Transformer items. Can return {@code null}! */
+    public static final Component<UnificationEntry> XF_ITEM = tier -> {
+        var material = XF_ITEM_TIER.getIngredient(tier);
+        return (material == null) ? null : new UnificationEntry(OrePrefix.circuit, material);
+    };
+
+    /**
+     * Different materials used for cables than usual in Transformer and Energy Hatch recipes
+     */
+    public static final Component<Material> XF_CABLE_MATERIAL = tier -> switch(tier) {
+        case IV -> Materials.Tungsten;
+        case LuV -> Materials.VanadiumGallium;
+        default -> CABLE_MATERIALS.getIngredient(tier);
+    };
+
+    /** Cables at tier; used in transformer recipes */
+    public static final Component<UnificationEntry> XF_CABLE = tier -> {
+        var material = XF_CABLE_MATERIAL.getIngredient(tier);
+        var kind = CABLE_TYPE.getIngredient(tier);
+        return new UnificationEntry(kind, material);
+    };
+
+    /** Cables one tier down; used in transformer recipes */
+    public static final Component<UnificationEntry> XF_CABLE_WORSE = tier ->
+        XF_CABLE.getIngredient(tier - 1);
+
+    /**
+     * Tiered Cables used in Energy Input and Output hatches.
+     * Same alternative materials as transformers, but sized the same as
+     * the standard cable set.
+     */
+    public static final Component<UnificationEntry> HATCH_CABLES = tier -> {
+        var kind = CABLE_TYPE.getIngredient(tier);
+        var material = XF_CABLE_MATERIAL.getIngredient(tier);
+        return new UnificationEntry(kind, material);
+    };
+
+    /**
+     * Charger batteries
+     */
+    public static final Component<MetaItem<?>.MetaValueItem> BATTERY = tier -> switch(tier) {
+        case ULV -> MetaItems.BATTERY_RE_ULV_TANTALUM;
+        case LV -> MetaItems.BATTERY_RE_LV_LITHIUM;
+        case MV -> MetaItems.BATTERY_RE_MV_LITHIUM;
+        case HV -> MetaItems.BATTERY_RE_HV_LITHIUM;
+        case EV -> MetaItems.LAPOTRON_CRYSTAL;
+        case IV -> MetaItems.ENERGY_LAPOTRONIC_ORB;
+        case LuV, ZPM -> MetaItems.ENERGY_LAPOTRONIC_ORB2;
+        case UV, MAX -> MetaItems.ZPM2;
+        default -> null;
+    };
+
+    /** Gears made of the core tier metal */
+    public static final Component<UnificationEntry> GEAR = bind(OrePrefix.gear, TIER_MATERIAL);
+
+    /**
+     * Materials for wires used in Rotor Holders
+     */
+    public static final Component<UnificationEntry> ROTOR_HOLDER_WIRE = tier -> {
+        var material = CABLE_MATERIALS.getIngredient(tier);
+        if (tier == LuV)
+            material = Materials.YttriumBariumCuprate;
+        return new UnificationEntry(OrePrefix.wireGtHex, material);
+    };
+
+    /**
+     * Gears used in Rotor Holder recipes
+     */
+    public static final Component<UnificationEntry> ROTOR_HOLDER_GEAR = tier -> {
+        Material material = Materials.HSSS;
+        if(tier != MAX)
+            material = TIER_MATERIAL.getIngredient(tier);
+        return new UnificationEntry(OrePrefix.gear, material);
+    };
+
+    /**
+     * Small pipes used in Steam Turbine recipes
+     */
+    public static final Component<UnificationEntry> STEAM_TURBINE_PIPE = tier -> {
+        var material = switch(tier) {
+            case GTValues.LV -> Materials.Bronze;
+            case GTValues.MV -> Materials.Steel;
+            default -> Materials.StainlessSteel;
+        };
+        return new UnificationEntry(OrePrefix.pipeSmall, material);
+    };
+
+    /**
+     * Primitive Brick and Coke Oven Brick materials corresponding to MetalCasingType enum ordinals.
+     * May return {@code null}!
+     */
+    public static final Component<MetaItem<?>.MetaValueItem> PRIMITIVE_MATERIAL = tier -> switch(tier) {
+        // PRIMITIVE_BRICKS.ordinal()
+        case 1 -> MetaItems.FIRECLAY_BRICK;
+        // COKE_BRICKS.ordinal()
+        case 8 -> MetaItems.COKE_OVEN_BRICK;
+        // Invalid ordinal
+        default -> null;
+    };
+
+    /**
+     * Given an OrePrefix and a Material-type Component, creates a Component returning a
+     * UnificationEntry made of that fixed OrePrefix and the tier-appropriate material.
+     */
+    public static Component<UnificationEntry> bind(OrePrefix prefix, Component<Material> material) {
+        return tier -> new UnificationEntry(prefix, material.getIngredient(tier));
+    }
+
+    /**
+     * Given an OrePrefix-type Component and a Material-type Component, creates a Component returning a
+     * UnificationEntry made from the tier-appropriate OrePrefix and Material.
+     */
+    public static Component<UnificationEntry> bind(Component<OrePrefix> prefix, Component<Material> material) {
+        return tier -> new UnificationEntry(prefix.getIngredient(tier), material.getIngredient(tier));
+    }
 
 }
