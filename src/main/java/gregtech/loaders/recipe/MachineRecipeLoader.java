@@ -43,6 +43,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
@@ -124,7 +125,7 @@ public class MachineRecipeLoader {
             .outputs(MetaItems.COIN_DOGE.getStackForm(4))
             .buildAndRegister();
 
-        for (MetaItem.MetaValueItem shapeMold : SHAPE_MOLDS) {
+        for (MetaItem<?>.MetaValueItem shapeMold : SHAPE_MOLDS) {
             RecipeMaps.FORMING_PRESS_RECIPES.recipeBuilder()
                 .duration(120).EUt(22)
                 .notConsumable(shapeMold.getStackForm())
@@ -133,7 +134,7 @@ public class MachineRecipeLoader {
                 .buildAndRegister();
         }
 
-        for (MetaItem.MetaValueItem shapeExtruder : SHAPE_EXTRUDERS) {
+        for (MetaItem<?>.MetaValueItem shapeExtruder : SHAPE_EXTRUDERS) {
             RecipeMaps.FORMING_PRESS_RECIPES.recipeBuilder()
                 .duration(120).EUt(22)
                 .notConsumable(shapeExtruder.getStackForm())
@@ -449,8 +450,7 @@ public class MachineRecipeLoader {
         RecipeMaps.CENTRIFUGE_RECIPES.recipeBuilder().duration(144).EUt(5).inputs(new ItemStack(Blocks.RED_MUSHROOM)).fluidOutputs(Materials.Methane.getFluid(18)).buildAndRegister();
         if (ConfigHolder.addFoodMethaneRecipes) {
             for (Item item : ForgeRegistries.ITEMS.getValuesCollection()) {
-                if (item instanceof ItemFood) {
-                    ItemFood itemFood = (ItemFood) item;
+                if (item instanceof ItemFood itemFood) {
                     Collection<ItemStack> subItems = ModHandler.getAllSubItems(new ItemStack(item, 1, GTValues.W));
                     for (ItemStack itemStack : subItems) {
                         int healAmount = itemFood.getHealAmount(itemStack);
@@ -1080,10 +1080,14 @@ public class MachineRecipeLoader {
     }
 
     private static <T extends Enum<T> & IStringSerializable> void registerBrickRecipe(StoneBlock<T> stoneBlock, T normalVariant, T brickVariant) {
-        ModHandler.addShapedRecipe(stoneBlock.getRegistryName().getNamespace() + "_" + normalVariant + "_bricks",
-            stoneBlock.getItemVariant(brickVariant, ChiselingVariant.NORMAL, 4),
-            "XX", "XX", 'X',
-            stoneBlock.getItemVariant(normalVariant, ChiselingVariant.NORMAL));
+        ResourceLocation name = stoneBlock.getRegistryName();
+        if(name == null)
+            throw new NullPointerException("NULL registry name for block");
+        ModHandler.addShapedRecipe(String.format("%s_%s_bricks", name.getNamespace(),  normalVariant),
+                                   stoneBlock.getItemVariant(brickVariant, ChiselingVariant.NORMAL, 4),
+                                   "XX",
+                                   "XX",
+                                   'X', stoneBlock.getItemVariant(normalVariant, ChiselingVariant.NORMAL));
     }
 
     private static <T extends Enum<T> & IStringSerializable> void registerChiselingRecipes(StoneBlock<T> stoneBlock) {
@@ -1103,7 +1107,10 @@ public class MachineRecipeLoader {
                 .fluidInputs(Materials.Water.getFluid(144))
                 .outputs(stoneBlock.getItemVariant(variant, ChiselingVariant.MOSSY))
                 .buildAndRegister();
-            ModHandler.addShapelessRecipe(stoneBlock.getRegistryName().getPath() + "_chiseling_" + variant,
+            ResourceLocation name = stoneBlock.getRegistryName();
+            if(name == null)
+                throw new NullPointerException("NULL registry name for block");
+            ModHandler.addShapelessRecipe(String.format("%s_chiseling_%s", name.getPath(), variant),
                 stoneBlock.getItemVariant(variant, ChiselingVariant.CHISELED),
                 stoneBlock.getItemVariant(variant, ChiselingVariant.NORMAL));
         }

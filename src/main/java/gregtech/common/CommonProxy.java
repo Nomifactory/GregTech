@@ -36,6 +36,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemMultiTexture;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.common.config.Config.Type;
 import net.minecraftforge.common.config.ConfigManager;
@@ -221,8 +222,7 @@ public class CommonProxy {
             event.setBurnTime(100);
         }
         //handle material blocks burn value
-        if (stack.getItem() instanceof CompressedItemBlock) {
-            CompressedItemBlock itemBlock = (CompressedItemBlock) stack.getItem();
+        if (stack.getItem() instanceof CompressedItemBlock itemBlock) {
             Material material = itemBlock.getBlockState(stack).getValue(itemBlock.compressedBlock.variantProperty);
             if (material instanceof DustMaterial &&
                 ((DustMaterial) material).burnTime > 0) {
@@ -239,13 +239,19 @@ public class CommonProxy {
             IBlockState blockState = block.getStateFromMeta(stack.getMetadata());
             return nameProducer.apply(blockState);
         });
-        itemBlock.setRegistryName(block.getRegistryName());
+        ResourceLocation name = block.getRegistryName();
+        if(name == null)
+            throw new NullPointerException("NULL registry name for block");
+        itemBlock.setRegistryName(name);
         return itemBlock;
     }
 
     private static <T extends Block> ItemBlock createItemBlock(T block, Function<T, ItemBlock> producer) {
         ItemBlock itemBlock = producer.apply(block);
-        itemBlock.setRegistryName(block.getRegistryName());
+        ResourceLocation name = block.getRegistryName();
+        if(name == null)
+            throw new NullPointerException("NULL registry name for block");
+        itemBlock.setRegistryName(name);
         return itemBlock;
     }
 

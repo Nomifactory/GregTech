@@ -362,7 +362,7 @@ public final class MetaItems {
 
     public static MetaItem<?>.MetaValueItem TURBINE_ROTOR;
 
-    public static ArmorMetaItem.ArmorMetaValueItem REBREATHER;
+    public static ArmorMetaItem<?>.ArmorMetaValueItem REBREATHER;
 
     public static ToolMetaItem<?>.MetaToolValueItem SWORD;
     public static ToolMetaItem<?>.MetaToolValueItem PICKAXE;
@@ -443,7 +443,7 @@ public final class MetaItems {
     @SuppressWarnings("unchecked")
     private static void registerSpecialItemModel(ModelBakeEvent event, MetaValueItem metaValueItem, IBakedModel bakedModel) {
         //god these casts when intellij says you're fine but compiler complains about shit boundaries
-        //noinspection RedundantCast
+        //noinspection RedundantCast,rawtypes
         ResourceLocation modelPath = ((MetaItem) metaValueItem.getMetaItem()).createItemModelPath(metaValueItem, "");
         ModelResourceLocation modelResourceLocation = new ModelResourceLocation(modelPath, "inventory");
         event.getModelRegistry().putObject(modelResourceLocation, bakedModel);

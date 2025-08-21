@@ -81,8 +81,7 @@ public class MaterialRecipeHandler {
                     .buildAndRegister();
             }
 
-        } else if (material instanceof IngotMaterial) {
-            IngotMaterial metalMaterial = (IngotMaterial) material;
+        } else if (material instanceof IngotMaterial metalMaterial) {
             if (!material.hasFlag(Material.MatFlags.FLAMMABLE | MatFlags.NO_SMELTING)) {
 
                 boolean hasHotIngot = OrePrefix.ingotHot.doGenerateItem(metalMaterial);
@@ -146,7 +145,7 @@ public class MaterialRecipeHandler {
 
         ModHandler.addShapedRecipe(String.format("small_dust_disassembling_%s", material.toString()),
             GTUtility.copyAmount(4, smallDustStack), " X", "  ", 'X', new UnificationEntry(OrePrefix.dust, material));
-        ModHandler.addShapedRecipe(String.format("small_dust_assembling_%s", material.toString()),
+        ModHandler.addShapedRecipe(String.format("small_dust_assembling_%s", material),
             dustStack, "XX", "XX", 'X', new UnificationEntry(orePrefix, material));
 
         RecipeMaps.PACKER_RECIPES.recipeBuilder().input(orePrefix, material, 4)
@@ -166,7 +165,7 @@ public class MaterialRecipeHandler {
 
         ModHandler.addShapedRecipe(String.format("tiny_dust_disassembling_%s", material.toString()),
             GTUtility.copyAmount(9, tinyDustStack), "X ", "  ", 'X', new UnificationEntry(OrePrefix.dust, material));
-        ModHandler.addShapedRecipe(String.format("tiny_dust_assembling_%s", material.toString()),
+        ModHandler.addShapedRecipe(String.format("tiny_dust_assembling_%s", material),
             dustStack, "XXX", "XXX", "XXX", 'X', new UnificationEntry(orePrefix, material));
 
         RecipeMaps.PACKER_RECIPES.recipeBuilder().input(orePrefix, material, 9)
@@ -182,18 +181,18 @@ public class MaterialRecipeHandler {
 
     public static void processIngot(OrePrefix ingotPrefix, IngotMaterial material) {
         if (material.hasFlag(MORTAR_GRINDABLE)) {
-            ModHandler.addShapedRecipe(String.format("mortar_grind_%s", material.toString()),
+            ModHandler.addShapedRecipe(String.format("mortar_grind_%s", material),
                 OreDictUnifier.get(OrePrefix.dust, material), "X", "m", 'X', new UnificationEntry(ingotPrefix, material));
         }
 
         if (!material.hasFlag(MatFlags.NO_SMASHING) && material.toolDurability > 0) {
-            ModHandler.addShapedRecipe(String.format("wrench_%s", material.toString()),
+            ModHandler.addShapedRecipe(String.format("wrench_%s", material),
                 MetaItems.WRENCH.getStackForm(material),
                 "IhI", "III", " I ", 'I', new UnificationEntry(ingotPrefix, material));
         }
 
         if (material.hasFlag(GENERATE_ROD)) {
-            ModHandler.addShapedRecipe(String.format("stick_%s", material.toString()),
+            ModHandler.addShapedRecipe(String.format("stick_%s", material),
                 OreDictUnifier.get(OrePrefix.stick, material, 1),
                 "f ", " X",
                 'X', new UnificationEntry(ingotPrefix, material));
@@ -259,7 +258,7 @@ public class MaterialRecipeHandler {
                 .EUt(2 * voltageMultiplier)
                 .buildAndRegister();
 
-            ModHandler.addShapedRecipe(String.format("plate_%s", material.toString()),
+            ModHandler.addShapedRecipe(String.format("plate_%s", material),
                 plateStack, "h", "I", "I", 'I', new UnificationEntry(ingotPrefix, material));
 
             if (material.hasFlag(IngotMaterial.MatFlags.GENERATE_DENSE)) {
@@ -302,9 +301,9 @@ public class MaterialRecipeHandler {
         if (material instanceof IngotMaterial) {
             ItemStack ingotStack = OreDictUnifier.get(OrePrefix.ingot, material);
 
-            ModHandler.addShapelessRecipe(String.format("nugget_disassembling_%s", material.toString()),
+            ModHandler.addShapelessRecipe(String.format("nugget_disassembling_%s", material),
                 GTUtility.copyAmount(9, nuggetStack), new UnificationEntry(OrePrefix.ingot, material));
-            ModHandler.addShapedRecipe(String.format("nugget_assembling_%s", material.toString()),
+            ModHandler.addShapedRecipe(String.format("nugget_assembling_%s", material),
                 ingotStack, "XXX", "XXX", "XXX", 'X', new UnificationEntry(orePrefix, material));
 
             RecipeMaps.UNPACKER_RECIPES.recipeBuilder().input(OrePrefix.ingot, material)
@@ -329,9 +328,9 @@ public class MaterialRecipeHandler {
         } else if (material instanceof GemMaterial) {
             ItemStack gemStack = OreDictUnifier.get(OrePrefix.gem, material);
 
-            ModHandler.addShapelessRecipe(String.format("nugget_disassembling_%s", material.toString()),
+            ModHandler.addShapelessRecipe(String.format("nugget_disassembling_%s", material),
                 GTUtility.copyAmount(9, nuggetStack), new UnificationEntry(OrePrefix.gem, material));
-            ModHandler.addShapedRecipe(String.format("nugget_assembling_%s", material.toString()),
+            ModHandler.addShapedRecipe(String.format("nugget_assembling_%s", material),
                 gemStack, "XXX", "XXX", "XXX", 'X', new UnificationEntry(orePrefix, material));
         }
     }
@@ -395,9 +394,9 @@ public class MaterialRecipeHandler {
 
             //do not allow hand crafting or uncrafting of blacklisted blocks
             if (!material.hasFlag(EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES)) {
-                ModHandler.addShapelessRecipe(String.format("block_compress_%s", material.toString()), blockStack, result.toArray());
+                ModHandler.addShapelessRecipe(String.format("block_compress_%s", material), blockStack, result.toArray());
 
-                ModHandler.addShapelessRecipe(String.format("block_decompress_%s", material.toString()),
+                ModHandler.addShapelessRecipe(String.format("block_decompress_%s", material),
                     GTUtility.copyAmount((int) (materialAmount / M), OreDictUnifier.get(blockEntry)),
                     new UnificationEntry(blockPrefix, material));
             }
