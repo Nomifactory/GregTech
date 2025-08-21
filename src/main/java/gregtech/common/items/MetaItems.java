@@ -417,17 +417,6 @@ public final class MetaItems {
         }
     }
 
-    public static void registerRecipes() {
-        for (MetaItem<?> item : ITEMS) {
-            if (item instanceof MetaItem1)
-                ((MetaItem1) item).registerRecipes();
-            if (item instanceof MetaItem2)
-                ((MetaItem2) item).registerRecipes();
-            if (item instanceof MetaTool)
-                ((MetaTool) item).registerRecipes();
-        }
-    }
-
     @SideOnly(Side.CLIENT)
     public static void registerModels() {
         MinecraftForge.EVENT_BUS.register(MetaItems.class);
