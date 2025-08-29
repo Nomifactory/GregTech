@@ -6,6 +6,7 @@ import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.MarkerMaterials.Tier;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.material.type.FluidMaterial;
 import gregtech.api.unification.material.type.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
@@ -350,7 +351,7 @@ public class CraftingComponent {
     };
 
     /** Tiered plastic */
-    public static final Component<Material> PLASTIC = tier -> {
+    public static final Component<FluidMaterial> PLASTIC = tier -> {
         if(tier < ZPM)
             return Materials.Plastic;
         return Materials.Polytetrafluoroethylene;

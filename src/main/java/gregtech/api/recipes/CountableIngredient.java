@@ -36,6 +36,13 @@ public class CountableIngredient {
         return new CountableIngredient(new OreIngredient(new UnificationEntry(prefix, material).toString()), count);
     }
 
+    /** @throws java.lang.NullPointerException if the UnificationEntry's material is {@code null} */
+    public static CountableIngredient from(UnificationEntry entry, int count) {
+        if(entry.material == null)
+            throw new NullPointerException("NULL material is not permitted here");
+        return from(entry.orePrefix, entry.material, count);
+    }
+
     private Ingredient ingredient;
     private int count;
 
