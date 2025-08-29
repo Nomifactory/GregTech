@@ -17,6 +17,7 @@ import net.minecraft.init.MobEffects;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 
+import static gregtech.api.GTValues.LV;
 import static gregtech.api.util.DyeUtil.getOrdictColorName;
 import static gregtech.common.items.MetaItems.*;
 
@@ -59,14 +60,14 @@ public class MetaItem2 extends MaterialMetaItem {
         PLANT_BALL = addItem(570, "plant_ball").setBurnValue(75);
         ENERGIUM_DUST = addItem(572, "energium_dust");
 
-        POWER_UNIT_LV = addItem(573, "power_unit.lv").addComponents(ElectricStats.createElectricItem(100000L, GTValues.LV)).setMaxStackSize(8);
+        POWER_UNIT_LV = addItem(573, "power_unit.lv").addComponents(ElectricStats.createElectricItem(100000L, LV)).setMaxStackSize(8);
         POWER_UNIT_MV = addItem(574, "power_unit.mv").addComponents(ElectricStats.createElectricItem(400000L, GTValues.MV)).setMaxStackSize(8);
         POWER_UNIT_HV = addItem(575, "power_unit.hv") .addComponents(ElectricStats.createElectricItem(1600000L, GTValues.HV)).setMaxStackSize(8);
         JACKHAMMER_BASE = addItem(576, "jackhammer_base").addComponents(ElectricStats.createElectricItem(1600000L, GTValues.HV)).setMaxStackSize(4);
 
         NANO_SABER = addItem(577, "nano_saber").addComponents(ElectricStats.createElectricItem(4000000L, GTValues.HV)).addComponents(new NanoSaberBehavior()).setMaxStackSize(1);
         ENERGY_FIELD_PROJECTOR = addItem(578, "energy_field_projector").addComponents(ElectricStats.createElectricItem(16000000L, GTValues.EV)).setMaxStackSize(1);
-        SCANNER = addItem(579, "scanner").addComponents(ElectricStats.createElectricItem(200_000L, GTValues.LV), new ScannerBehavior(50));
+        SCANNER = addItem(579, "scanner").addComponents(ElectricStats.createElectricItem(200_000L, LV), new ScannerBehavior(50));
 
         CARBON_FIBERS = addItem(504, "carbon.fibers");
         CARBON_MESH = addItem(505, "carbon.mesh");
@@ -160,13 +161,6 @@ public class MetaItem2 extends MaterialMetaItem {
         TURBINE_ROTOR = addItem(508, "turbine_rotor").addComponents(new TurbineRotorBehavior());
         COVER_FACADE = addItem(509, "cover.facade").addComponents(new FacadeItem()).disableModelLoading();
 
-        FLUID_REGULATORS[0] = FLUID_REGULATOR_LV = addItem(700, "fluid.regulator.lv");
-        FLUID_REGULATORS[1] = FLUID_REGULATOR_MV = addItem(701, "fluid.regulator.mv");
-        FLUID_REGULATORS[2] = FLUID_REGULATOR_HV = addItem(702, "fluid.regulator.hv");
-        FLUID_REGULATORS[3] = FLUID_REGULATOR_EV = addItem(703, "fluid.regulator.ev");
-        FLUID_REGULATORS[4] = FLUID_REGULATOR_IV = addItem(704, "fluid.regulator.iv");
-        FLUID_REGULATORS[5] = FLUID_REGULATOR_LUV = addItem(705, "fluid.regulator.luv");
-        FLUID_REGULATORS[6] = FLUID_REGULATOR_ZPM = addItem(706, "fluid.regulator.zpm");
-        FLUID_REGULATORS[7] = FLUID_REGULATOR_UV = addItem(707, "fluid.regulator.uv");
+        registerTieredComponents(this, FLUID_REGULATORS, 700, LV, "fluid", "regulator");
     }
 }
