@@ -86,7 +86,7 @@ public class PartsRecipeHandler {
             .EUt(4)
             .buildAndRegister();
 
-        ModHandler.addShapedRecipe(String.format("screw_%s", material.toString()),
+        ModHandler.addShapedRecipe(String.format("screw_%s", material),
             screwStack, "fX", "X ",
             'X', new UnificationEntry(OrePrefix.bolt, material));
     }
@@ -294,7 +294,7 @@ public class PartsRecipeHandler {
                 .EUt(4)
                 .buildAndRegister();
 
-            ModHandler.addShapedRecipe(String.format("bolt_saw_%s", material.toString()),
+            ModHandler.addShapedRecipe(String.format("bolt_saw_%s", material),
                 GTUtility.copyAmount(2, boltStack),
                 "s ", " X",
                 'X', new UnificationEntry(OrePrefix.stick, material));
@@ -311,17 +311,17 @@ public class PartsRecipeHandler {
             .duration((int) Math.max(material.getAverageMass(), 1L)).EUt(4)
             .buildAndRegister();
 
-        ModHandler.addShapedRecipe(String.format("stick_long_%s", material.toString()),
+        ModHandler.addShapedRecipe(String.format("stick_long_%s", material),
             GTUtility.copyAmount(2, stickStack),
             "s", "X", 'X', new UnificationEntry(OrePrefix.stickLong, material));
 
-        ModHandler.addShapedRecipe(String.format("stick_long_gem_flawless_%s", material.toString()),
+        ModHandler.addShapedRecipe(String.format("stick_long_gem_flawless_%s", material),
             stickStack,
             "sf",
             "G ",
             'G', new UnificationEntry(OrePrefix.gemFlawless, material));
 
-        ModHandler.addShapedRecipe(String.format("stick_long_gem_exquisite_%s", material.toString()),
+        ModHandler.addShapedRecipe(String.format("stick_long_gem_exquisite_%s", material),
             GTUtility.copyAmount(2, stickStack),
             "sf", "G ",
             'G', new UnificationEntry(OrePrefix.gemExquisite, material));
@@ -336,7 +336,7 @@ public class PartsRecipeHandler {
                 .buildAndRegister();
         }
 
-        ModHandler.addShapedRecipe(String.format("stick_long_stick_%s", material.toString()), stack,
+        ModHandler.addShapedRecipe(String.format("stick_long_stick_%s", material), stack,
             "ShS",
             'S', new UnificationEntry(OrePrefix.stick, material));
 
@@ -378,7 +378,7 @@ public class PartsRecipeHandler {
     }
 
     private static int getVoltageMultiplier(Material material) {
-        return material instanceof IngotMaterial && ((IngotMaterial) material)
+        return material instanceof IngotMaterial im && im
             .blastFurnaceTemperature >= 2800 ? 32 : 8;
     }
 }

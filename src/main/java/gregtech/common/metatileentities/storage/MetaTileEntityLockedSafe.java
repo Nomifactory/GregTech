@@ -24,6 +24,7 @@ import gregtech.api.render.Textures;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.common.worldgen.LootTableHelper;
+import gregtech.loaders.recipe.Component;
 import gregtech.loaders.recipe.CraftingComponent;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
@@ -50,10 +51,12 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.DoubleSupplier;
 
+import static gregtech.loaders.recipe.CraftingComponent.*;
+
 public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRenderMetaTileEntity {
     
     private static final int MAX_UNLOCK_PROGRESS = 100;
-    private static final CraftingComponent[] ALLOWED_COMPONENTS = {CraftingComponent.PUMP, CraftingComponent.CONVEYOR, CraftingComponent.EMITTER, CraftingComponent.SENSOR};
+    private static final Component<?>[] ALLOWED_COMPONENTS = {PUMP, CONVEYOR, EMITTER, SENSOR};
     private static IndexedCuboid6 COLLISION_BOX = new IndexedCuboid6(null, new Cuboid6(3 / 16.0, 0 / 16.0, 3 / 16.0, 13 / 16.0, 14 / 16.0, 13 / 16.0));
 
     private int unlockProgress = -1;

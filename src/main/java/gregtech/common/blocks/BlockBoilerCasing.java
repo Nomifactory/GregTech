@@ -1,17 +1,19 @@
 package gregtech.common.blocks;
 
+import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.material.type.Material;
 import net.minecraft.block.SoundType;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLiving.SpawnPlacementType;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import org.jetbrains.annotations.NotNull;
 
 public class BlockBoilerCasing extends VariantBlock<BlockBoilerCasing.BoilerCasingType> {
 
     public BlockBoilerCasing() {
-        super(Material.IRON);
+        super(net.minecraft.block.material.Material.IRON);
         setTranslationKey("boiler_casing");
         setHardness(5.0f);
         setResistance(10.0f);
@@ -25,17 +27,19 @@ public class BlockBoilerCasing extends VariantBlock<BlockBoilerCasing.BoilerCasi
         return false;
     }
 
-    public enum BoilerCasingType implements IStringSerializable {
+    public enum BoilerCasingType implements IStringSerializable, MaterialLookupBlock<BoilerCasingType> {
 
-        BRONZE_PIPE("bronze_pipe"),
-        STEEL_PIPE("steel_pipe"),
-        TITANIUM_PIPE("titanium_pipe"),
-        TUNGSTENSTEEL_PIPE("tungstensteel_pipe");
+        BRONZE_PIPE("bronze_pipe", Materials.Bronze),
+        STEEL_PIPE("steel_pipe", Materials.Steel),
+        TITANIUM_PIPE("titanium_pipe", Materials.Titanium),
+        TUNGSTENSTEEL_PIPE("tungstensteel_pipe", Materials.TungstenSteel);
 
         private final String name;
+        private final Material material;
 
-        BoilerCasingType(String name) {
+        BoilerCasingType(String name, Material material) {
             this.name = name;
+            this.material = material;
         }
 
         @Override
@@ -43,6 +47,16 @@ public class BlockBoilerCasing extends VariantBlock<BlockBoilerCasing.BoilerCasi
             return this.name;
         }
 
+        @Override
+        public Material getMaterial() {
+            return this.material;
+        }
+
+        @Override
+        @NotNull
+        public VariantBlock<BoilerCasingType> getVariantBlock() {
+            return MetaBlocks.BOILER_CASING;
+        }
     }
 
 }

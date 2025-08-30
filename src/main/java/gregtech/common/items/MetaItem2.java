@@ -5,24 +5,19 @@ import gregtech.api.items.materialitem.MaterialMetaItem;
 import gregtech.api.items.metaitem.ElectricStats;
 import gregtech.api.items.metaitem.FoodStats;
 import gregtech.api.items.metaitem.stats.IItemContainerItemProvider;
-import gregtech.api.recipes.CountableIngredient;
-import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials.Tier;
-import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.RandomPotionEffect;
-import gregtech.common.ConfigHolder;
 import gregtech.common.items.behaviors.FacadeItem;
 import gregtech.common.items.behaviors.ScannerBehavior;
 import gregtech.common.items.behaviors.NanoSaberBehavior;
 import gregtech.common.items.behaviors.TurbineRotorBehavior;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 
+import static gregtech.api.GTValues.LV;
 import static gregtech.api.util.DyeUtil.getOrdictColorName;
 import static gregtech.common.items.MetaItems.*;
 
@@ -65,14 +60,14 @@ public class MetaItem2 extends MaterialMetaItem {
         PLANT_BALL = addItem(570, "plant_ball").setBurnValue(75);
         ENERGIUM_DUST = addItem(572, "energium_dust");
 
-        POWER_UNIT_LV = addItem(573, "power_unit.lv").addComponents(ElectricStats.createElectricItem(100000L, GTValues.LV)).setMaxStackSize(8);
+        POWER_UNIT_LV = addItem(573, "power_unit.lv").addComponents(ElectricStats.createElectricItem(100000L, LV)).setMaxStackSize(8);
         POWER_UNIT_MV = addItem(574, "power_unit.mv").addComponents(ElectricStats.createElectricItem(400000L, GTValues.MV)).setMaxStackSize(8);
         POWER_UNIT_HV = addItem(575, "power_unit.hv") .addComponents(ElectricStats.createElectricItem(1600000L, GTValues.HV)).setMaxStackSize(8);
         JACKHAMMER_BASE = addItem(576, "jackhammer_base").addComponents(ElectricStats.createElectricItem(1600000L, GTValues.HV)).setMaxStackSize(4);
 
         NANO_SABER = addItem(577, "nano_saber").addComponents(ElectricStats.createElectricItem(4000000L, GTValues.HV)).addComponents(new NanoSaberBehavior()).setMaxStackSize(1);
         ENERGY_FIELD_PROJECTOR = addItem(578, "energy_field_projector").addComponents(ElectricStats.createElectricItem(16000000L, GTValues.EV)).setMaxStackSize(1);
-        SCANNER = addItem(579, "scanner").addComponents(ElectricStats.createElectricItem(200_000L, GTValues.LV), new ScannerBehavior(50));
+        SCANNER = addItem(579, "scanner").addComponents(ElectricStats.createElectricItem(200_000L, LV), new ScannerBehavior(50));
 
         CARBON_FIBERS = addItem(504, "carbon.fibers");
         CARBON_MESH = addItem(505, "carbon.mesh");
@@ -166,136 +161,6 @@ public class MetaItem2 extends MaterialMetaItem {
         TURBINE_ROTOR = addItem(508, "turbine_rotor").addComponents(new TurbineRotorBehavior());
         COVER_FACADE = addItem(509, "cover.facade").addComponents(new FacadeItem()).disableModelLoading();
 
-        FLUID_REGULATORS[0] = FLUID_REGULATOR_LV = addItem(700, "fluid.regulator.lv");
-        FLUID_REGULATORS[1] = FLUID_REGULATOR_MV = addItem(701, "fluid.regulator.mv");
-        FLUID_REGULATORS[2] = FLUID_REGULATOR_HV = addItem(702, "fluid.regulator.hv");
-        FLUID_REGULATORS[3] = FLUID_REGULATOR_EV = addItem(703, "fluid.regulator.ev");
-        FLUID_REGULATORS[4] = FLUID_REGULATOR_IV = addItem(704, "fluid.regulator.iv");
-        FLUID_REGULATORS[5] = FLUID_REGULATOR_LUV = addItem(705, "fluid.regulator.luv");
-        FLUID_REGULATORS[6] = FLUID_REGULATOR_ZPM = addItem(706, "fluid.regulator.zpm");
-        FLUID_REGULATORS[7] = FLUID_REGULATOR_UV = addItem(707, "fluid.regulator.uv");
-    }
-
-    public void registerRecipes() {
-        // Dyes recipes
-        RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
-            .inputs(new ItemStack(Blocks.RED_FLOWER, 1, 0))
-            .outputs(new ItemStack(Items.DYE, 2, 1))
-            .buildAndRegister();
-
-        RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
-            .inputs(new ItemStack(Blocks.RED_FLOWER, 1, 1))
-            .outputs(new ItemStack(Items.DYE, 2, 12))
-            .buildAndRegister();
-
-        RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
-            .inputs(new ItemStack(Blocks.RED_FLOWER, 1, 2))
-            .outputs(new ItemStack(Items.DYE, 2, 13))
-            .buildAndRegister();
-
-        RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
-            .inputs(new ItemStack(Blocks.RED_FLOWER, 1, 3))
-            .outputs(new ItemStack(Items.DYE, 2, 7))
-            .buildAndRegister();
-
-        RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
-            .inputs(new ItemStack(Blocks.RED_FLOWER, 1, 4))
-            .outputs(new ItemStack(Items.DYE, 2, 1))
-            .buildAndRegister();
-
-        RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
-            .inputs(new ItemStack(Blocks.RED_FLOWER, 1, 5))
-            .outputs(new ItemStack(Items.DYE, 2, 14))
-            .buildAndRegister();
-
-        RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
-            .inputs(new ItemStack(Blocks.RED_FLOWER, 1, 6))
-            .outputs(new ItemStack(Items.DYE, 2, 7))
-            .buildAndRegister();
-
-        RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
-            .inputs(new ItemStack(Blocks.RED_FLOWER, 1, 7))
-            .outputs(new ItemStack(Items.DYE, 2, 9))
-            .buildAndRegister();
-
-        RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
-            .inputs(new ItemStack(Blocks.RED_FLOWER, 1, 8))
-            .outputs(new ItemStack(Items.DYE, 2, 7))
-            .buildAndRegister();
-
-        RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
-            .inputs(new ItemStack(Blocks.YELLOW_FLOWER, 1, 0))
-            .outputs(new ItemStack(Items.DYE, 2, 11))
-            .buildAndRegister();
-
-        RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
-            .inputs(new ItemStack(Blocks.DOUBLE_PLANT, 1, 0))
-            .outputs(new ItemStack(Items.DYE, 3, 11))
-            .buildAndRegister();
-
-        RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
-            .inputs(new ItemStack(Blocks.DOUBLE_PLANT, 1, 1))
-            .outputs(new ItemStack(Items.DYE, 3, 13))
-            .buildAndRegister();
-
-        RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
-            .inputs(new ItemStack(Blocks.DOUBLE_PLANT, 1, 4))
-            .outputs(new ItemStack(Items.DYE, 3, 1))
-            .buildAndRegister();
-
-        RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
-            .inputs(new ItemStack(Blocks.DOUBLE_PLANT, 1, 5))
-            .outputs(new ItemStack(Items.DYE, 3, 9))
-            .buildAndRegister();
-
-        RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
-            .inputs(new ItemStack(Items.BEETROOT, 1))
-            .outputs(new ItemStack(Items.DYE, 2, 1))
-            .buildAndRegister();
-
-        // Misc
-        RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
-            .inputs(new ItemStack(Items.DYE, 1, EnumDyeColor.BROWN.getDyeDamage()))
-            .outputs(OreDictUnifier.get(OrePrefix.dust, Materials.Cocoa, 1))
-            .duration(400)
-            .EUt(2)
-            .buildAndRegister();
-
-        RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
-            .inputs(new ItemStack(Items.REEDS, 1))
-            .outputs(new ItemStack(Items.SUGAR, 1))
-            .duration(400)
-            .EUt(2)
-            .buildAndRegister();
-
-        RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
-            .inputs(new ItemStack(Blocks.MELON_BLOCK, 1, 0))
-            .outputs(new ItemStack(Items.MELON, 8, 0))
-            .chancedOutput(new ItemStack(Items.MELON_SEEDS, 1), 8000, 500)
-            .duration(400)
-            .EUt(2)
-            .buildAndRegister();
-
-        RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
-            .inputs(new ItemStack(Blocks.PUMPKIN, 1, 0))
-            .outputs(new ItemStack(Items.PUMPKIN_SEEDS, 4, 0))
-            .duration(400)
-            .EUt(2)
-            .buildAndRegister();
-
-        RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
-            .inputs(new ItemStack(Items.MELON, 1, 0))
-            .outputs(new ItemStack(Items.MELON_SEEDS, 1, 0))
-            .duration(400)
-            .EUt(2)
-            .buildAndRegister();
-
-        RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
-            .inputs(CountableIngredient.from("blockWool", 1))
-            .outputs(new ItemStack(Items.STRING, 3))
-            .chancedOutput(new ItemStack(Items.STRING, 1), 2000, 800)
-            .duration(400)
-            .EUt(2)
-            .buildAndRegister();
+        registerTieredComponents(this, FLUID_REGULATORS, 700, LV, "fluid", "regulator");
     }
 }

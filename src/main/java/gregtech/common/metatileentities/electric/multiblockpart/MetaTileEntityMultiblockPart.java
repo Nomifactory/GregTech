@@ -5,6 +5,7 @@ import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.block.machines.BlockMachine;
+import gregtech.api.metatileentity.ITiered;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
@@ -25,7 +26,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity implements IMultiblockPart {
+public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity implements IMultiblockPart, ITiered {
 
     protected final int tier;
     private BlockPos controllerPos;

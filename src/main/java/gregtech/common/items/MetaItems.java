@@ -1,5 +1,6 @@
 package gregtech.common.items;
 
+import gregtech.api.GTValues;
 import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.materialitem.MaterialMetaItem;
 import gregtech.api.items.metaitem.MetaItem;
@@ -19,7 +20,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
-@SuppressWarnings("WeakerAccess")
+import static gregtech.api.GTValues.*;
+
+@SuppressWarnings("unused")
 public final class MetaItems {
 
     private MetaItems() {
@@ -149,6 +152,8 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem ELECTRIC_MOTOR_ZPM;
     public static MetaItem<?>.MetaValueItem ELECTRIC_MOTOR_UV;
 
+    public static final MetaItem<?>.MetaValueItem[] MOTORS = new MetaValueItem[UV];
+
     public static MetaItem<?>.MetaValueItem ELECTRIC_PUMP_LV;
     public static MetaItem<?>.MetaValueItem ELECTRIC_PUMP_MV;
     public static MetaItem<?>.MetaValueItem ELECTRIC_PUMP_HV;
@@ -158,7 +163,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem ELECTRIC_PUMP_ZPM;
     public static MetaItem<?>.MetaValueItem ELECTRIC_PUMP_UV;
 
-    public static final MetaItem<?>.MetaValueItem[] PUMPS = new MetaValueItem[8];
+    public static final MetaItem<?>.MetaValueItem[] PUMPS = new MetaValueItem[UV];
 
     public static MetaItem<?>.MetaValueItem FLUID_REGULATOR_LV;
     public static MetaItem<?>.MetaValueItem FLUID_REGULATOR_MV;
@@ -169,7 +174,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem FLUID_REGULATOR_ZPM;
     public static MetaItem<?>.MetaValueItem FLUID_REGULATOR_UV;
 
-    public static final MetaItem<?>.MetaValueItem[] FLUID_REGULATORS = new MetaValueItem[8];
+    public static final MetaItem<?>.MetaValueItem[] FLUID_REGULATORS = new MetaValueItem[UV];
 
     public static MetaItem<?>.MetaValueItem FLUID_FILTER;
 
@@ -184,6 +189,8 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem CONVEYOR_MODULE_ZPM;
     public static MetaItem<?>.MetaValueItem CONVEYOR_MODULE_UV;
 
+    public static final MetaItem<?>.MetaValueItem[] CONVEYORS = new MetaValueItem[UV];
+
     public static MetaItem<?>.MetaValueItem ELECTRIC_PISTON_LV;
     public static MetaItem<?>.MetaValueItem ELECTRIC_PISTON_MV;
     public static MetaItem<?>.MetaValueItem ELECTRIC_PISTON_HV;
@@ -192,6 +199,8 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem ELECTRIC_PISTON_LUV;
     public static MetaItem<?>.MetaValueItem ELECTRIC_PISTON_ZPM;
     public static MetaItem<?>.MetaValueItem ELECTRIC_PISTON_UV;
+
+    public static final MetaItem<?>.MetaValueItem[] PISTONS = new MetaValueItem[UV];
 
     public static MetaItem<?>.MetaValueItem ROBOT_ARM_LV;
     public static MetaItem<?>.MetaValueItem ROBOT_ARM_MV;
@@ -202,6 +211,8 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem ROBOT_ARM_ZPM;
     public static MetaItem<?>.MetaValueItem ROBOT_ARM_UV;
 
+    public static final MetaItem<?>.MetaValueItem[] ROBOT_ARMS = new MetaValueItem[UV];
+
     public static MetaItem<?>.MetaValueItem FIELD_GENERATOR_LV;
     public static MetaItem<?>.MetaValueItem FIELD_GENERATOR_MV;
     public static MetaItem<?>.MetaValueItem FIELD_GENERATOR_HV;
@@ -210,6 +221,8 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem FIELD_GENERATOR_LUV;
     public static MetaItem<?>.MetaValueItem FIELD_GENERATOR_ZPM;
     public static MetaItem<?>.MetaValueItem FIELD_GENERATOR_UV;
+
+    public static MetaItem<?>.MetaValueItem[] FIELD_GENERATORS = new MetaValueItem[UV];
 
     public static MetaItem<?>.MetaValueItem EMITTER_LV;
     public static MetaItem<?>.MetaValueItem EMITTER_MV;
@@ -220,6 +233,8 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem EMITTER_ZPM;
     public static MetaItem<?>.MetaValueItem EMITTER_UV;
 
+    public static final MetaItem<?>.MetaValueItem[] EMITTERS = new MetaValueItem[UV];
+
     public static MetaItem<?>.MetaValueItem SENSOR_LV;
     public static MetaItem<?>.MetaValueItem SENSOR_MV;
     public static MetaItem<?>.MetaValueItem SENSOR_HV;
@@ -228,6 +243,8 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem SENSOR_LUV;
     public static MetaItem<?>.MetaValueItem SENSOR_ZPM;
     public static MetaItem<?>.MetaValueItem SENSOR_UV;
+
+    public static final MetaItem<?>.MetaValueItem[] SENSORS = new MetaValueItem[UV];
 
     public static MetaItem<?>.MetaValueItem TOOL_DATA_STICK;
     public static MetaItem<?>.MetaValueItem TOOL_DATA_ORB;
@@ -362,7 +379,7 @@ public final class MetaItems {
 
     public static MetaItem<?>.MetaValueItem TURBINE_ROTOR;
 
-    public static ArmorMetaItem.ArmorMetaValueItem REBREATHER;
+    public static ArmorMetaItem<?>.ArmorMetaValueItem REBREATHER;
 
     public static ToolMetaItem<?>.MetaToolValueItem SWORD;
     public static ToolMetaItem<?>.MetaToolValueItem PICKAXE;
@@ -417,17 +434,6 @@ public final class MetaItems {
         }
     }
 
-    public static void registerRecipes() {
-        for (MetaItem<?> item : ITEMS) {
-            if (item instanceof MetaItem1)
-                ((MetaItem1) item).registerRecipes();
-            if (item instanceof MetaItem2)
-                ((MetaItem2) item).registerRecipes();
-            if (item instanceof MetaTool)
-                ((MetaTool) item).registerRecipes();
-        }
-    }
-
     @SideOnly(Side.CLIENT)
     public static void registerModels() {
         MinecraftForge.EVENT_BUS.register(MetaItems.class);
@@ -454,9 +460,43 @@ public final class MetaItems {
     @SuppressWarnings("unchecked")
     private static void registerSpecialItemModel(ModelBakeEvent event, MetaValueItem metaValueItem, IBakedModel bakedModel) {
         //god these casts when intellij says you're fine but compiler complains about shit boundaries
-        //noinspection RedundantCast
+        //noinspection RedundantCast,rawtypes
         ResourceLocation modelPath = ((MetaItem) metaValueItem.getMetaItem()).createItemModelPath(metaValueItem, "");
         ModelResourceLocation modelResourceLocation = new ModelResourceLocation(modelPath, "inventory");
         event.getModelRegistry().putObject(modelResourceLocation, bakedModel);
+    }
+
+    /**
+     * Creates a range of sub-items under a MetaItem, and populates arrays and fields in this class with the
+     * generated references for use elsewhere. Make sure the fields are actually declared, or the game will crash.
+     *
+     * @param metaItem     the MetaItem instance to add elements to
+     * @param arr          an array to fill with new MetaItems. Its length determines the number of items generated.
+     * @param startingId   the starting ID for the items registered
+     * @param startingTier the {@link GTValues} tier ordinal to begin, e.g. {@link GTValues#LV}
+     * @param nameParts words used to construct the unlocalized name and MetaItems field names to populate,
+     *                  e.g. {@code {"foo", "bar"}} would generate an unlocalized name {@code "foo.bar.lv"}
+     *                  and a field name {@code "FOO_BAR_LV"}
+     */
+    static void registerTieredComponents(MetaItem<MetaItem<?>.MetaValueItem> metaItem,
+                                         MetaItem<?>.MetaValueItem[] arr,
+                                         int startingId,
+                                         int startingTier,
+                                         String... nameParts)
+    {
+        String unlocalizedNameFmt = String.join(".", nameParts).toLowerCase() + ".%s";
+        String fieldNameFmt = String.join("_", nameParts).toUpperCase() + "_%s";
+
+        for(int i = 0; i < arr.length; i++) {
+            String tierName = GTValues.VN[startingTier + i];
+            String fieldName = String.format(fieldNameFmt, tierName.toUpperCase());
+            String name = String.format(unlocalizedNameFmt, tierName.toLowerCase());
+            arr[i] = metaItem.addItem(startingId + i, name);
+            try {
+                MetaItems.class.getDeclaredField(fieldName).set(null, arr[i]);
+            } catch(NoSuchFieldException | IllegalAccessException e) {
+                throw new RuntimeException("Failed to write field: " + fieldName, e);
+            }
+        }
     }
 }

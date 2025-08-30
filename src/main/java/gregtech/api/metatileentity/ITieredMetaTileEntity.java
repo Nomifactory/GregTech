@@ -2,16 +2,9 @@ package gregtech.api.metatileentity;
 
 import gregtech.api.GTValues;
 
-public interface ITieredMetaTileEntity {
+public interface ITieredMetaTileEntity extends ITiered {
 
     String getMetaName();
-
-    /**
-     * Tier of machine determines it's input voltage, storage and generation rate
-     *
-     * @return tier of this machine
-     */
-    int getTier();
 
     /**
      * Returns tier less tooltip key

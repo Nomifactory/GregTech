@@ -6,7 +6,6 @@ import gregtech.api.items.materialitem.MaterialMetaItem;
 import gregtech.api.items.metaitem.ElectricStats;
 import gregtech.api.items.metaitem.FluidStats;
 import gregtech.api.items.metaitem.FoodStats;
-import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.Materials;
@@ -22,7 +21,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
@@ -33,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 import static gregtech.common.items.MetaItems.*;
+import static gregtech.api.GTValues.LV;
 
 public class MetaItem1 extends MaterialMetaItem {
 
@@ -172,26 +171,22 @@ public class MetaItem1 extends MaterialMetaItem {
         ENERGY_LAPOTRONIC_ORB = addItem(597, "energy.lapotronicorb").addComponents(ElectricStats.createRechargeableBattery(100000000, 5)).setUnificationData(OrePrefix.battery, MarkerMaterials.Tier.Ultimate).setModelAmount(8);
         ENERGY_LAPOTRONIC_ORB2 = addItem(598, "energy.lapotronicorb2").addComponents(ElectricStats.createRechargeableBattery(1000000000, 6)).setUnificationData(OrePrefix.battery, MarkerMaterials.Tier.Ultimate).setModelAmount(8);
 
-        ZPM = addItem(599, "zpm").addComponents(ElectricStats.createBattery(2000000000000L, 7, false)).setModelAmount(8);
+        ZPM = addItem(599, "zpm").addComponents(ElectricStats.createBattery(2_000_000_000_000L, 7, false)).setModelAmount(8);
         ZPM2 = addItem(605, "zpm2").addComponents(ElectricStats.createRechargeableBattery(Long.MAX_VALUE, 8)).setModelAmount(8);
 
-        ELECTRIC_MOTOR_LV = addItem(600, "electric.motor.lv");
-        ELECTRIC_MOTOR_MV = addItem(601, "electric.motor.mv");
-        ELECTRIC_MOTOR_HV = addItem(602, "electric.motor.hv");
-        ELECTRIC_MOTOR_EV = addItem(603, "electric.motor.ev");
-        ELECTRIC_MOTOR_IV = addItem(604, "electric.motor.iv");
-        ELECTRIC_MOTOR_LUV = addItem(606, "electric.motor.luv");
-        ELECTRIC_MOTOR_ZPM = addItem(607, "electric.motor.zpm");
-        ELECTRIC_MOTOR_UV = addItem(608, "electric.motor.uv");
+        // 600 ~ 608
+        MOTORS[0] = ELECTRIC_MOTOR_LV = addItem(600, "electric.motor.lv");
+        MOTORS[1] = ELECTRIC_MOTOR_MV = addItem(601, "electric.motor.mv");
+        MOTORS[2] = ELECTRIC_MOTOR_HV = addItem(602, "electric.motor.hv");
+        MOTORS[3] = ELECTRIC_MOTOR_EV = addItem(603, "electric.motor.ev");
+        MOTORS[4] = ELECTRIC_MOTOR_IV = addItem(604, "electric.motor.iv");
+        // Due to a historical mistake, ID 605 was used for the MAX battery. TODO: consider datafixers to remap
+        MOTORS[5] = ELECTRIC_MOTOR_LUV = addItem(606, "electric.motor.luv");
+        MOTORS[6] = ELECTRIC_MOTOR_ZPM = addItem(607, "electric.motor.zpm");
+        MOTORS[7] = ELECTRIC_MOTOR_UV = addItem(608, "electric.motor.uv");
 
-        PUMPS[0] = ELECTRIC_PUMP_LV = addItem(610, "electric.pump.lv");
-        PUMPS[1] = ELECTRIC_PUMP_MV = addItem(611, "electric.pump.mv");
-        PUMPS[2] = ELECTRIC_PUMP_HV = addItem(612, "electric.pump.hv");
-        PUMPS[3] = ELECTRIC_PUMP_EV = addItem(613, "electric.pump.ev");
-        PUMPS[4] = ELECTRIC_PUMP_IV = addItem(614, "electric.pump.iv");
-        PUMPS[5] = ELECTRIC_PUMP_LUV = addItem(615, "electric.pump.luv");
-        PUMPS[6] = ELECTRIC_PUMP_ZPM = addItem(616, "electric.pump.zpm");
-        PUMPS[7] = ELECTRIC_PUMP_UV = addItem(617, "electric.pump.uv");
+        // 610 ~ 617
+        registerTieredComponents(this, PUMPS, 610, LV, "electric", "pump");
 
         RUBBER_DROP = addItem(627, "rubber_drop").setBurnValue(200);
 
@@ -199,59 +194,23 @@ public class MetaItem1 extends MaterialMetaItem {
 
         DYNAMITE = addItem(629, "dynamite").addComponents(new DynamiteBehaviour()).setMaxStackSize(16);
 
-        CONVEYOR_MODULE_LV = addItem(630, "conveyor.module.lv");
-        CONVEYOR_MODULE_MV = addItem(631, "conveyor.module.mv");
-        CONVEYOR_MODULE_HV = addItem(632, "conveyor.module.hv");
-        CONVEYOR_MODULE_EV = addItem(633, "conveyor.module.ev");
-        CONVEYOR_MODULE_IV = addItem(634, "conveyor.module.iv");
-        CONVEYOR_MODULE_LUV = addItem(635, "conveyor.module.luv");
-        CONVEYOR_MODULE_ZPM = addItem(636, "conveyor.module.zpm");
-        CONVEYOR_MODULE_UV = addItem(637, "conveyor.module.uv");
+        // 630 ~ 637
+        registerTieredComponents(this, CONVEYORS, 630, LV, "conveyor", "module");
 
-        ELECTRIC_PISTON_LV = addItem(640, "electric.piston.lv");
-        ELECTRIC_PISTON_MV = addItem(641, "electric.piston.mv");
-        ELECTRIC_PISTON_HV = addItem(642, "electric.piston.hv");
-        ELECTRIC_PISTON_EV = addItem(643, "electric.piston.ev");
-        ELECTRIC_PISTON_IV = addItem(644, "electric.piston.iv");
-        ELECTRIC_PISTON_LUV = addItem(645, "electric.piston.luv");
-        ELECTRIC_PISTON_ZPM = addItem(646, "electric.piston.zpm");
-        ELECTRIC_PISTON_UV = addItem(647, "electric.piston.uv");
+        // 640 ~ 647
+        registerTieredComponents(this, PISTONS, 640, LV, "electric", "piston");
 
-        ROBOT_ARM_LV = addItem(650, "robot.arm.lv");
-        ROBOT_ARM_MV = addItem(651, "robot.arm.mv");
-        ROBOT_ARM_HV = addItem(652, "robot.arm.hv");
-        ROBOT_ARM_EV = addItem(653, "robot.arm.ev");
-        ROBOT_ARM_IV = addItem(654, "robot.arm.iv");
-        ROBOT_ARM_LUV = addItem(655, "robot.arm.luv");
-        ROBOT_ARM_ZPM = addItem(656, "robot.arm.zpm");
-        ROBOT_ARM_UV = addItem(657, "robot.arm.uv");
+        // 650 ~ 657
+        registerTieredComponents(this, ROBOT_ARMS, 650, LV, "robot", "arm");
 
-        FIELD_GENERATOR_LV = addItem(670, "field.generator.lv");
-        FIELD_GENERATOR_MV = addItem(671, "field.generator.mv");
-        FIELD_GENERATOR_HV = addItem(672, "field.generator.hv");
-        FIELD_GENERATOR_EV = addItem(673, "field.generator.ev");
-        FIELD_GENERATOR_IV = addItem(674, "field.generator.iv");
-        FIELD_GENERATOR_LUV = addItem(675, "field.generator.luv");
-        FIELD_GENERATOR_ZPM = addItem(676, "field.generator.zpm");
-        FIELD_GENERATOR_UV = addItem(677, "field.generator.uv");
+        // 670 ~ 677
+        registerTieredComponents(this, FIELD_GENERATORS, 670, LV, "field", "generator");
 
-        EMITTER_LV = addItem(680, "emitter.lv");
-        EMITTER_MV = addItem(681, "emitter.mv");
-        EMITTER_HV = addItem(682, "emitter.hv");
-        EMITTER_EV = addItem(683, "emitter.ev");
-        EMITTER_IV = addItem(684, "emitter.iv");
-        EMITTER_LUV = addItem(685, "emitter.luv");
-        EMITTER_ZPM = addItem(686, "emitter.zpm");
-        EMITTER_UV = addItem(687, "emitter.uv");
+        // 680 ~ 687
+        registerTieredComponents(this, EMITTERS, 680, LV, "emitter");
 
-        SENSOR_LV = addItem(690, "sensor.lv");
-        SENSOR_MV = addItem(691, "sensor.mv");
-        SENSOR_HV = addItem(692, "sensor.hv");
-        SENSOR_EV = addItem(693, "sensor.ev");
-        SENSOR_IV = addItem(694, "sensor.iv");
-        SENSOR_LUV = addItem(695, "sensor.luv");
-        SENSOR_ZPM = addItem(696, "sensor.zpm");
-        SENSOR_UV = addItem(697, "sensor.uv");
+        // 690 ~ 697
+        registerTieredComponents(this, SENSORS, 690, LV, "sensor");
 
         TOOL_DATA_STICK = addItem(708, "tool.datastick");
         TOOL_DATA_ORB = addItem(707, "tool.dataorb");
@@ -288,222 +247,6 @@ public class MetaItem1 extends MaterialMetaItem {
         FLUID_CELL = addItem(762, "fluid_cell").addComponents(new FluidStats(1000, Integer.MIN_VALUE, Integer.MAX_VALUE, false));
         INTEGRATED_CIRCUIT = addItem(766, "circuit.integrated").addComponents(new IntCircuitBehaviour());
         FOAM_SPRAYER = addItem(746, "foam_sprayer").addComponents(new FoamSprayerBehavior());
-    }
-
-    public void registerRecipes() {
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-            .input(OrePrefix.dust, Materials.Redstone).input(OrePrefix.plate, Materials.Tin, 2)
-            .outputs(SPRAY_EMPTY.getStackForm())
-            .duration(200).EUt(8)
-            .buildAndRegister();
-
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-            .input(OrePrefix.plateDense, Materials.Steel, 2)
-            .input(OrePrefix.ring, Materials.Steel, 8)
-            .outputs(LARGE_FLUID_CELL_STEEL.getStackForm())
-            .circuitMeta(1).duration(100).EUt(64)
-            .buildAndRegister();
-
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-            .input(OrePrefix.plateDense, Materials.TungstenSteel, 2)
-            .input(OrePrefix.ring, Materials.TungstenSteel, 8)
-            .outputs(LARGE_FLUID_CELL_TUNGSTEN_STEEL.getStackForm())
-            .circuitMeta(1).duration(200).EUt(256)
-            .buildAndRegister();
-
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-            .input(OrePrefix.plate, Materials.Tin, 6)
-            .inputs(SPRAY_EMPTY.getStackForm())
-            .input(OrePrefix.paneGlass.name(), 1)
-            .outputs(FOAM_SPRAYER.getStackForm())
-            .duration(200).EUt(8)
-            .buildAndRegister();
-
-        // Matches/lighters recipes
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-            .input(OrePrefix.stick, Materials.Wood).input(OrePrefix.dustSmall, Materials.Phosphorus)
-            .outputs(TOOL_MATCHES.getStackForm())
-            .duration(16).EUt(16)
-            .buildAndRegister();
-
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-            .input(OrePrefix.stick, Materials.Wood).input(OrePrefix.dustSmall, Materials.Phosphor)
-            .outputs(TOOL_MATCHES.getStackForm())
-            .duration(16).EUt(16)
-            .buildAndRegister();
-
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-            .input(OrePrefix.stick, Materials.Wood, 4).input(OrePrefix.dust, Materials.Phosphorus)
-            .outputs(TOOL_MATCHES.getStackForm(4))
-            .duration(64).EUt(16)
-            .buildAndRegister();
-
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-            .input(OrePrefix.stick, Materials.Wood, 4).input(OrePrefix.dust, Materials.Phosphor)
-            .outputs(TOOL_MATCHES.getStackForm(4))
-            .duration(64)
-            .EUt(16)
-            .buildAndRegister();
-
-        RecipeMaps.PACKER_RECIPES.recipeBuilder()
-            .inputs(TOOL_MATCHES.getStackForm(16)).input(OrePrefix.plate, Materials.Paper)
-            .outputs(TOOL_MATCHBOX.getStackForm())
-            .duration(64)
-            .EUt(16)
-            .buildAndRegister();
-
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-            .input(OrePrefix.plate, Materials.Invar, 2).inputs(new ItemStack(Items.FLINT, 1))
-            .outputs(TOOL_LIGHTER_INVAR.getStackForm())
-            .duration(256)
-            .EUt(16)
-            .buildAndRegister();
-
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-            .input(OrePrefix.plate, Materials.Platinum, 2).inputs(new ItemStack(Items.FLINT, 1))
-            .outputs(TOOL_LIGHTER_PLATINUM.getStackForm())
-            .duration(256)
-            .EUt(256)
-            .buildAndRegister();
-
-        RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
-            .inputs(BATTERY_SU_LV_SULFURIC_ACID.getStackForm())
-            .outputs(BATTERY_HULL_LV.getStackForm())
-            .buildAndRegister();
-
-        RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
-            .inputs(BATTERY_SU_LV_MERCURY.getStackForm())
-            .outputs(BATTERY_HULL_LV.getStackForm())
-            .buildAndRegister();
-
-        RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
-            .inputs(BATTERY_SU_MV_SULFURIC_ACID.getStackForm())
-            .outputs(BATTERY_HULL_MV.getStackForm())
-            .buildAndRegister();
-
-        RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
-            .inputs(BATTERY_SU_MV_MERCURY.getStackForm())
-            .outputs(BATTERY_HULL_MV.getStackForm())
-            .buildAndRegister();
-
-        RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
-            .inputs(BATTERY_SU_HV_SULFURIC_ACID.getStackForm())
-            .outputs(BATTERY_HULL_HV.getStackForm())
-            .buildAndRegister();
-
-        RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
-            .inputs(BATTERY_SU_HV_MERCURY.getStackForm())
-            .outputs(BATTERY_HULL_HV.getStackForm())
-            .buildAndRegister();
-
-        RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
-            .inputs(BATTERY_RE_LV_CADMIUM.getStackForm())
-            .outputs(BATTERY_HULL_LV.getStackForm())
-            .buildAndRegister();
-
-        RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
-            .inputs(BATTERY_RE_LV_LITHIUM.getStackForm())
-            .outputs(BATTERY_HULL_LV.getStackForm())
-            .buildAndRegister();
-
-        RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
-            .inputs(BATTERY_RE_LV_SODIUM.getStackForm())
-            .outputs(BATTERY_HULL_LV.getStackForm())
-            .buildAndRegister();
-
-        RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
-            .inputs(BATTERY_RE_MV_CADMIUM.getStackForm())
-            .outputs(BATTERY_HULL_MV.getStackForm())
-            .buildAndRegister();
-
-        RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
-            .inputs(BATTERY_RE_MV_LITHIUM.getStackForm())
-            .outputs(BATTERY_HULL_MV.getStackForm())
-            .buildAndRegister();
-
-        RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
-            .inputs(BATTERY_RE_MV_SODIUM.getStackForm())
-            .outputs(BATTERY_HULL_MV.getStackForm())
-            .buildAndRegister();
-
-        RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
-            .inputs(BATTERY_RE_HV_CADMIUM.getStackForm())
-            .outputs(BATTERY_HULL_HV.getStackForm())
-            .buildAndRegister();
-
-        RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
-            .inputs(BATTERY_RE_HV_LITHIUM.getStackForm())
-            .outputs(BATTERY_HULL_HV.getStackForm())
-            .buildAndRegister();
-
-        RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
-            .inputs(BATTERY_RE_HV_SODIUM.getStackForm())
-            .outputs(BATTERY_HULL_HV.getStackForm())
-            .buildAndRegister();
-
-        RecipeMaps.CANNER_RECIPES.recipeBuilder()
-            .inputs(BATTERY_HULL_LV.getStackForm())
-            .input(OrePrefix.dust, Materials.Cadmium, 2)
-            .outputs(BATTERY_RE_LV_CADMIUM.getStackForm())
-            .duration(100).EUt(2)
-            .buildAndRegister();
-
-        RecipeMaps.CANNER_RECIPES.recipeBuilder()
-            .inputs(BATTERY_HULL_LV.getStackForm())
-            .input(OrePrefix.dust, Materials.Lithium, 2)
-            .outputs(BATTERY_RE_LV_LITHIUM.getStackForm())
-            .duration(100).EUt(2)
-            .buildAndRegister();
-
-        RecipeMaps.CANNER_RECIPES.recipeBuilder()
-            .inputs(BATTERY_HULL_LV.getStackForm())
-            .input(OrePrefix.dust, Materials.Sodium, 2)
-            .outputs(BATTERY_RE_LV_SODIUM.getStackForm())
-            .duration(100).EUt(2)
-            .buildAndRegister();
-
-        RecipeMaps.CANNER_RECIPES.recipeBuilder()
-            .inputs(BATTERY_HULL_MV.getStackForm())
-            .input(OrePrefix.dust, Materials.Cadmium, 8)
-            .outputs(BATTERY_RE_MV_CADMIUM.getStackForm())
-            .duration(400).EUt(2)
-            .buildAndRegister();
-
-        RecipeMaps.CANNER_RECIPES.recipeBuilder()
-            .inputs(BATTERY_HULL_MV.getStackForm())
-            .input(OrePrefix.dust, Materials.Lithium, 8)
-            .outputs(BATTERY_RE_MV_LITHIUM.getStackForm())
-            .duration(400).EUt(2)
-            .buildAndRegister();
-
-        RecipeMaps.CANNER_RECIPES.recipeBuilder()
-            .inputs(BATTERY_HULL_MV.getStackForm())
-            .input(OrePrefix.dust, Materials.Sodium, 8)
-            .outputs(BATTERY_RE_MV_SODIUM.getStackForm())
-            .duration(400).EUt(2)
-            .buildAndRegister();
-
-        RecipeMaps.CANNER_RECIPES.recipeBuilder()
-            .inputs(BATTERY_HULL_HV.getStackForm())
-            .input(OrePrefix.dust, Materials.Cadmium, 16)
-            .outputs(BATTERY_RE_HV_CADMIUM.getStackForm())
-            .duration(1600).EUt(2)
-            .buildAndRegister();
-
-        RecipeMaps.CANNER_RECIPES.recipeBuilder()
-            .inputs(BATTERY_HULL_HV.getStackForm())
-            .input(OrePrefix.dust, Materials.Lithium, 16)
-            .outputs(BATTERY_RE_HV_LITHIUM.getStackForm())
-            .duration(1600).EUt(2)
-            .buildAndRegister();
-
-        RecipeMaps.CANNER_RECIPES.recipeBuilder()
-            .inputs(BATTERY_HULL_HV.getStackForm())
-            .input(OrePrefix.dust, Materials.Sodium, 16)
-            .outputs(BATTERY_RE_HV_SODIUM.getStackForm())
-            .duration(1600).EUt(2)
-            .buildAndRegister();
-
     }
 
     @Override
