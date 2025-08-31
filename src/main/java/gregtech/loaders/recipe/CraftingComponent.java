@@ -268,8 +268,7 @@ public class CraftingComponent {
         case IV -> Materials.TungstenSteel;
         case LuV -> Materials.HSSG;
         case ZPM -> Materials.Naquadah;
-        case UV -> Materials.NaquadahAlloy;
-        default -> Materials.Nichrome;
+        default -> Materials.NaquadahAlloy;
     };
     
     /** Electric Furnace heating coils */
