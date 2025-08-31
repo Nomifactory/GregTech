@@ -34,6 +34,7 @@ public class CraftingComponent {
         case IV -> Tier.Elite;
         case LuV -> Tier.Master;
         case ZPM -> Tier.Ultimate;
+        case UV -> Tier.Superconductor;
         default -> Tier.Infinite;
     };
 
