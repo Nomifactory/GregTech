@@ -939,7 +939,7 @@ public class MachineRecipeLoader {
             .input(OrePrefix.dust, Materials.RareEarth, 1)
             .chancedOutput(OreDictUnifier.get(OrePrefix.dustSmall, Materials.Cadmium, 1), 2500, 400)
             .chancedOutput(OreDictUnifier.get(OrePrefix.dustSmall, Materials.Neodymium, 1), 2500, 400)
-            .chancedOutput(OreDictUnifier.get(OrePrefix.dustSmall, Materials.Caesium, 1), 2500, 400)
+            .chancedOutput(OreDictUnifier.get(OrePrefix.dustSmall, Materials.Samarium, 1), 2500, 400)
             .chancedOutput(OreDictUnifier.get(OrePrefix.dustSmall, Materials.Cerium, 1), 2500, 400)
             .chancedOutput(OreDictUnifier.get(OrePrefix.dustSmall, Materials.Yttrium, 1), 2500, 400)
             .chancedOutput(OreDictUnifier.get(OrePrefix.dustSmall, Materials.Lanthanum, 1), 2500, 400)

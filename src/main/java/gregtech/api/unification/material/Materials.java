@@ -44,7 +44,7 @@ public class Materials {
     public static IngotMaterial Beryllium = new IngotMaterial(7, "beryllium", 0x64B464, METALLIC, 2, of(), STD_METAL | GENERATE_ORE, Element.Be);
     public static IngotMaterial Bismuth = new IngotMaterial(8, "bismuth", 0x64A0A0, METALLIC, 1, of(), GENERATE_ORE, Element.Bi);
     public static DustMaterial Boron = new DustMaterial(9, "boron", 0xD2F0D2, SAND, 2, of(), 0, Element.B);
-    public static IngotMaterial Caesium = new IngotMaterial(10, "caesium", 0xFFFFFC, DULL, 2, of(), 0, Element.Cs);
+    public static IngotMaterial Caesium = new IngotMaterial(59, "caesium", 0xFFFFFC, DULL, 2, of(), 0, Element.Cs);
     public static IngotMaterial Calcium = new IngotMaterial(11, "calcium", 0xDDDDAA, METALLIC, 2, of(), 0, Element.Ca);
     public static IngotMaterial Carbon = new IngotMaterial(12, "carbon", 0x333333, DULL, 2, of(), 0, Element.C);
     public static IngotMaterial Cadmium = new IngotMaterial(13, "cadmium", 0x505060, SHINY, 2, of(), 0, Element.Cd);
@@ -93,7 +93,7 @@ public class Materials {
     public static IngotMaterial Promethium = new IngotMaterial(56, "promethium", 0xFFFFFF, METALLIC, 2, of(), EXT_METAL, Element.Pm, 1315);
     public static FluidMaterial Radon = new FluidMaterial(57, "radon", 0xFF00FF, FLUID, of(), STATE_GAS, Element.Rn);
     public static IngotMaterial Rubidium = new IngotMaterial(58, "rubidium", 0xF01E1E, METALLIC, 2, of(), STD_METAL, Element.Rb);
-    public static IngotMaterial Samarium = new IngotMaterial(59, "samarium", 0xFFFFFF, METALLIC, 2, of(), STD_METAL, Element.Sm, 1345);
+    public static IngotMaterial Samarium = new IngotMaterial(10, "samarium", 0xFFFFFF, METALLIC, 2, of(), STD_METAL, Element.Sm, 1345);
     public static IngotMaterial Scandium = new IngotMaterial(60, "scandium", 0xFFFFFF, METALLIC, 2, of(), STD_METAL, Element.Sc, 1814);
     public static IngotMaterial Silicon = new IngotMaterial(61, "silicon", 0x3C3C50, METALLIC, 2, of(), STD_METAL | GENERATE_FOIL, Element.Si, 1687);
     public static IngotMaterial Silver = new IngotMaterial(62, "silver", 0xDCDCFF, SHINY, 2, of(), EXT2_METAL | GENERATE_ORE | MORTAR_GRINDABLE, Element.Ag);
