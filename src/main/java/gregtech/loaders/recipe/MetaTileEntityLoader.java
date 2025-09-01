@@ -1,6 +1,5 @@
 package gregtech.loaders.recipe;
 
-import com.github.bsideup.jabel.Desugar;
 import gregtech.api.GTValues;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.items.OreDictNames;
@@ -10,7 +9,6 @@ import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.MarkerMaterials.Tier;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.type.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.common.ConfigHolder;
@@ -40,7 +38,6 @@ import static gregtech.common.blocks.BlockWarningSign.SignType;
 import static gregtech.common.blocks.BlockWarningSign.SignType.*;
 import static gregtech.common.blocks.BlockWireCoil.CoilType.*;
 import static gregtech.loaders.recipe.CraftingComponent.*;
-import static gregtech.loaders.recipe.MetaTileEntityLoader.TieredElement.*;
 
 public class MetaTileEntityLoader {
 
@@ -984,39 +981,26 @@ public class MetaTileEntityLoader {
         ModHandler.addShapelessRecipe("wooden_chest", MetaTileEntities.WOODEN_CHEST.getStackForm(), "chest", 'r');
 
         // Metal Chests
-        for(var chest : arr(
-            of("bronze_chest",          MetaTileEntities.BRONZE_CHEST,          Materials.Bronze),
-            of("steel_chest",           MetaTileEntities.STEEL_CHEST,           Materials.Steel),
-            of("stainless_steel_chest", MetaTileEntities.STAINLESS_STEEL_CHEST, Materials.StainlessSteel),
-            of("titanium_chest",        MetaTileEntities.TITANIUM_CHEST,        Materials.Titanium),
-            of("tungsten_steel_chest",  MetaTileEntities.TUNGSTENSTEEL_CHEST,   Materials.TungstenSteel)))
-        {
-            ModHandler.addShapedRecipe(chest.name, chest.element.getStackForm(),
+        for(var chest : MetaTileEntities.METAL_CHESTS) {
+            ModHandler.addShapedRecipe(chest.metaTileEntityId.getPath(), chest.getStackForm(),
                                        new String[] {
                                            "XXX",
                                            "X X",
                                            "XXX"
                                        },
-                                       sub('X', new UnificationEntry(OrePrefix.plate, chest.material)));
+                                       sub('X', new UnificationEntry(OrePrefix.plate, chest.getMaterial())));
         }
 
         // Multiblock Tanks
-        for (var tank : arr(
-            of("wooden_tank",          MetaTileEntities.WOODEN_TANK,          Materials.Wood),
-            of("bronze_tank",          MetaTileEntities.BRONZE_TANK,          Materials.Bronze),
-            of("steel_tank",           MetaTileEntities.STEEL_TANK,           Materials.Steel),
-            of("stainless_steel_tank", MetaTileEntities.STAINLESS_STEEL_TANK, Materials.StainlessSteel),
-            of("titanium_tank",        MetaTileEntities.TITANIUM_TANK,        Materials.Titanium),
-            of("tungsten_steel_tank",  MetaTileEntities.TUNGSTENSTEEL_TANK,   Materials.TungstenSteel)))
-        {
-            var prefix = tank.material == Materials.Wood ? OrePrefix.plank : OrePrefix.plate;
-            ModHandler.addShapedRecipe(tank.name, tank.element.getStackForm(),
+        for (var tank : MetaTileEntities.TANKS) {
+            var prefix = tank.getMaterial() == Materials.Wood ? OrePrefix.plank : OrePrefix.plate;
+            ModHandler.addShapedRecipe(tank.metaTileEntityId.getPath(), tank.getStackForm(),
                                        new String[] {
                                            "XYX",
                                            "Y Y",
                                            "XYX"
                                        },
-                                       sub('X', new UnificationEntry(prefix, tank.material)),
+                                       sub('X', new UnificationEntry(prefix, tank.getMaterial())),
                                        sub('Y', new UnificationEntry(OrePrefix.blockGlass)));
         }
 
@@ -1163,21 +1147,6 @@ public class MetaTileEntityLoader {
     @SafeVarargs
     public static <T> T[] arr(T... ts) {
         return ts;
-    }
-
-    /**
-     * Utility record for type-safe recipe generation code for elements which
-     * can't report their own name and material in a suitable way.
-     * @param name     the name to use for this element
-     * @param element  the target element
-     * @param material the element's associated material
-     */
-    @Desugar
-    record TieredElement(String name, ICoverable element, Material material) {
-        /** Static initializer for convenience. */
-        public static TieredElement of(String name, ICoverable mte, Material material) {
-            return new TieredElement(name, mte, material);
-        }
     }
 
 }

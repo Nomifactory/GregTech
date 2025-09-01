@@ -13,11 +13,13 @@ import gregtech.api.cover.CoverBehavior;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.items.metaitem.DefaultSubItemHandler;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
+import gregtech.api.metatileentity.IMaterial;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.render.TankRenderer;
 import gregtech.api.render.Textures;
+import gregtech.api.unification.material.type.Material;
 import gregtech.api.unification.material.type.Material.MatFlags;
 import gregtech.api.unification.material.type.SolidMaterial;
 import gregtech.api.util.ByteBufUtils;
@@ -64,7 +66,7 @@ import java.util.*;
 
 import static gregtech.api.util.GTUtility.convertOpaqueRGBA_CLtoRGB;
 
-public class MetaTileEntityTank extends MetaTileEntity implements IFastRenderMetaTileEntity {
+public class MetaTileEntityTank extends MetaTileEntity implements IFastRenderMetaTileEntity, IMaterial {
 
     private static final int FLUID_SYNC_THROTTLE = 0;
     private final int tankSize;
@@ -734,6 +736,11 @@ public class MetaTileEntityTank extends MetaTileEntity implements IFastRenderMet
     @Override
     protected boolean shouldSerializeInventories() {
         return false; //handled manually
+    }
+
+    @Override
+    public Material getMaterial() {
+        return material;
     }
 
     private enum NetworkStatus {

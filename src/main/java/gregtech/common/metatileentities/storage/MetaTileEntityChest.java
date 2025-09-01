@@ -12,10 +12,12 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.ModularUI.Builder;
 import gregtech.api.gui.widgets.SortingButtonWidget;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
+import gregtech.api.metatileentity.IMaterial;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.render.Textures;
+import gregtech.api.unification.material.type.Material;
 import gregtech.api.unification.material.type.SolidMaterial;
 import gregtech.api.util.GTUtility;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -44,7 +46,7 @@ import java.util.List;
 
 import static gregtech.api.util.GTUtility.convertOpaqueRGBA_CLtoRGB;
 
-public class MetaTileEntityChest extends MetaTileEntity implements IFastRenderMetaTileEntity {
+public class MetaTileEntityChest extends MetaTileEntity implements IFastRenderMetaTileEntity, IMaterial {
 
     private static final IndexedCuboid6 CHEST_COLLISION = new IndexedCuboid6(null, new Cuboid6(1 / 16.0, 1 / 16.0, 1 / 16.0, 15 / 16.0, 14 / 16.0, 15 / 16.0));
 
@@ -308,5 +310,10 @@ public class MetaTileEntityChest extends MetaTileEntity implements IFastRenderMe
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.universal.tooltip.item_storage_capacity", rowSize * amountOfRows));
+    }
+
+    @Override
+    public Material getMaterial() {
+        return material;
     }
 }

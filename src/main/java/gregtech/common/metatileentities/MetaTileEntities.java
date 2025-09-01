@@ -141,11 +141,14 @@ public class MetaTileEntities {
     //STORAGE SECTION
     public static MetaTileEntityChest SMALL_WOODEN_CHEST;
     public static MetaTileEntityChest WOODEN_CHEST;
+
     public static MetaTileEntityChest BRONZE_CHEST;
     public static MetaTileEntityChest STEEL_CHEST;
     public static MetaTileEntityChest STAINLESS_STEEL_CHEST;
     public static MetaTileEntityChest TITANIUM_CHEST;
     public static MetaTileEntityChest TUNGSTENSTEEL_CHEST;
+    public static MetaTileEntityChest[] METAL_CHESTS = new MetaTileEntityChest[5];
+
     public static MetaTileEntityLockedSafe LOCKED_SAFE;
     public static MetaTileEntityArmorTable ARMOR_TABLE;
 
@@ -155,6 +158,7 @@ public class MetaTileEntities {
     public static MetaTileEntityTank STAINLESS_STEEL_TANK;
     public static MetaTileEntityTank TITANIUM_TANK;
     public static MetaTileEntityTank TUNGSTENSTEEL_TANK;
+    public static MetaTileEntityTank[] TANKS = new MetaTileEntityTank[6];
 
 
     //MISC MACHINES SECTION
@@ -504,18 +508,19 @@ public class MetaTileEntities {
 
         SMALL_WOODEN_CHEST = GregTechAPI.registerMetaTileEntity(808, new MetaTileEntityChest(gregtechId("small_wooden_chest"), Materials.Wood, 1, 1));
         WOODEN_CHEST = GregTechAPI.registerMetaTileEntity(807, new MetaTileEntityChest(gregtechId("wooden_chest"), Materials.Wood, 9, 3));
-        BRONZE_CHEST = GregTechAPI.registerMetaTileEntity(802, new MetaTileEntityChest(gregtechId("bronze_chest"), Materials.Bronze, 9, 6));
-        STEEL_CHEST = GregTechAPI.registerMetaTileEntity(803, new MetaTileEntityChest(gregtechId("steel_chest"), Materials.Steel, 9, 8));
-        STAINLESS_STEEL_CHEST = GregTechAPI.registerMetaTileEntity(804, new MetaTileEntityChest(gregtechId("stainless_steel_chest"), Materials.StainlessSteel, 9, 10));
-        TITANIUM_CHEST = GregTechAPI.registerMetaTileEntity(805, new MetaTileEntityChest(gregtechId("titanium_chest"), Materials.Titanium, 12, 10));
-        TUNGSTENSTEEL_CHEST = GregTechAPI.registerMetaTileEntity(806, new MetaTileEntityChest(gregtechId("tungstensteel_chest"), Materials.TungstenSteel, 12, 14));
 
-        WOODEN_TANK = GregTechAPI.registerMetaTileEntity(811, new MetaTileEntityTank(gregtechId("wooden_tank"), Materials.Wood, 4000, 1, 3));
-        BRONZE_TANK = GregTechAPI.registerMetaTileEntity(812, new MetaTileEntityTank(gregtechId("bronze_tank"), Materials.Bronze, 8000, 4, 3));
-        STEEL_TANK = GregTechAPI.registerMetaTileEntity(813, new MetaTileEntityTank(gregtechId("steel_tank"), Materials.Steel, 16000, 7, 5));
-        STAINLESS_STEEL_TANK = GregTechAPI.registerMetaTileEntity(814, new MetaTileEntityTank(gregtechId("stainless_steel_tank"), Materials.StainlessSteel, 32000, 9, 7));
-        TITANIUM_TANK = GregTechAPI.registerMetaTileEntity(815, new MetaTileEntityTank(gregtechId("titanium_tank"), Materials.Titanium, 48000, 12, 9));
-        TUNGSTENSTEEL_TANK = GregTechAPI.registerMetaTileEntity(816, new MetaTileEntityTank(gregtechId("tungstensteel_tank"), Materials.TungstenSteel, 64000, 16, 9));
+        METAL_CHESTS[0] = BRONZE_CHEST = GregTechAPI.registerMetaTileEntity(802, new MetaTileEntityChest(gregtechId("bronze_chest"), Materials.Bronze, 9, 6));
+        METAL_CHESTS[1] = STEEL_CHEST = GregTechAPI.registerMetaTileEntity(803, new MetaTileEntityChest(gregtechId("steel_chest"), Materials.Steel, 9, 8));
+        METAL_CHESTS[2] = STAINLESS_STEEL_CHEST = GregTechAPI.registerMetaTileEntity(804, new MetaTileEntityChest(gregtechId("stainless_steel_chest"), Materials.StainlessSteel, 9, 10));
+        METAL_CHESTS[3] = TITANIUM_CHEST = GregTechAPI.registerMetaTileEntity(805, new MetaTileEntityChest(gregtechId("titanium_chest"), Materials.Titanium, 12, 10));
+        METAL_CHESTS[4] = TUNGSTENSTEEL_CHEST = GregTechAPI.registerMetaTileEntity(806, new MetaTileEntityChest(gregtechId("tungstensteel_chest"), Materials.TungstenSteel, 12, 14));
+
+        TANKS[0] = WOODEN_TANK = GregTechAPI.registerMetaTileEntity(811, new MetaTileEntityTank(gregtechId("wooden_tank"), Materials.Wood, 4000, 1, 3));
+        TANKS[1] = BRONZE_TANK = GregTechAPI.registerMetaTileEntity(812, new MetaTileEntityTank(gregtechId("bronze_tank"), Materials.Bronze, 8000, 4, 3));
+        TANKS[2] = STEEL_TANK = GregTechAPI.registerMetaTileEntity(813, new MetaTileEntityTank(gregtechId("steel_tank"), Materials.Steel, 16000, 7, 5));
+        TANKS[3] = STAINLESS_STEEL_TANK = GregTechAPI.registerMetaTileEntity(814, new MetaTileEntityTank(gregtechId("stainless_steel_tank"), Materials.StainlessSteel, 32000, 9, 7));
+        TANKS[4] = TITANIUM_TANK = GregTechAPI.registerMetaTileEntity(815, new MetaTileEntityTank(gregtechId("titanium_tank"), Materials.Titanium, 48000, 12, 9));
+        TANKS[5] = TUNGSTENSTEEL_TANK = GregTechAPI.registerMetaTileEntity(816, new MetaTileEntityTank(gregtechId("tungstensteel_tank"), Materials.TungstenSteel, 64000, 16, 9));
 
         FISHER[0] = GregTechAPI.registerMetaTileEntity(820, new MetaTileEntityFisher(gregtechId("fisher.lv"), 1));
         FISHER[1] = GregTechAPI.registerMetaTileEntity(821, new MetaTileEntityFisher(gregtechId("fisher.mv"), 2));
