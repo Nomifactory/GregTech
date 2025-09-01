@@ -92,6 +92,7 @@ public class CraftingComponent {
         case ZPM -> Materials.Naquadah;
         case UV -> Materials.NaquadahAlloy;
         case UHV -> Materials.Europium;
+        case UEV -> Materials.NaquadriaAlloy;
         default -> MarkerMaterials.Tier.Superconductor;
     };
     

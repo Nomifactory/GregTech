@@ -1,6 +1,5 @@
 package gregtech.api.unification.material;
 
-import gregtech.api.GTValues;
 import gregtech.api.unification.Element;
 import gregtech.api.unification.material.type.*;
 import gregtech.api.unification.ore.OrePrefix;
@@ -93,7 +92,7 @@ public class Materials {
     public static IngotMaterial Promethium = new IngotMaterial(56, "promethium", 0xFFFFFF, METALLIC, 2, of(), EXT_METAL, Element.Pm, 1315);
     public static FluidMaterial Radon = new FluidMaterial(57, "radon", 0xFF00FF, FLUID, of(), STATE_GAS, Element.Rn);
     public static IngotMaterial Rubidium = new IngotMaterial(58, "rubidium", 0xF01E1E, METALLIC, 2, of(), STD_METAL, Element.Rb);
-    public static IngotMaterial Samarium = new IngotMaterial(10, "samarium", 0xFFFFFF, METALLIC, 2, of(), STD_METAL, Element.Sm, 1345);
+    public static IngotMaterial Samarium = new IngotMaterial(10, "samarium", 0xFFFFCC, METALLIC, 2, of(), STD_METAL, Element.Sm, 1345);
     public static IngotMaterial Scandium = new IngotMaterial(60, "scandium", 0xFFFFFF, METALLIC, 2, of(), STD_METAL, Element.Sc, 1814);
     public static IngotMaterial Silicon = new IngotMaterial(61, "silicon", 0x3C3C50, METALLIC, 2, of(), STD_METAL | GENERATE_FOIL, Element.Si, 1687);
     public static IngotMaterial Silver = new IngotMaterial(62, "silver", 0xDCDCFF, SHINY, 2, of(), EXT2_METAL | GENERATE_ORE | MORTAR_GRINDABLE, Element.Ag);
@@ -502,6 +501,18 @@ public class Materials {
     public static IngotMaterial Tritanium = new IngotMaterial(311, "tritanium", 0xFFFFFF, METALLIC, 6, of(), EXT_METAL, Element.Tr, 20.0F, 6.0f, 10240);
     public static IngotMaterial Duranium = new IngotMaterial(312, "duranium", 0xFFFFFF, METALLIC, 5, of(), EXT_METAL, Element.Dr, 16.0F, 5.0f, 5120);
 
+    /** Post-UV Superconducting Alloys */
+    public static IngotMaterial NaquadriaAlloy =
+        new IngotMaterial(334, "naquadria_alloy",
+                          0x00FFFF, SHINY, 3,
+                          of(new MaterialStack(Naquadria, 4),
+                             new MaterialStack(Osmiridium, 3),
+                             new MaterialStack(Europium, 1),
+                             new MaterialStack(Samarium, 1)),
+                          0, null,
+                          0, 0, 0,
+                          9000, false);
+
     /**
      * Actual food
      */
@@ -828,6 +839,7 @@ public class Materials {
         Duranium.setCableProperties(V[UV], 1, 8);
 
         Europium.setCableProperties(V[UHV], 2, 32);
+        NaquadriaAlloy.setCableProperties(V[UEV], 4, 0);
 
         Copper.setFluidPipeProperties(25, 1000, true);
         Bronze.setFluidPipeProperties(35, 2000, true);

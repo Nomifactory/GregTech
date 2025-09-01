@@ -62,4 +62,13 @@ public class CTMaterialRegistry {
             Math.max(0.0f, toolSpeed), Math.max(0.0f, attackDamage), Math.max(0, toolDurability), blastFurnaceTemperature);
     }
 
+    @ZenMethod
+    public static IngotMaterial createFluidlessIngotMaterial(int metaItemSubId, String name, int color, String iconSet, int harvestLevel, @Optional MaterialStack[] materialComponents, @Optional float toolSpeed, @Optional float attackDamage, @Optional int toolDurability, @Optional int blastFurnaceTemperature) {
+        return new IngotMaterial(metaItemSubId, name, color,
+                                 MaterialIconSet.getByName(iconSet), harvestLevel,
+                                 validateComponentList(materialComponents), 0, null,
+                                 Math.max(0.0f, toolSpeed), Math.max(0.0f, attackDamage), Math.max(0, toolDurability),
+                                 blastFurnaceTemperature, false);
+    }
+
 }

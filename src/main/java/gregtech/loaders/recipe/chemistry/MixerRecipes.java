@@ -117,5 +117,13 @@ public class MixerRecipes {
                 .fluidOutputs(Lubricant.getFluid(750))
                 .duration(128).EUt(4).buildAndRegister();
         }
+
+        MIXER_RECIPES.recipeBuilder()
+                     .output(dust, NaquadriaAlloy, 9)
+                     .input(dust, Naquadria, 4)
+                     .input(dust, Osmiridium, 3)
+                     .input(dust, Europium, 1)
+                     .input(dust, Samarium, 1)
+                     .duration(200).EUt(122_880).buildAndRegister();
     }
 }
