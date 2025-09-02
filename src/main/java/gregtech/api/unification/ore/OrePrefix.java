@@ -1,6 +1,7 @@
 package gregtech.api.unification.ore;
 
 import com.google.common.base.Preconditions;
+import gregtech.api.GTValues;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.MaterialIconType;
 import gregtech.api.unification.material.Materials;
@@ -159,7 +160,16 @@ public enum OrePrefix {
     batterySingleUse("Single Use Batteries", -1, null, null, DISALLOW_RECYCLING, null),
     battery("Reusable Batteries", -1, null, null, DISALLOW_RECYCLING, null), // Introduced by Calclavia
     circuit("Circuits", -1, null, null, ENABLE_UNIFICATION | DISALLOW_RECYCLING, null), // Introduced by Calclavia
-    chipset("Chipsets", -1, null, null, ENABLE_UNIFICATION | DISALLOW_RECYCLING, null); // Introduced by Buildcraft
+    chipset("Chipsets", -1, null, null, ENABLE_UNIFICATION | DISALLOW_RECYCLING, null), // Introduced by Buildcraft
+
+    // Shadows of Greg
+    plateCurved("Curved Plate", GTValues.M, null, MaterialIconType.plateCurved,
+        OrePrefix.Flags.ENABLE_UNIFICATION, mat -> mat instanceof IngotMaterial && mat.hasFlag(DustMaterial.MatFlags.GENERATE_PLATE)),
+    ingotDouble("Double Ingot", GTValues.M, null, MaterialIconType.ingotDouble,
+                OrePrefix.Flags.ENABLE_UNIFICATION, mat -> mat instanceof IngotMaterial && mat.hasFlag(DustMaterial.MatFlags.GENERATE_PLATE)),
+    round("Round", GTValues.M, null, MaterialIconType.round,
+          OrePrefix.Flags.ENABLE_UNIFICATION, mat -> mat instanceof IngotMaterial && mat.hasFlag(IngotMaterial.MatFlags.GENERATE_SMALL_GEAR));
+
 
     public static final String DUST_REGULAR = "dustRegular";
 
@@ -171,7 +181,7 @@ public enum OrePrefix {
     }
 
     public static class Conditions {
-        public static Predicate<Material> isToolMaterial = mat -> mat instanceof SolidMaterial && ((SolidMaterial) mat).toolDurability > 0;
+        public static Predicate<Material> isToolMaterial = mat -> mat instanceof SolidMaterial s && s.toolDurability > 0;
     }
 
     static {

@@ -33,6 +33,7 @@ public enum MaterialIconType {
     ingotQuadruple,
     ingotQuintuple,
     plate,
+    plateCurved, // SoG
     plateDouble,
     plateTriple,
     plateQuadruple,

@@ -1076,8 +1076,8 @@ public class MetaTileEntityLoader {
      * @param subs substitution mappings
      * @return a new array containing tier-resolved substitution mappings
      */
-    private static Substitution<?>[] resolveComponents(int tier,
-                                                       Substitution<?>... subs) {
+    public static Substitution<?>[] resolveComponents(int tier,
+                                                      Substitution<?>... subs) {
         Substitution<?>[] result = new ModHandler.Substitution[subs.length];
         for(int i = 0; i < subs.length; i++) {
             var current = subs[i];
