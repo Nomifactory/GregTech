@@ -152,8 +152,7 @@ public class CraftingComponent {
         case IV -> Materials.TungstenSteel;
         case LuV -> Materials.HSSG;
         case ZPM -> Materials.HSSE;
-        case UV -> Materials.Darmstadtium;
-        default -> Materials.TungstenSteel;
+        default -> Materials.Darmstadtium;
     };
     
     /** Tiered plates used in select machine recipes */
