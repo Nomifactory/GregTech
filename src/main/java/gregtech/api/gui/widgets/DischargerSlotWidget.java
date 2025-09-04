@@ -12,7 +12,7 @@ public class DischargerSlotWidget extends SlotWidget {
     }
 
     @Override
-    public boolean canPutStack(ItemStack stack) {
+    public boolean canMergeSlot(ItemStack stack) {
         IElectricItem capability = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         return capability != null && capability.canProvideChargeExternally();
     }

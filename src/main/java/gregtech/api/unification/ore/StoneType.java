@@ -1,7 +1,9 @@
 package gregtech.api.unification.ore;
 
+import gregtech.api.GTValues;
 import gregtech.api.unification.material.type.DustMaterial;
 import gregtech.api.util.GTControlledRegistry;
+import gregtech.integration.jei.recipe.primitive.OreByProduct;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;
@@ -49,6 +51,9 @@ public class StoneType implements Comparable<StoneType> {
         this.stone = stone;
         this.predicate = predicate::test;
         STONE_TYPE_REGISTRY.register(id, name, this);
+        if (GTValues.isModLoaded(GTValues.MODID_JEI)) {
+            OreByProduct.addOreByProductPrefix(this.processingPrefix);
+        }
     }
 
     public StoneType(int id, String name, ResourceLocation backgroundTexture, SoundType soundType, OrePrefix processingPrefix, DustMaterial stoneMaterial, String harvestTool, int flags, Supplier<IBlockState> stone, Predicate<IBlockState> predicate) {
