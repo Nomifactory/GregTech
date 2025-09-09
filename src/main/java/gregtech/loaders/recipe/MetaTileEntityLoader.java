@@ -27,6 +27,7 @@ import static gregtech.api.recipes.ModHandler.Substitution;
 import static gregtech.api.recipes.ModHandler.Substitution.sub;
 import static gregtech.common.blocks.BlockBoilerCasing.*;
 import static gregtech.common.blocks.BlockFireboxCasing.*;
+import static gregtech.common.blocks.BlockMachineCasing.MachineCasingType;
 import static gregtech.common.blocks.BlockMachineCasing.MachineCasingType.getTiered;
 import static gregtech.common.blocks.BlockMachineCasing.MachineCasingType.BRONZE_HULL;
 import static gregtech.common.blocks.BlockMachineCasing.MachineCasingType.BRONZE_BRICKS_HULL;
@@ -223,8 +224,9 @@ public class MetaTileEntityLoader {
         // only register recipes for ULV - UV and MAX
         final MetaTileEntityHull[] hulls =
             Arrays.stream(MetaTileEntities.HULL)
-                  .filter(x -> x.getTier() == GTValues.MAX || x.getTier() < GTValues.UHV)
+                  .filter(x -> x.getTier() == MAX || x.getTier() < UHV)
                   .toArray(MetaTileEntityHull[]::new);
+
         if (ConfigHolder.harderMachineHulls)
             registerTieredShapedRecipes(
                 "hull_",
