@@ -437,8 +437,7 @@ public class CraftingComponent {
 
     /** Overrides for cable types used in Transformer recipes. */
     public static final Component<OrePrefix> XF_CABLE_TYPE = tier -> switch(tier) {
-        case UHV -> OrePrefix.cableGtQuadruple;
-        case UEV -> OrePrefix.wireGtQuadruple;
+        case UHV, UEV -> OrePrefix.cableGtQuadruple;
         default -> CABLE_TYPE.getIngredient(tier);
     };
 

@@ -630,8 +630,8 @@ public class MachineRecipeLoader {
         for(int tier : RNO) {
             RecipeMaps.ASSEMBLER_RECIPES
                 .recipeBuilder()
-                .outputs(TIER_CASING.getIngredient(tier))
-                .inputs(from(HULL_PLATE_1.getIngredient(tier), 8))
+                .output(tier, TIER_CASING)
+                .input(tier, HULL_PLATE_1, 8)
                 .circuitMeta(8)
                 .duration(tier == ULV ? 25 : 50).EUt(16)
                 .buildAndRegister();
@@ -694,13 +694,13 @@ public class MachineRecipeLoader {
         // Machine Hulls
         for(var hull : MetaTileEntities.HULL) {
             int tier = hull.getTier();
-            if(tier < MAX && tier > UV)
+            if(tier < MAX && tier > UEV)
                 continue;
             var builder = RecipeMaps.ASSEMBLER_RECIPES
                 .recipeBuilder()
-                .outputs(hull.getStackForm())
-                .inputs(from(TIER_CASING.getIngredient(tier)),
-                        from(HULL_CABLE.getIngredient(tier), 2))
+                .output(hull)
+                .input(tier, TIER_CASING)
+                .input(tier, HULL_CABLE, 2)
                 .duration(tier == ULV ? 25 : 50).EUt(16);
             if(ConfigHolder.harderMachineHulls)
                 builder.fluidInputs(PLASTIC.getIngredient(tier).getFluid(L * 2));
