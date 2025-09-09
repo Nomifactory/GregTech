@@ -10,6 +10,11 @@ import gregtech.api.items.materialitem.MaterialMetaItem;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.type.Material;
+import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.util.GTLog;
+import gregtech.common.blocks.MetaBlocks;
+import gregtech.common.pipelike.cable.BlockCable;
 import net.minecraft.item.ItemStack;
 import stanhebben.zenscript.compiler.IEnvironmentGlobal;
 import stanhebben.zenscript.expression.ExpressionCallStatic;
@@ -37,8 +42,8 @@ public class MetaItemBracketHandler implements IBracketHandler {
     public static void rebuildComponentRegistry() {
         metaItemNames.clear();
         for (MetaItem<?> item : MetaItem.getMetaItems()) {
-            if (item instanceof MaterialMetaItem) {
-                for(ItemStack entry : ((MaterialMetaItem) item).getEntries()) {
+            if (item instanceof MaterialMetaItem m) {
+                for(ItemStack entry : m.getEntries()) {
                     metaItemNames.put(OreDictUnifier.getPrefix(entry).name() + OreDictUnifier.getMaterial(entry).material.toCamelCaseString(), entry);
                 }
             }
@@ -48,6 +53,18 @@ public class MetaItemBracketHandler implements IBracketHandler {
                 }
             }
         }
+
+        final var prefixes = new OrePrefix[] {
+            OrePrefix.wireGtSingle, OrePrefix.wireGtDouble, OrePrefix.wireGtQuadruple, OrePrefix.wireGtOctal, OrePrefix.wireGtHex,
+            OrePrefix.cableGtSingle, OrePrefix.cableGtDouble, OrePrefix.cableGtQuadruple, OrePrefix.cableGtOctal, OrePrefix.cableGtHex
+        };
+
+        for(Material material : MetaBlocks.CABLE.getEnabledMaterials()) {
+            for(OrePrefix prefix : prefixes) {
+                String name = prefix.name() + material.toCamelCaseString();
+                metaItemNames.put(name, OreDictUnifier.get(name));
+            }
+        }
     }
 
     public static IItemStack getMetaItem(String name) {
@@ -55,6 +72,7 @@ public class MetaItemBracketHandler implements IBracketHandler {
         if(item != null) {
             return new MCItemStack(item);
         } else {
+            GTLog.logger.error("No such metaitem: {}", name);
             return null;
         }
     }
