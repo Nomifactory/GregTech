@@ -97,7 +97,7 @@ public class MetaTileEntityTransformer extends TieredMetaTileEntity {
 
         // Make post-UV transformers 16A instead of 4A
         int M = tier >= GTValues.UHV ? 4 : 1;
-        long tierVoltage = M * GTValues.V[tier];
+        long tierVoltage = GTValues.V[tier];
         if (isTransformUp)
             //storage = 1 amp high; input = tier / 4; amperage = 4; output = tier; amperage = 1
             this.energyContainer = new EnergyContainerHandler(this, tierVoltage * M * 8L, tierVoltage / 4, 4*M, tierVoltage, M);
