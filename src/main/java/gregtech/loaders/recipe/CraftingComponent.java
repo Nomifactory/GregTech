@@ -67,6 +67,18 @@ public class CraftingComponent {
         default -> MetaItems.ELECTRIC_PUMP_UV;
     };
 
+    /** Tiered fluid regulator components */
+    public static final Component<MetaItem<?>.MetaValueItem> FLUID_REGULATOR = tier -> switch(tier) {
+        case ULV, LV -> MetaItems.FLUID_REGULATOR_LV;
+        case MV -> MetaItems.FLUID_REGULATOR_MV;
+        case HV -> MetaItems.FLUID_REGULATOR_HV;
+        case EV -> MetaItems.FLUID_REGULATOR_EV;
+        case IV -> MetaItems.FLUID_REGULATOR_IV;
+        case LuV -> MetaItems.FLUID_REGULATOR_LUV;
+        case ZPM -> MetaItems.FLUID_REGULATOR_ZPM;
+        default -> MetaItems.FLUID_REGULATOR_UV;
+    };
+
     /** Tiered materials for generic cables used in most crafting recipes. */
     public static final Component<Material> CABLE_MATERIALS = tier -> switch(tier) {
         case ULV -> Materials.Lead;
@@ -173,20 +185,21 @@ public class CraftingComponent {
         default -> MetaItems.ELECTRIC_MOTOR_UV;
     };
 
-    /** Tiered Rotors */
-    public static final Component<UnificationEntry> ROTOR = tier -> {
-        var material = switch(tier) {
-            case ULV, LV -> Materials.Tin;
-            case MV -> Materials.Bronze;
-            case HV -> Materials.Steel;
-            case EV -> Materials.StainlessSteel;
-            case IV -> Materials.TungstenSteel;
-            case LuV -> Materials.Chrome;
-            case ZPM -> Materials.Iridium;
-            default -> Materials.Osmium;
-        };
-        return new UnificationEntry(OrePrefix.rotor, material);
+    /** Tiered materials used in components like rotors */
+    public static final Component<Material> MATERIAL_COMPONENT = tier -> switch(tier) {
+        case ULV, LV -> Materials.Tin;
+        case MV -> Materials.Bronze;
+        case HV -> Materials.Steel;
+        case EV -> Materials.StainlessSteel;
+        case IV -> Materials.TungstenSteel;
+        case LuV -> Materials.Chrome;
+        case ZPM -> Materials.Iridium;
+        default -> Materials.Osmium;
     };
+
+    /** Tiered Rotors */
+    public static final Component<UnificationEntry> ROTOR =
+        bind(OrePrefix.rotor, MATERIAL_COMPONENT);
 
     /** Tiered Sensors. ULV uses LV. */
     public static final Component<MetaItem<?>.MetaValueItem> SENSOR = tier -> switch(tier) {

@@ -1,25 +1,33 @@
 package gregtech.api.recipes;
 
 import gregtech.api.items.metaitem.MetaItem;
+import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.Recipe.ChanceEntry;
 import gregtech.api.unification.material.type.FluidMaterial;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.type.Material;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.EnumValidationResult;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ValidationResult;
+import gregtech.common.blocks.LookupBlock;
+import gregtech.loaders.recipe.Component;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.*;
+import java.util.function.Predicate;
+
+import static gregtech.api.recipes.CountableIngredient.from;
 
 /**
  * @see Recipe
@@ -94,30 +102,56 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         return inputs(Arrays.asList(inputs));
     }
 
+    private static final Predicate<ItemStack> nullOrEmpty = stack -> stack == null || stack.isEmpty();
+
     public R inputs(Collection<ItemStack> inputs) {
-        if (GTUtility.iterableContains(inputs, stack -> stack == null || stack.isEmpty())) {
+        if (GTUtility.iterableContains(inputs, nullOrEmpty)) {
             GTLog.logger.error("Input cannot contain null or empty ItemStacks. Inputs: {}", inputs);
             GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
             recipeStatus = EnumValidationResult.INVALID;
         }
-        inputs.forEach(stack -> {
-            if (!(stack == null || stack.isEmpty())) {
-                this.inputs.add(CountableIngredient.from(stack));
-            }
-        });
+
+        for(ItemStack stack : inputs)
+            if (!nullOrEmpty.test(stack))
+                this.inputs.add(from(stack));
+
         return (R) this;
     }
 
     public R input(String oredict, int count) {
-        return inputs(CountableIngredient.from(oredict, count));
+        return inputs(from(oredict, count));
     }
 
     public R input(OrePrefix orePrefix, Material material) {
-        return inputs(CountableIngredient.from(orePrefix, material, 1));
+        return inputs(from(orePrefix, material, 1));
     }
 
     public R input(OrePrefix orePrefix, Material material, int count) {
-        return inputs(CountableIngredient.from(orePrefix, material, count));
+        return inputs(from(orePrefix, material, count));
+    }
+
+    public R input(UnificationEntry entry) {
+        return input(entry, 1);
+    }
+
+    public R input(UnificationEntry entry, int count) {
+        return inputs(from(entry, count));
+    }
+
+    public <T extends Enum<T> & IStringSerializable> R input(LookupBlock<T> block, int count) {
+        return inputs(block.getStack(count));
+    }
+
+    public <T extends Enum<T> & IStringSerializable> R input(LookupBlock<T> block) {
+        return input(block, 1);
+    }
+
+    public R input(MetaItem<?>.MetaValueItem item, int count) {
+        return inputs(item.getStackForm(count));
+    }
+
+    public R input(MetaItem<?>.MetaValueItem item) {
+        return inputs(item.getStackForm());
     }
 
     public R input(Item item) {
@@ -148,6 +182,33 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         return inputs(new ItemStack(item, count, OreDictionary.WILDCARD_VALUE));
     }
 
+    /**
+     * Resolves a single {@link Component} and adds it to the inputs with a count of 1.
+     * @throws IllegalArgumentException if the resolved type isn't supported.
+     */
+    public <T> R input(int tier, Component<T> component) {
+        return input(tier, component, 1);
+    }
+
+    /**
+     * Resolves a single {@link Component} and adds it to the inputs with the specified count.
+     * @throws IllegalArgumentException if the resolved type isn't supported.
+     */
+    public R input(int tier, Component<?> component, int count) {
+        return inputs(from(tier, component, count));
+    }
+
+    /**
+     * For {@link Component}, which are resolved before adding to inputs.
+     * @throws IllegalArgumentException if an input type isn't supported
+     */
+    public R inputs(int tier, Component<?>... components) {
+        List<CountableIngredient> ingredients = new ArrayList<>(components.length);
+        for(var component : components)
+            ingredients.add(from(tier, component, 1));
+        return inputs(ingredients.toArray(new CountableIngredient[0]));
+    }
+
     public R inputs(CountableIngredient... inputs) {
         List<CountableIngredient> ingredients = new ArrayList<>();
         for (CountableIngredient input : inputs) {
@@ -168,7 +229,7 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
     }
 
     public R notConsumable(ItemStack itemStack) {
-        return inputs(CountableIngredient.from(itemStack, 0));
+        return inputs(from(itemStack, 0));
     }
 
     public R notConsumable(OrePrefix prefix, Material material) {
@@ -180,7 +241,7 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
     }
 
     public R notConsumable(MetaItem<?>.MetaValueItem item) {
-        return inputs(CountableIngredient.from(item.getStackForm(), 0));
+        return inputs(from(item.getStackForm(), 0));
     }
 
     public R notConsumable(FluidMaterial fluidMat) {
@@ -217,6 +278,44 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     public R output(Block item, int count) {
         return outputs(new ItemStack(item, count));
+    }
+
+    public R output(LookupBlock<?> block, int count) {
+        return outputs(block.getStack(count));
+    }
+
+    public R output(LookupBlock<?> block) {
+        return outputs(block.getStack());
+    }
+
+    public R output(MetaItem<?>.MetaValueItem item, int count) {
+        return outputs(item.getStackForm(count));
+    }
+
+    public R output(MetaItem<?>.MetaValueItem item) {
+        return outputs(item.getStackForm());
+    }
+
+    public R output(MetaTileEntity entity, int count) {
+        return outputs(entity.getStackForm(count));
+    }
+
+    public R output(MetaTileEntity entity) {
+        return outputs(entity.getStackForm());
+    }
+
+    /**
+     * Resolves a single tiered {@link Component} to an ItemStack and adds it to the outputs.
+     * @throws IllegalArgumentException if the type is not supported.
+     */
+    public <T> R output(int tier, Component<T> component) {
+        T resolved = component.getIngredient(tier);
+        if(resolved instanceof ItemStack stack)
+            return outputs(stack);
+        if(resolved instanceof MetaItem<?>.MetaValueItem item)
+            return outputs(item.getStackForm());
+
+        throw new IllegalArgumentException("unsupported type");
     }
 
     public R outputs(ItemStack... outputs) {

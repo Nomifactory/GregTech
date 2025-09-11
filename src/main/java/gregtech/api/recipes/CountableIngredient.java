@@ -1,8 +1,11 @@
 package gregtech.api.recipes;
 
+import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.unification.material.type.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
+import gregtech.common.blocks.LookupBlock;
+import gregtech.loaders.recipe.Component;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraftforge.oredict.OreIngredient;
@@ -41,6 +44,28 @@ public class CountableIngredient {
         if(entry.material == null)
             throw new NullPointerException("NULL material is not permitted here");
         return from(entry.orePrefix, entry.material, count);
+    }
+
+    /** @throws java.lang.NullPointerException if the UnificationEntry's material is {@code null} */
+    public static CountableIngredient from(UnificationEntry entry) {
+        return from(entry, 1);
+    }
+
+    /** @throws java.lang.IllegalArgumentException for unsupported types */
+    public static <T> CountableIngredient from(int tier, Component<T> component, int count) {
+        T resolved = component.getIngredient(tier);
+        if(resolved instanceof UnificationEntry ue)
+            return from(ue, count);
+        if(resolved instanceof ItemStack stack)
+            return from(stack, count);
+        if(resolved instanceof String str)
+            return from(str, count);
+        if(resolved instanceof MetaItem<?>.MetaValueItem meta)
+            return from(meta.getStackForm(count));
+        if(resolved instanceof LookupBlock<?> block)
+            return from(block.getStack(), count);
+
+        throw new IllegalArgumentException("unsupported type");
     }
 
     private Ingredient ingredient;

@@ -168,14 +168,18 @@ public class MaterialRecipeHandler {
         ModHandler.addShapedRecipe(String.format("tiny_dust_assembling_%s", material),
             dustStack, "XXX", "XXX", "XXX", 'X', new UnificationEntry(orePrefix, material));
 
-        RecipeMaps.PACKER_RECIPES.recipeBuilder().input(orePrefix, material, 9)
-            .inputs(new CountableIngredient(new IntCircuitIngredient(1), 0))
+        RecipeMaps.PACKER_RECIPES
+            .recipeBuilder()
             .outputs(dustStack)
+            .input(orePrefix, material, 9)
+            .circuitMeta(1)
             .buildAndRegister();
 
-        RecipeMaps.UNPACKER_RECIPES.recipeBuilder().input(OrePrefix.dust, material)
-            .inputs(new CountableIngredient(new IntCircuitIngredient(1), 0))
+        RecipeMaps.UNPACKER_RECIPES
+            .recipeBuilder()
             .outputs(GTUtility.copyAmount(9, tinyDustStack))
+            .input(OrePrefix.dust, material)
+            .circuitMeta(1)
             .buildAndRegister();
     }
 
@@ -306,14 +310,18 @@ public class MaterialRecipeHandler {
             ModHandler.addShapedRecipe(String.format("nugget_assembling_%s", material),
                 ingotStack, "XXX", "XXX", "XXX", 'X', new UnificationEntry(orePrefix, material));
 
-            RecipeMaps.UNPACKER_RECIPES.recipeBuilder().input(OrePrefix.ingot, material)
-                .inputs(new CountableIngredient(new IntCircuitIngredient(1), 0))
+            RecipeMaps.UNPACKER_RECIPES
+                .recipeBuilder()
                 .outputs(GTUtility.copyAmount(9, nuggetStack))
+                .input(OrePrefix.ingot, material)
+                .circuitMeta(1)
                 .buildAndRegister();
 
-            RecipeMaps.PACKER_RECIPES.recipeBuilder().input(orePrefix, material, 9)
-                .inputs(new CountableIngredient(new IntCircuitIngredient(1), 0))
+            RecipeMaps.PACKER_RECIPES
+                .recipeBuilder()
                 .outputs(ingotStack)
+                .input(orePrefix, material, 9)
+                .circuitMeta(1)
                 .buildAndRegister();
 
             if (material.shouldGenerateFluid()) {

@@ -17,6 +17,8 @@ import gregtech.api.util.GTLog;
 import gregtech.api.util.ShapedOreEnergyTransferRecipe;
 import gregtech.api.util.world.DummyWorld;
 import gregtech.common.MetaFluids;
+import gregtech.common.blocks.LookupBlock;
+import gregtech.loaders.recipe.Component;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.inventory.InventoryCrafting;
@@ -25,6 +27,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -217,6 +220,19 @@ public class ModHandler {
     public record Substitution<T>(char key, @Nullable T value) {
         public static <T> Substitution<T> sub(char k, T v) {
             return new Substitution<>(k, v);
+        }
+
+        public static Substitution<UnificationEntry> sub(char k, OrePrefix p, Material m) {
+            return new Substitution<>(k, new UnificationEntry(p, m));
+        }
+
+        public static <T> Substitution<T> sub(char k, int tier, Component<T> v) {
+            return new Substitution<>(k, v.getIngredient(tier));
+        }
+
+        public static <T extends Enum<T> & IStringSerializable>
+        Substitution<ItemStack> sub(char k, LookupBlock<T> block) {
+            return new Substitution<>(k, block.getStack());
         }
     }
 

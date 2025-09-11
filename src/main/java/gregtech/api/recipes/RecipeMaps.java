@@ -705,7 +705,7 @@ public class RecipeMaps {
 
 
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> PACKER_RECIPES = new RecipeMap<>("packer", 2, 2, 1, 1, 0, 0, 0, 0, new SimpleRecipeBuilder().EUt(12).duration(10))
+    public static final RecipeMap<IntCircuitRecipeBuilder> PACKER_RECIPES = new RecipeMap<>("packer", 2, 2, 1, 1, 0, 0, 0, 0, new IntCircuitRecipeBuilder().EUt(12).duration(10))
         .setSlotOverlay(false, false, true, GuiTextures.BOX_OVERLAY)
         .setSlotOverlay(true, false, GuiTextures.BOXED_OVERLAY)
         .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL)
@@ -713,7 +713,7 @@ public class RecipeMaps {
 
 
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> UNPACKER_RECIPES = new RecipeMap<>("unpacker", 2, 2, 1, 2, 0, 0, 0, 0, new SimpleRecipeBuilder().EUt(12).duration(10))
+    public static final RecipeMap<IntCircuitRecipeBuilder> UNPACKER_RECIPES = new RecipeMap<>("unpacker", 2, 2, 1, 2, 0, 0, 0, 0, new IntCircuitRecipeBuilder().EUt(12).duration(10))
         .setSlotOverlay(false, false, GuiTextures.BOXED_OVERLAY)
         .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL)
         .setSound(GTSoundEvents.ASSEMBLER);

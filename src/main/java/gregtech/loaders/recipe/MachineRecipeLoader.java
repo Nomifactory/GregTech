@@ -58,6 +58,7 @@ import java.util.stream.Stream;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.CountableIngredient.from;
+import static gregtech.api.recipes.ModHandler.Substitution.sub;
 import static gregtech.api.util.DyeUtil.getOrdictColorName;
 import static gregtech.common.blocks.BlockMetalCasing.MetalCasingType.*;
 import static gregtech.common.blocks.BlockTurbineCasing.TurbineCasingType.*;
@@ -100,12 +101,13 @@ public class MachineRecipeLoader {
         RecipeMaps.COMPRESSOR_RECIPES.recipeBuilder().inputs(new ItemStack(Blocks.ICE, 2, OreDictionary.WILDCARD_VALUE)).outputs(new ItemStack(Blocks.PACKED_ICE)).buildAndRegister();
         RecipeMaps.COMPRESSOR_RECIPES.recipeBuilder().input(OrePrefix.dust, Materials.Ice, 1).outputs(new ItemStack(Blocks.ICE)).buildAndRegister();
 
-        RecipeMaps.PACKER_RECIPES.recipeBuilder()
-                .inputs(new ItemStack(Items.WHEAT, 9))
-                .inputs(new CountableIngredient(new IntCircuitIngredient(9), 0))
-                .outputs(new ItemStack(Blocks.HAY_BLOCK))
-                .duration(200).EUt(2)
-                .buildAndRegister();
+        RecipeMaps.PACKER_RECIPES
+            .recipeBuilder()
+            .outputs(new ItemStack(Blocks.HAY_BLOCK))
+            .inputs(new ItemStack(Items.WHEAT, 9))
+            .circuitMeta(9)
+            .duration(200).EUt(2)
+            .buildAndRegister();
 
         RecipeMaps.COMPRESSOR_RECIPES.recipeBuilder()
             .input(OrePrefix.dust, Materials.Fireclay)
@@ -564,7 +566,7 @@ public class MachineRecipeLoader {
                 .inputs(MetaItems.SPRAY_EMPTY.getStackForm())
                 .input(getOrdictColorName(dyeColor), 1)
                 .outputs(MetaItems.SPRAY_CAN_DYES[dyeColor.getMetadata()].getStackForm())
-                .EUt(8).duration(200)
+                .duration(200).EUt(8)
                 .buildAndRegister();
         }
 
@@ -590,14 +592,14 @@ public class MachineRecipeLoader {
             .input(OrePrefix.plate, Materials.Rubber, 2)
             .input(OrePrefix.plate, Materials.Aluminium, 2)
             .outputs(MetaItems.COVER_SHUTTER.getStackForm(4))
-            .EUt(16).duration(200)
+            .duration(200).EUt(16)
             .buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
             .input(OrePrefix.plate, Materials.Aluminium, 2)
             .input(OrePrefix.dust, Materials.Redstone)
             .outputs(MetaItems.COVER_MACHINE_CONTROLLER.getStackForm(1))
-            .EUt(16).duration(200)
+            .duration(200).EUt(16)
             .buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().duration(480).EUt(240).input(OrePrefix.dust, Materials.Graphite, 8).input(OrePrefix.foil, Materials.Silicon, 1).fluidInputs(Materials.Glue.getFluid(250)).outputs(OreDictUnifier.get(OrePrefix.dustSmall, Materials.Graphene, 1)).buildAndRegister();
@@ -627,9 +629,11 @@ public class MachineRecipeLoader {
         // Tiered Machine Casings
         for(int tier = ULV; tier <= MAX; tier++) {
             RecipeMaps.ASSEMBLER_RECIPES
-                .recipeBuilder().EUt(16).duration(tier == ULV ? 25 : 50).circuitMeta(8)
+                .recipeBuilder()
                 .outputs(TIER_CASING.getIngredient(tier))
                 .inputs(from(HULL_PLATE_1.getIngredient(tier), 8))
+                .circuitMeta(8)
+                .duration(tier == ULV ? 25 : 50).EUt(16)
                 .buildAndRegister();
         }
 
@@ -649,10 +653,11 @@ public class MachineRecipeLoader {
         Stream.of(INVAR_HEATPROOF, STEEL_SOLID, ALUMINIUM_FROSTPROOF,
                   TUNGSTENSTEEL_ROBUST, STAINLESS_CLEAN, TITANIUM_STABLE)
               .forEachOrdered(m -> RecipeMaps.ASSEMBLER_RECIPES
-                  .recipeBuilder().EUt(16).duration(50)
+                  .recipeBuilder()
                   .outputs(m.getStack(3))
                   .input(OrePrefix.plate, m.getMaterial(), 6)
                   .input(OrePrefix.frameGt, m.getMaterial(), 1)
+                  .duration(50).EUt(16)
                   .buildAndRegister());
 
         // Fusion Casing
@@ -664,10 +669,11 @@ public class MachineRecipeLoader {
         // Turbine Casings (except Steel)
         Stream.of(STAINLESS_TURBINE_CASING, TITANIUM_TURBINE_CASING, TUNGSTENSTEEL_TURBINE_CASING)
               .forEachOrdered(m -> RecipeMaps.ASSEMBLER_RECIPES
-                  .recipeBuilder().EUt(16).duration(50)
+                  .recipeBuilder()
                   .outputs(m.getStack(3))
                   .inputs(STEEL_TURBINE_CASING.getStack())
                   .input(OrePrefix.plate, m.getMaterial(), 6)
+                  .duration(50).EUt(16)
                   .buildAndRegister());
 
         // Gearbox Casings
@@ -675,11 +681,13 @@ public class MachineRecipeLoader {
               .forEachOrdered(g -> {
                   Material material = g.getMaterial();
                   RecipeMaps.ASSEMBLER_RECIPES
-                      .recipeBuilder().EUt(16).duration(50).circuitMeta(4)
+                      .recipeBuilder()
                       .outputs(g.getStack(3))
                       .input(OrePrefix.plate, material, 4)
                       .input(OrePrefix.gear, material, 2)
                       .input(OrePrefix.frameGt, material)
+                      .circuitMeta(4)
+                      .duration(50).EUt(16)
                       .buildAndRegister();
               });
 
@@ -687,10 +695,11 @@ public class MachineRecipeLoader {
         for(var hull : MetaTileEntities.HULL) {
             int tier = hull.getTier();
             var builder = RecipeMaps.ASSEMBLER_RECIPES
-                .recipeBuilder().EUt(16).duration(tier == ULV ? 25 : 50)
+                .recipeBuilder()
                 .outputs(hull.getStackForm())
                 .inputs(from(TIER_CASING.getIngredient(tier)),
-                        from(HULL_CABLE.getIngredient(tier), 2));
+                        from(HULL_CABLE.getIngredient(tier), 2))
+                .duration(tier == ULV ? 25 : 50).EUt(16);
             if(ConfigHolder.harderMachineHulls)
                 builder.fluidInputs(PLASTIC.getIngredient(tier).getFluid(L * 2));
             builder.buildAndRegister();
@@ -706,10 +715,11 @@ public class MachineRecipeLoader {
         for(var chest : arr(Blocks.CHEST, Blocks.TRAPPED_CHEST))
             for(var material : arr(Materials.Iron, Materials.WroughtIron))
                 RecipeMaps.ASSEMBLER_RECIPES
-                    .recipeBuilder().EUt(2).duration(800)
+                    .recipeBuilder()
                     .outputs(new ItemStack(Blocks.HOPPER))
                     .inputs(new ItemStack(chest, 1, OreDictionary.WILDCARD_VALUE))
                     .input(OrePrefix.plate, material, 5)
+                    .duration(800).EUt(2)
                     .buildAndRegister();
 
         // Misc Items
@@ -839,11 +849,12 @@ public class MachineRecipeLoader {
 
         final BiFunction<Material, Material, SimpleRecipeBuilder> magSep =
             (a, b) -> RecipeMaps.ELECTROMAGNETIC_SEPARATOR_RECIPES
-                .recipeBuilder().duration(400).EUt(24)
+                .recipeBuilder()
                 .outputs(OreDictUnifier.get(OrePrefix.dust, a))
+                .input(OrePrefix.dustPure, a)
                 .chancedOutput(OreDictUnifier.get(OrePrefix.dustSmall, b), 4000, 900)
                 .chancedOutput(OreDictUnifier.get(OrePrefix.nugget, b), 2000, 600)
-                .input(OrePrefix.dustPure, a);
+                .duration(400).EUt(24);
 
         //electromagnetic separation recipes
         Stream.of(Materials.BrownLimonite, Materials.YellowLimonite, Materials.Nickel,
@@ -1123,11 +1134,14 @@ public class MachineRecipeLoader {
         ResourceLocation name = stoneBlock.getRegistryName();
         if(name == null)
             throw new NullPointerException("NULL registry name for block");
-        ModHandler.addShapedRecipe(String.format("%s_%s_bricks", name.getNamespace(),  normalVariant),
-                                   stoneBlock.getItemVariant(brickVariant, ChiselingVariant.NORMAL, 4),
-                                   "XX",
-                                   "XX",
-                                   'X', stoneBlock.getItemVariant(normalVariant, ChiselingVariant.NORMAL));
+        ModHandler.addShapedRecipe(
+            String.format("%s_%s_bricks", name.getNamespace(),  normalVariant),
+            stoneBlock.getItemVariant(brickVariant, ChiselingVariant.NORMAL, 4),
+            new String[] {
+                "XX",
+                "XX"
+            },
+            sub('X', stoneBlock.getItemVariant(normalVariant, ChiselingVariant.NORMAL)));
     }
 
     private static <T extends Enum<T> & IStringSerializable> void registerChiselingRecipes(StoneBlock<T> stoneBlock) {
