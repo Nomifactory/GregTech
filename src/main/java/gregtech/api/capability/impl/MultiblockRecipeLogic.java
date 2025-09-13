@@ -48,44 +48,43 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         invalidated = true;
     }
 
+    protected RecipeMapMultiblockController getController() {
+        return (RecipeMapMultiblockController) metaTileEntity;
+    }
+
     public IEnergyContainer getEnergyContainer() {
-        RecipeMapMultiblockController controller = (RecipeMapMultiblockController) metaTileEntity;
-        return controller.getEnergyContainer();
+        return getController().getEnergyContainer();
     }
 
     @Override
     protected IItemHandlerModifiable getInputInventory() {
-        RecipeMapMultiblockController controller = (RecipeMapMultiblockController) metaTileEntity;
-        return controller.getInputInventory();
+        return getController().getInputInventory();
     }
 
     // Used for distinct bus recipe checking in SoG
+    @SuppressWarnings("unused")
     protected List<IItemHandlerModifiable> getInputBuses() {
-        RecipeMapMultiblockController controller = (RecipeMapMultiblockController) metaTileEntity;
-        return controller.getAbilities(MultiblockAbility.IMPORT_ITEMS);
+        return getController().getAbilities(MultiblockAbility.IMPORT_ITEMS);
     }
 
     @Override
     protected IItemHandlerModifiable getOutputInventory() {
-        RecipeMapMultiblockController controller = (RecipeMapMultiblockController) metaTileEntity;
-        return controller.getOutputInventory();
+        return getController().getOutputInventory();
     }
 
     @Override
     protected IMultipleTankHandler getInputTank() {
-        RecipeMapMultiblockController controller = (RecipeMapMultiblockController) metaTileEntity;
-        return controller.getInputFluidInventory();
+        return getController().getInputFluidInventory();
     }
 
     @Override
     protected IMultipleTankHandler getOutputTank() {
-        RecipeMapMultiblockController controller = (RecipeMapMultiblockController) metaTileEntity;
-        return controller.getOutputFluidInventory();
+        return getController().getOutputFluidInventory();
     }
 
     @Override
     protected boolean setupAndConsumeRecipeInputs(Recipe recipe) {
-        RecipeMapMultiblockController controller = (RecipeMapMultiblockController) metaTileEntity;
+        RecipeMapMultiblockController controller = getController();
         if (controller.checkRecipe(recipe, false) &&
             super.setupAndConsumeRecipeInputs(recipe)) {
             controller.checkRecipe(recipe, true);
@@ -122,25 +121,23 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     private void checkIfJammed() {
-        if(metaTileEntity instanceof RecipeMapMultiblockController controller) {
-            // determine if outputs will fit
-            boolean canFitItems = addItemsToItemHandler(getOutputInventory(), true, itemOutputs);
-            boolean canFitFluids = addFluidsToFluidHandler(getOutputTank(), true, fluidOutputs);
+        // determine if outputs will fit
+        boolean canFitItems = addItemsToItemHandler(getOutputInventory(), true, itemOutputs);
+        boolean canFitFluids = addFluidsToFluidHandler(getOutputTank(), true, fluidOutputs);
 
-            // clear output notifications since we just checked them
-            metaTileEntity.getNotifiedItemOutputList().clear();
-            metaTileEntity.getNotifiedFluidOutputList().clear();
+        // clear output notifications since we just checked them
+        metaTileEntity.getNotifiedItemOutputList().clear();
+        metaTileEntity.getNotifiedFluidOutputList().clear();
 
-            // remember prior value
-            boolean oldJammed = this.isJammed;
+        // remember prior value
+        boolean oldJammed = this.isJammed;
 
-            // Jam if we can't output all items and fluids, or we fail whatever other conditions the controller imposes
-            this.isJammed = !(canFitItems && canFitFluids && controller.checkRecipe(previousRecipe, false));
+        // Jam if we can't output all items and fluids, or we fail whatever other conditions the controller imposes
+        this.isJammed = !(canFitItems && canFitFluids && getController().checkRecipe(previousRecipe, false));
 
-            // Sync state if changed
-            if(this.isJammed != oldJammed)
-                writeCustomData(DataIDs.JAMMED, buf -> buf.writeBoolean(this.isJammed));
-        }
+        // Sync state if changed
+        if(this.isJammed != oldJammed)
+            writeCustomData(DataIDs.JAMMED, buf -> buf.writeBoolean(this.isJammed));
     }
 
     private boolean hasOutputChanged() {
