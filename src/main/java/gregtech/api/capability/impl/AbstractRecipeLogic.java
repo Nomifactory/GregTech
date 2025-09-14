@@ -369,15 +369,13 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
     }
 
     /**
-     * Determines which tier of power is required to run a recipe of the specified voltage, clamping it to
-     * {@link ConfigHolder#maxHatchOCTier} to avoid impossibly high overclocks.
+     * Determines which tier of power is required to run a recipe of the specified voltage.
      *
      * @param voltage the EU/t required
      * @return the lowest tier that can handle the passed voltage, as a {@link GTValues} tier ordinal
      */
     protected int getOverclockingTier(long voltage) {
-        // restrict to prevent impossibly high overclocks
-        return Math.min(GTUtility.getTierByVoltage(voltage), ConfigHolder.maxHatchOCTier);
+        return GTUtility.getTierByVoltage(voltage);
     }
 
     protected long getVoltageByTier(final int tier) {

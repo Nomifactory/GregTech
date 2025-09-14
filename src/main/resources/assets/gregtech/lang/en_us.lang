@@ -3065,6 +3065,10 @@ gregtech.multiblock.large_boiler.heat_efficiency.tooltip=The higher boiler tempe
 gregtech.multiblock.large_boiler.throttle.tooltip=Boiler can output less steam and consume less fuel, but it comes with price: the fuel efficiency is lower at higher throttle rates.
 gregtech.multiblock.large_boiler.throttle_modify=Modify Throttle:
 
+gregtech.multiblock.occ.label=Overclocking Tier:
+gregtech.multiblock.occ.key=[%s]
+gregtech.multiblock.occ.hover=Click to cycle overclocking tiers
+
 gregtech.command.usage=Usage: /gregtech <worldgen/util>
 gregtech.command.worldgen.usage=Usage: /gregtech worldgen <reload>
 gregtech.command.worldgen.reload.usage=Usage: /gregtech worldgen reload

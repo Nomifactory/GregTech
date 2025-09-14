@@ -5,6 +5,8 @@ import net.minecraft.util.EnumFacing;
 
 import java.util.List;
 
+import static gregtech.api.GTValues.*;
+
 public class EnergyContainerList implements IEnergyContainer {
 
     private List<IEnergyContainer> energyContainerList;
@@ -79,5 +81,11 @@ public class EnergyContainerList implements IEnergyContainer {
     @Override
     public boolean outputsEnergy(EnumFacing side) {
         return true;
+    }
+
+    /** Whether there is a MAX-tier hatch present */
+    public boolean hasMax() {
+        return energyContainerList.stream()
+                                  .anyMatch(v -> Math.max(v.getInputVoltage(), v.getOutputVoltage()) >= V[MAX]);
     }
 }

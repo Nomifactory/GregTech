@@ -204,4 +204,12 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
             return GTSoundEvents.INTERRUPTED;
         return recipeMap.getSound();
     }
+
+    @Override
+    protected int getOverclockingTier(long voltage) {
+        RecipeMapMultiblockController controller = getController();
+        if(controller.getControlsEnabled())
+            return controller.getSelectedTier();
+        return super.getOverclockingTier(voltage);
+    }
 }

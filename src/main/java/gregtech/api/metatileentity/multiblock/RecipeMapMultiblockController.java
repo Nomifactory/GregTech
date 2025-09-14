@@ -11,10 +11,13 @@ import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.capability.impl.MultiblockRecipeLogic;
+import gregtech.api.gui.Widget;
 import gregtech.api.multiblock.PatternMatchContext;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTUtility;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.ITextComponent;
@@ -29,6 +32,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
+
+import static gregtech.api.GTValues.*;
+import static gregtech.api.gui.widgets.AdvancedTextWidget.withButton;
+import static gregtech.api.gui.widgets.AdvancedTextWidget.withHoverTextTranslate;
 
 public abstract class RecipeMapMultiblockController extends MultiblockWithDisplayBase {
 
@@ -40,6 +48,8 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     protected IMultipleTankHandler inputFluidInventory;
     protected IMultipleTankHandler outputFluidInventory;
     protected IEnergyContainer energyContainer;
+    private boolean enableOverclockControls;
+    private int selectedTier;
 
     public RecipeMapMultiblockController(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap) {
         super(metaTileEntityId);
@@ -84,6 +94,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     protected void formStructure(PatternMatchContext context) {
         super.formStructure(context);
         initializeAbilities();
+        onStructureFormed();
     }
 
     @Override
@@ -134,10 +145,40 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         return true;
     }
 
+    /** @return a clickable text widget for cycling through overclocking tiers */
+    private ITextComponent createOverclockControllerWidget() {
+        ITextComponent label = new TextComponentTranslation("gregtech.multiblock.occ.label");
+        TextComponentTranslation buttonText = new TextComponentTranslation("gregtech.multiblock.occ.key", VNF[selectedTier]);
+        ITextComponent button = withButton(buttonText, "oc");
+        withHoverTextTranslate(button, "gregtech.multiblock.occ.hover");
+        return label.appendText(" ").appendSibling(button);
+    }
+
+    @Override
+    protected void handleDisplayClick(String componentData, Widget.ClickData clickData) {
+        super.handleDisplayClick(componentData, clickData);
+        // Cycle through overclock tiers, shift reverses order
+        if("oc".equals(componentData)) {
+            if (clickData.isShiftClick) {
+                if (selectedTier == UHV)
+                    selectedTier = MAX;
+                else
+                    selectedTier--;
+            } else {
+                if (selectedTier == MAX)
+                    selectedTier = UHV;
+                else
+                    selectedTier++;
+            }
+        }
+    }
+
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
         super.addDisplayText(textList);
         if (isStructureFormed()) {
+            if(enableOverclockControls)
+                textList.add(createOverclockControllerWidget());
             IEnergyContainer energyContainer = recipeMapWorkable.getEnergyContainer();
             if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
                 long maxVoltage = energyContainer.getInputVoltage();
@@ -166,12 +207,12 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     @Override
     protected boolean checkStructureComponents(List<IMultiblockPart> parts, Map<MultiblockAbility<Object>, List<Object>> abilities) {
         //basically check minimal requirements for inputs count
-        //noinspection SuspiciousMethodCalls
-        int itemInputsCount = abilities.getOrDefault(MultiblockAbility.IMPORT_ITEMS, Collections.emptyList())
-            .stream().map(it -> (IItemHandler) it).mapToInt(IItemHandler::getSlots).sum();
-        //noinspection SuspiciousMethodCalls
+        int itemInputsCount = 0;
+        for(Object it : abilities.getOrDefault(MultiblockAbility.IMPORT_ITEMS, Collections.emptyList())) {
+            int slots = ((IItemHandler) it).getSlots();
+            itemInputsCount += slots;
+        }
         int fluidInputsCount = abilities.getOrDefault(MultiblockAbility.IMPORT_FLUIDS, Collections.emptyList()).size();
-        //noinspection SuspiciousMethodCalls
         return itemInputsCount >= recipeMap.getMinInputs() &&
             fluidInputsCount >= recipeMap.getMinFluidInputs() &&
             abilities.containsKey(MultiblockAbility.INPUT_ENERGY);
@@ -181,5 +222,59 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         this.getFrontOverlay().render(renderState, translation, pipeline, getFrontFacing(), recipeMapWorkable.isActive());
+    }
+
+    protected void onStructureFormed() {
+        boolean previous = this.enableOverclockControls;
+        if(getEnergyContainer() instanceof EnergyContainerList list)
+            this.enableOverclockControls = list.hasMax();
+
+        // if OC controls were previously disabled, reset selected tier to UHV
+        if(this.enableOverclockControls && !previous)
+            this.selectedTier = UHV;
+    }
+
+    /** Whether OC controls are enabled for this multiblock */
+    public boolean getControlsEnabled() {
+        return this.enableOverclockControls;
+    }
+
+    /** The overclocking tier selected */
+    public int getSelectedTier() {
+        return this.selectedTier;
+    }
+
+    @Override
+    public void writeInitialSyncData(PacketBuffer buf) {
+        super.writeInitialSyncData(buf);
+        buf.writeBoolean(this.enableOverclockControls);
+        buf.writeInt(this.selectedTier);
+    }
+
+    @Override
+    public void receiveInitialSyncData(PacketBuffer buf) {
+        super.receiveInitialSyncData(buf);
+        this.enableOverclockControls = buf.readBoolean();
+        this.selectedTier = buf.readInt();
+    }
+
+    @Override
+    public void receiveCustomData(int dataId, PacketBuffer buf) {
+        super.receiveCustomData(dataId, buf);
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound data) {
+        super.readFromNBT(data);
+        this.enableOverclockControls = data.getBoolean("EnableOverclockControls");
+        this.selectedTier = data.getInteger("SelectedTier");
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound data) {
+        super.writeToNBT(data);
+        data.setBoolean("EnableOverclockControls", this.enableOverclockControls);
+        data.setInteger("SelectedTier", this.selectedTier);
+        return data;
     }
 }
