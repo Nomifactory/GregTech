@@ -94,6 +94,7 @@ public class MetaTileEntityTransformer extends TieredMetaTileEntity {
     @Override
     protected void reinitializeEnergyContainer() {
         int tier = getTier();
+        long oldContents = this.energyContainer == null ? 0L : this.energyContainer.getEnergyStored();
 
         // Make post-UV transformers 16A instead of 4A
         int M = tier >= GTValues.UHV ? 4 : 1;
@@ -108,6 +109,7 @@ public class MetaTileEntityTransformer extends TieredMetaTileEntity {
         EnergyContainerHandler ech = (EnergyContainerHandler) this.energyContainer;
         ech.setSideInputCondition(s -> s == getFrontFacing());
         ech.setSideOutputCondition(s -> s == getFrontFacing().getOpposite());
+        ech.setEnergyStored(oldContents);
     }
 
     @Override
