@@ -43,6 +43,8 @@ import java.util.*;
 import java.util.function.DoubleSupplier;
 import java.util.stream.Collectors;
 
+import static gregtech.api.util.Predicates.not;
+
 @ZenClass("mods.gregtech.recipe.RecipeMap")
 @ZenRegister
 public class RecipeMap<R extends RecipeBuilder<R>> implements SoundEmitter<RecipeMap<R>> {
@@ -248,6 +250,10 @@ public class RecipeMap<R extends RecipeBuilder<R>> implements SoundEmitter<Recip
      */
     @Nullable
     public Recipe findRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, int outputFluidTankCapacity, MatchingMode matchingMode) {
+
+        // remove air inputs, so we don't iterate over them a million times
+        inputs = inputs.stream().filter(not(ItemStack::isEmpty)).collect(Collectors.toList());
+
         if (recipeList.isEmpty())
             return null;
         if (minFluidInputs > 0 && GTUtility.amountOfNonNullElements(fluidInputs) < minFluidInputs) {
