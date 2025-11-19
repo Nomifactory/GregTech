@@ -2821,7 +2821,7 @@ gregtech.fluid.click_to_empty.shift=§7(Shift+单击将倒出手持容器内全�
 
 gregtech.fluid.plasma=%s等离子体
 gregtech.fluid.empty=空
-gregtech.fluid.amount=§7%,d/%,d
+gregtech.fluid.amount=§7%,d/%,dL
 gregtech.fluid.temperature=§7温度: %dK
 gregtech.fluid.state_gas=§7状态: 气态
 gregtech.fluid.state_liquid=§7状态: 液态
