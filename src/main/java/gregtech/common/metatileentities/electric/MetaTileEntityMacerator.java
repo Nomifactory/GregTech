@@ -26,13 +26,24 @@ public class MetaTileEntityMacerator extends SimpleMachineMetaTileEntity {
     @Override
     protected RecipeLogicEnergy createWorkable(RecipeMap<?> recipeMap) {
         final RecipeLogicEnergy result = new RecipeLogicEnergy(this, recipeMap, () -> energyContainer) {
+            /*
+             * Lower tier macerators are unable to produce byproducts. MV macerators used to have two slots, so the
+             * reported tier for computing overclocking bonuses was adjusted so that no bonuses are granted until
+             * after MV. Macerators now only gain slots at HV, but the prior convention is retained.
+             */
             @Override
             protected int getMachineTierForRecipe(Recipe recipe) {
+                // if the recipe base tier is above MV, use default logic
+                int baseTier = recipe.getBaseTier();
+                if(baseTier > GTValues.MV)
+                    return super.getMachineTierForRecipe(recipe);
+
+                // otherwise, reduce the number of bonuses applied as though the recipe is MV base
                 int tier = GTUtility.getTierByVoltage(getMaxVoltage());
                 if (tier > GTValues.MV) {
-                    return tier - GTValues.MV;
+                    return tier - (GTValues.MV - baseTier);
                 }
-                return 0;
+                return baseTier;
             }
         };
         result.enableOverclockVoltage();
