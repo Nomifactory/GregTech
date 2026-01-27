@@ -425,7 +425,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
      * @return all possible chanced item outputs paired with their computed chances for the currently active recipe
      */
     public List<Pair<ItemStack, Integer>> getChancedItemOutputs() {
-        if(itemOutputs == null)
+        if(chancedItemOutputs == null)
             return Collections.emptyList();
         return chancedItemOutputs;
     }
