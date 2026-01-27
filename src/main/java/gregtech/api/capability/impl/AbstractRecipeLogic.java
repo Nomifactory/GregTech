@@ -393,7 +393,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         this.recipeEUt = resultOverclock[0];
         this.fluidOutputs = GTUtility.copyFluidList(recipe.getFluidOutputs());
         int overclocks = getMachineTierForRecipe(recipe) - recipe.getBaseTier();
-        this.nonChancedItemAmt = recipe.getOutputs().size();
+        this.nonChancedItemAmt = Math.min(recipe.getOutputs().size(), getOutputInventory().getSlots());
         this.chancedItemOutputs = recipe.getChancedRecipeOutputsAtTier(overclocks);
         this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(getOutputInventory().getSlots(), random, overclocks));
         if (this.wasActiveAndNeedsUpdate) {
