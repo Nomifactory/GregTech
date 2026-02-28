@@ -33,7 +33,14 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.LongSupplier;
 
+import static gregtech.api.capability.impl.AbstractRecipeLogic.DataIDs.*;
+
 public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable {
+
+    protected static class DataIDs {
+        public static final int ACTIVE_ENABLED = 1;
+        public static final int NOT_ENOUGH_ENERGY = 2;
+    }
 
     private static final String ALLOW_OVERCLOCKING = "AllowOverclocking";
     private static final String OVERCLOCK_VOLTAGE = "OverclockVoltage";
@@ -495,7 +502,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         World world = metaTileEntity.getWorld();
         if (world != null && !world.isRemote) {
             metaTileEntity.markDirty();
-            writeCustomData(1, buf -> {
+            writeCustomData(ACTIVE_ENABLED, buf -> {
                 buf.writeBoolean(active);
                 buf.writeBoolean(workingEnabled);
             });
@@ -510,7 +517,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         World world = metaTileEntity.getWorld();
         if (world != null && !world.isRemote) {
             metaTileEntity.markDirty();
-            writeCustomData(2, buf -> buf.writeBoolean(hasNotEnoughEnergy));
+            writeCustomData(NOT_ENOUGH_ENERGY, buf -> buf.writeBoolean(hasNotEnoughEnergy));
         }
     }
 
@@ -523,7 +530,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         World world = metaTileEntity.getWorld();
         if (world != null && !world.isRemote) {
             metaTileEntity.markDirty();
-            writeCustomData(1, buf -> {
+            writeCustomData(ACTIVE_ENABLED, buf -> {
                 buf.writeBoolean(isActive);
                 buf.writeBoolean(workingEnabled);
             });
@@ -596,12 +603,13 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
 
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
-        if (dataId == 1) {
-            this.isActive = buf.readBoolean();
-            this.workingEnabled = buf.readBoolean();
-            getMetaTileEntity().getHolder().scheduleChunkForRenderUpdate();
-        } else if (dataId == 2) {
-            this.hasNotEnoughEnergy = buf.readBoolean();
+        switch(dataId) {
+            case ACTIVE_ENABLED -> {
+                this.isActive = buf.readBoolean();
+                this.workingEnabled = buf.readBoolean();
+                getMetaTileEntity().getHolder().scheduleChunkForRenderUpdate();
+            }
+            case NOT_ENOUGH_ENERGY -> this.hasNotEnoughEnergy = buf.readBoolean();
         }
     }
 

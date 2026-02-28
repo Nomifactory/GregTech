@@ -21,7 +21,15 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.fluids.IFluidTank;
 import org.jetbrains.annotations.NotNull;
 
+import static gregtech.api.capability.impl.RecipeLogicSteam.DataIDs.*;
+
 public class RecipeLogicSteam extends AbstractRecipeLogic {
+
+    protected static class DataIDs {
+        public static final int NEEDS_VENTING = 2;
+        public static final int SET_VENTING_SIDE = 3;
+        public static final int VENTING_STUCK = 4;
+    }
 
     private final IFluidTank steamFluidTank;
     private final boolean isHighPressure;
@@ -64,7 +72,7 @@ public class RecipeLogicSteam extends AbstractRecipeLogic {
         this.ventingStuck = ventingStuck;
         if (!metaTileEntity.getWorld().isRemote) {
             metaTileEntity.markDirty();
-            writeCustomData(4, buf -> buf.writeBoolean(ventingStuck));
+            writeCustomData(VENTING_STUCK, buf -> buf.writeBoolean(ventingStuck));
         }
     }
 
@@ -77,7 +85,7 @@ public class RecipeLogicSteam extends AbstractRecipeLogic {
             setVentingStuck(false);
         if (!metaTileEntity.getWorld().isRemote) {
             metaTileEntity.markDirty();
-            writeCustomData(2, buf -> buf.writeBoolean(needsVenting));
+            writeCustomData(NEEDS_VENTING, buf -> buf.writeBoolean(needsVenting));
         }
     }
 
@@ -85,20 +93,20 @@ public class RecipeLogicSteam extends AbstractRecipeLogic {
         this.ventingSide = ventingSide;
         if (!metaTileEntity.getWorld().isRemote) {
             metaTileEntity.markDirty();
-            writeCustomData(3, buf -> buf.writeByte(ventingSide.getIndex()));
+            writeCustomData(SET_VENTING_SIDE, buf -> buf.writeByte(ventingSide.getIndex()));
         }
     }
 
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if (dataId == 2) {
-            this.needsVenting = buf.readBoolean();
-        } else if (dataId == 3) {
-            this.ventingSide = EnumFacing.VALUES[buf.readByte()];
-            getMetaTileEntity().getHolder().scheduleChunkForRenderUpdate();
-        } else if (dataId == 4) {
-            this.ventingStuck = buf.readBoolean();
+        switch(dataId) {
+            case NEEDS_VENTING    -> this.needsVenting = buf.readBoolean();
+            case SET_VENTING_SIDE -> {
+                this.ventingSide = EnumFacing.VALUES[buf.readByte()];
+                getMetaTileEntity().getHolder().scheduleChunkForRenderUpdate();
+            }
+            case VENTING_STUCK    -> this.ventingStuck = buf.readBoolean();
         }
     }
 
