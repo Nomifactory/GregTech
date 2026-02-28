@@ -492,9 +492,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
             return;
 
         this.isActive = active;
-        metaTileEntity.markDirty();
         World world = metaTileEntity.getWorld();
         if (world != null && !world.isRemote) {
+            metaTileEntity.markDirty();
             writeCustomData(1, buf -> {
                 buf.writeBoolean(active);
                 buf.writeBoolean(workingEnabled);
@@ -507,9 +507,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
             return;
 
         this.hasNotEnoughEnergy = hasNotEnoughEnergy;
-        metaTileEntity.markDirty();
         World world = metaTileEntity.getWorld();
         if (world != null && !world.isRemote) {
+            metaTileEntity.markDirty();
             writeCustomData(2, buf -> buf.writeBoolean(hasNotEnoughEnergy));
         }
     }
@@ -520,9 +520,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
             return;
 
         this.workingEnabled = workingEnabled;
-        metaTileEntity.markDirty();
         World world = metaTileEntity.getWorld();
         if (world != null && !world.isRemote) {
+            metaTileEntity.markDirty();
             writeCustomData(1, buf -> {
                 buf.writeBoolean(isActive);
                 buf.writeBoolean(workingEnabled);
