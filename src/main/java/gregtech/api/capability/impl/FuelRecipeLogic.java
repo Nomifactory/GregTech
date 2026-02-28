@@ -236,10 +236,13 @@ public class FuelRecipeLogic extends MTETrait implements IControllable, IFuelabl
     }
 
     protected void setActive(boolean active) {
+        if(this.isActive == active)
+            return;
+
         // If we are changing states (active -> inactive), clear remaining recipe duration
-        if (this.isActive && !active) {
+        if (this.isActive)
             recipeDurationLeft = 0;
-        }
+
         this.isActive = active;
         if (!metaTileEntity.getWorld().isRemote) {
             metaTileEntity.markDirty();

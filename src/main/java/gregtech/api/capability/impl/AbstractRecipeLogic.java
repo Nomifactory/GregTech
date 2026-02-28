@@ -488,6 +488,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
     }
 
     protected void setActive(boolean active) {
+        if(this.isActive == active)
+            return;
+
         this.isActive = active;
         metaTileEntity.markDirty();
         World world = metaTileEntity.getWorld();
@@ -500,6 +503,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
     }
 
     protected void setHasNotEnoughEnergy(boolean hasNotEnoughEnergy) {
+        if(this.hasNotEnoughEnergy == hasNotEnoughEnergy)
+            return;
+
         this.hasNotEnoughEnergy = hasNotEnoughEnergy;
         metaTileEntity.markDirty();
         World world = metaTileEntity.getWorld();
@@ -510,6 +516,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
 
     @Override
     public void setWorkingEnabled(boolean workingEnabled) {
+        if(this.workingEnabled == workingEnabled)
+            return;
+
         this.workingEnabled = workingEnabled;
         metaTileEntity.markDirty();
         World world = metaTileEntity.getWorld();

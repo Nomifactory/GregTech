@@ -58,6 +58,9 @@ public class RecipeLogicSteam extends AbstractRecipeLogic {
     }
 
     public void setVentingStuck(boolean ventingStuck) {
+        if(this.ventingStuck == ventingStuck)
+            return;
+
         this.ventingStuck = ventingStuck;
         if (!metaTileEntity.getWorld().isRemote) {
             metaTileEntity.markDirty();
@@ -66,6 +69,9 @@ public class RecipeLogicSteam extends AbstractRecipeLogic {
     }
 
     public void setNeedsVenting(boolean needsVenting) {
+        if(this.needsVenting == needsVenting)
+            return;
+
         this.needsVenting = needsVenting;
         if (!needsVenting && ventingStuck)
             setVentingStuck(false);
