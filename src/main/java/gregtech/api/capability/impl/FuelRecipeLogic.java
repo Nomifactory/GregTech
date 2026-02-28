@@ -82,7 +82,7 @@ public class FuelRecipeLogic extends MTETrait implements IControllable, IFuelabl
                 continue;
             int amountPerRecipe = calculateFuelAmount(recipe);
             int duration = calculateRecipeDuration(recipe);
-            long fuelBurnTime = (duration * fuelRemaining) / amountPerRecipe;
+            long fuelBurnTime = ((long) duration * fuelRemaining) / amountPerRecipe;
 
             FluidFuelInfo fuelInfo = (FluidFuelInfo) fuels.get(tankContents.getUnlocalizedName());
             if (fuelInfo == null) {
