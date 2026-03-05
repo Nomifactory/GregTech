@@ -15,7 +15,6 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.*;
 import org.junit.jupiter.params.provider.*;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -317,10 +316,7 @@ public class AbstractRecipeLogicTest {
 	 */
 	@ParameterizedTest
 	@MethodSource("macerChancedArgs")
-	public void macerator_chanced_outputs(int outputs, int tier, int chanceExpected) throws
-	                                                                                 NoSuchMethodException,
-	                                                                                 InvocationTargetException,
-	                                                                                 IllegalAccessException {
+	public void macerator_chanced_outputs(int outputs, int tier, int chanceExpected) {
 		World world = DummyWorld.INSTANCE;
 
 		// Create an empty recipe map to work with
@@ -351,15 +347,11 @@ public class AbstractRecipeLogicTest {
 		   .buildAndRegister();
 
 		// get at the Macerator custom workable logic
-		var workableFn = MetaTileEntityMacerator.class.getDeclaredMethod("createWorkable", RecipeMap.class);
-		workableFn.setAccessible(true);
-		RecipeLogicEnergy workable = (RecipeLogicEnergy) workableFn.invoke(macer, map);
-
 		AbstractRecipeLogic arl = new AbstractRecipeLogic(macerTE, map) {
 
 			@Override
-			protected int getMachineTierForRecipe(Recipe recipe) {
-				return workable.getMachineTierForRecipe(recipe);
+			public int getMachineTierForRecipe(Recipe recipe) {
+				return macer.getMachineTierForRecipe(recipe);
 			}
 
 			@Override

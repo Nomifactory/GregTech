@@ -442,7 +442,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
      * Used to override the machine's tier for the purposes of determining chanced outputs.
      * The default implementation simply returns the overclocking tier of the maximum voltage of the machine.
      */
-    protected int getMachineTierForRecipe(Recipe recipe) {
+    public int getMachineTierForRecipe(Recipe recipe) {
         return getOverclockingTier(getMaxVoltage());
     }
 

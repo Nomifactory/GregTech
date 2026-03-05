@@ -136,6 +136,11 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
         return 64000;
     }
 
+    public int getMachineTierForRecipe(Recipe recipe) {
+        if(workable == null) return 0;
+        return workable.getMachineTierForRecipe(recipe);
+    }
+
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);

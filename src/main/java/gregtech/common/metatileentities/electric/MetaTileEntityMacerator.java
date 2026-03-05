@@ -32,7 +32,7 @@ public class MetaTileEntityMacerator extends SimpleMachineMetaTileEntity {
              * after MV. Macerators now only gain slots at HV, but the prior convention is retained.
              */
             @Override
-            protected int getMachineTierForRecipe(Recipe recipe) {
+            public int getMachineTierForRecipe(Recipe recipe) {
                 // if the recipe base tier is above MV, use default logic
                 int baseTier = recipe.getBaseTier();
                 if(baseTier > GTValues.MV)
