@@ -93,6 +93,10 @@ public final class ModularUI implements ISizeProvider {
         return new Builder(GuiTextures.BACKGROUND, 176, 166);
     }
 
+    public static Builder defaultBuilder(int height) {
+        return new Builder(GuiTextures.BACKGROUND, 176, height);
+    }
+
     public static Builder borderedBuilder() {
         return new Builder(GuiTextures.BORDERED_BACKGROUND, 195, 136);
     }
@@ -142,6 +146,14 @@ public final class ModularUI implements ISizeProvider {
             this.background = background;
             this.width = width;
             this.height = height;
+        }
+
+        public int getWidth() {
+            return width;
+        }
+
+        public int getHeight() {
+            return height;
         }
 
         public Builder widget(Widget widget) {
