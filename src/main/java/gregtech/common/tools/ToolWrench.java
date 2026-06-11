@@ -6,6 +6,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.monster.EntityGolem;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 
@@ -13,9 +14,7 @@ public class ToolWrench extends ToolBase {
 
     @Override
     public float getNormalDamageBonus(EntityLivingBase entity, ItemStack stack, EntityLivingBase attacker) {
-        String name = entity.getClass().getName();
-        name = name.substring(name.lastIndexOf('.') + 1);
-        return name.toLowerCase().contains("golem") ? 3.0F : 1.0F;
+        return entity.getClass().isAssignableFrom(EntityGolem.class) ? 3.0F : 1.0F;
     }
 
     @Override

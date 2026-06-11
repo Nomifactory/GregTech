@@ -8,31 +8,6 @@ import net.minecraft.item.ItemStack;
 public class ToolDrillHV extends ToolDrillLV {
 
     @Override
-    public int getToolDamagePerBlockBreak(ItemStack stack) {
-        return 8;
-    }
-
-    @Override
-    public int getToolDamagePerDropConversion(ItemStack stack) {
-        return 16;
-    }
-
-    @Override
-    public int getToolDamagePerContainerCraft(ItemStack stack) {
-        return 128;
-    }
-
-    @Override
-    public int getToolDamagePerEntityAttack(ItemStack stack) {
-        return 32;
-    }
-
-    @Override
-    public int getBaseQuality(ItemStack stack) {
-        return 1;
-    }
-
-    @Override
     public float getBaseDamage(ItemStack stack) {
         return 5.0F;
     }

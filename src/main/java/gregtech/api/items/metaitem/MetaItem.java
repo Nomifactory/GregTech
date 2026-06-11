@@ -17,6 +17,7 @@ import gregtech.api.items.OreDictNames;
 import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.metaitem.stats.*;
+import gregtech.api.items.toolitem.ToolMetaItem;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.type.Material;
 import gregtech.api.unification.ore.OrePrefix;
@@ -457,17 +458,36 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         }
     }
 
+    private static long _getDamage(ItemStack itemStack) {
+        // Retrieve the tool damage from NBT if it's a tool, otherwise standard item damage
+        if(!itemStack.isEmpty() && itemStack.getItem() instanceof ToolMetaItem toolMetaItem)
+            return toolMetaItem.getItemDamage(itemStack);
+        return itemStack.getItemDamage();
+    }
+
+    // Prevent charging electric items from resetting block breaking every tick
+    @Override
+    public boolean shouldCauseBlockBreakReset(ItemStack oldStack, ItemStack newStack) {
+        return oldStack.getItem() != newStack.getItem() || _getDamage(oldStack) < _getDamage(newStack);
+    }
+
+    private static long _getCharge(ItemStack itemStack) {
+        // get the charge if this item has it
+        if(itemStack.hasCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null))
+            return itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null).getCharge();
+        // else return -1 (to ensure it doesn't match a merely discharged item)
+        return -1;
+    }
+
+    // Prevent electric tools from bobbing while charging
     @Override
     public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
-        //if item is equal, and old item has electric item capability, remove charge tags to stop reequip animation when charge is altered
-        if(ItemStack.areItemsEqual(oldStack, newStack) && oldStack.hasCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null) &&
-            oldStack.hasTagCompound() && newStack.hasTagCompound()) {
-            oldStack = oldStack.copy();
-            newStack = newStack.copy();
-            oldStack.getTagCompound().removeTag("Charge");
-            newStack.getTagCompound().removeTag("Charge");
-        }
-        return !ItemStack.areItemStacksEqual(oldStack, newStack);
+        // to prevent electric items from bobbing while charging, only animate when the slot changed
+        if(_getCharge(oldStack) != _getCharge(newStack))
+            return slotChanged;
+
+        // if the charges are identical, only animate if the old and new stacks are otherwise different
+        return !oldStack.equals(newStack);
     }
 
     @Override
