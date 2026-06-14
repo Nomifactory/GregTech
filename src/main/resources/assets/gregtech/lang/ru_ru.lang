@@ -2828,6 +2828,7 @@ gregtech.recipe.duration=Длительность: %.1f сек.
 gregtech.recipe.amperage=Сила тока: %d
 gregtech.recipe.not_consumed=Не расходуется
 gregtech.recipe.chance=Шанс: %s%% +%s%%/уровень
+gregtech.recipe.fixed_chance=Шанс: %s%%
 gregtech.recipe.blast_furnace_temperature=Температура: %dK (%s)
 gregtech.recipe.eu_to_start=Энергия для запуска: %dEU
 

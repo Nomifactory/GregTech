@@ -2810,6 +2810,7 @@ gregtech.recipe.duration=耗时: %.1f 秒
 gregtech.recipe.amperage=电流: %d
 gregtech.recipe.not_consumed=不在加工时消耗
 gregtech.recipe.chance=出产概率: %s%% +%s%%/tier
+gregtech.recipe.fixed_chance=出产概率: %s%%
 gregtech.recipe.blast_furnace_temperature=温度: %d K (%s)
 gregtech.recipe.eu_to_start=启动耗电: %d EU
 
