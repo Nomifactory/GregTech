@@ -26,9 +26,9 @@ import static gregtech.api.capability.impl.RecipeLogicSteam.DataIDs.*;
 public class RecipeLogicSteam extends AbstractRecipeLogic {
 
     protected static class DataIDs {
-        public static final int NEEDS_VENTING = 2;
-        public static final int SET_VENTING_SIDE = 3;
-        public static final int VENTING_STUCK = 4;
+        public static final int NEEDS_VENTING = 3;
+        public static final int SET_VENTING_SIDE = 4;
+        public static final int VENTING_STUCK = 5;
     }
 
     private final IFluidTank steamFluidTank;
