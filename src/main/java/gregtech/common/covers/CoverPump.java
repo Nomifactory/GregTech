@@ -307,7 +307,7 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
 
         @Override
         public int fill(FluidStack resource, boolean doFill) {
-            if (pumpMode == PumpMode.EXPORT && manualImportExportMode == ManualImportExportMode.DISABLED) {
+            if (manualImportExportMode == ManualImportExportMode.DISABLED) {
                 return 0;
             }
             if (!checkInputFluid(resource) && manualImportExportMode == ManualImportExportMode.FILTERED) {
@@ -319,7 +319,7 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
         @Nullable
         @Override
         public FluidStack drain(FluidStack resource, boolean doDrain) {
-            if (pumpMode == PumpMode.IMPORT && manualImportExportMode == ManualImportExportMode.DISABLED) {
+            if (manualImportExportMode == ManualImportExportMode.DISABLED) {
                 return null;
             }
             if (!checkInputFluid(resource) && manualImportExportMode == ManualImportExportMode.FILTERED) {
