@@ -144,7 +144,7 @@ public class CoverItemFilter extends CoverBehavior implements CoverWithUI {
             ItemFilterMode filterMode = getFilterMode();
             if (filterMode == ItemFilterMode.FILTER_EXTRACT) {
                 return stack;
-            } else if (!itemFilter.testItemStack(stack)) {
+            } else if (!itemFilter.testItemStack(stack, null)) {
                 return stack;
             }
             return super.insertItem(slot, stack, simulate);
@@ -158,7 +158,7 @@ public class CoverItemFilter extends CoverBehavior implements CoverWithUI {
                 return ItemStack.EMPTY;
             }
             ItemStack result = super.extractItem(slot, amount, true);
-            if (!itemFilter.testItemStack(result)) {
+            if (!itemFilter.testItemStack(result, null)) {
                 return ItemStack.EMPTY;
             }
             if (!simulate) {

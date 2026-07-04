@@ -138,7 +138,7 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
             double distanceX = (areaCenterPos.getX() + 0.5) - entityItem.posX;
             double distanceZ = (areaCenterPos.getZ() + 0.5) - entityItem.posZ;
             double distance = MathHelper.sqrt(distanceX * distanceX + distanceZ * distanceZ);
-            if(!itemFilter.testItemStack(entityItem.getItem())) {
+            if(!itemFilter.testItemStack(entityItem.getItem(), this)) {
                 continue;
             }
             if (distance >= 0.7) {

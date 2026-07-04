@@ -18,6 +18,7 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.render.Textures;
 import gregtech.api.util.ItemStackKey;
 import gregtech.common.covers.filter.ItemFilterContainer;
@@ -48,6 +49,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
     protected int itemsLeftToTransferLastSecond;
     private CoverableItemHandlerWrapper itemHandlerWrapper;
     protected boolean isWorkingAllowed = true;
+    protected MetaTileEntity dest = null;
 
     public CoverConveyor(ICoverable coverable, EnumFacing attachedSide, int tier, int itemsPerSecond) {
         super(coverable, attachedSide);
@@ -93,7 +95,13 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
             TileEntity tileEntity = coverHolder.getWorld().getTileEntity(coverHolder.getPos().offset(attachedSide));
             IItemHandler itemHandler = tileEntity == null ? null : tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, attachedSide.getOpposite());
             IItemHandler myItemHandler = coverHolder.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, attachedSide);
+            dest = null;
             if (itemHandler != null && myItemHandler != null) {
+                if(conveyorMode == ConveyorMode.EXPORT) {
+                    if (tileEntity instanceof MetaTileEntityHolder mteh)
+                        dest = mteh.getMetaTileEntity();
+                } else if(coverHolder instanceof MetaTileEntity mte)
+                    dest = mte;
                 int totalTransferred = doTransferItems(itemHandler, myItemHandler, itemsLeftToTransferLastSecond);
                 this.itemsLeftToTransferLastSecond -= totalTransferred;
             }
@@ -215,7 +223,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
             if(itemStack.isEmpty()) {
                 continue;
             }
-            Object matchSlotIndex = itemFilterContainer.matchItemStack(itemStack);
+            Object matchSlotIndex = itemFilterContainer.matchItemStack(itemStack, dest);
             if (matchSlotIndex == null || !itemInfos.containsKey(matchSlotIndex)) {
                 continue;
             }
@@ -258,7 +266,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
             if (sourceStack.isEmpty()) {
                 continue;
             }
-            if (!itemFilterContainer.testItemStack(sourceStack)) {
+            if (!itemFilterContainer.testItemStack(sourceStack, dest)) {
                 continue;
             }
             ItemStack remainder = ItemHandlerHelper.insertItemStacked(targetInventory, sourceStack, true);
@@ -312,7 +320,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
             if (itemStack.isEmpty()) {
                 continue;
             }
-            Object transferSlotIndex = itemFilterContainer.matchItemStack(itemStack);
+            Object transferSlotIndex = itemFilterContainer.matchItemStack(itemStack, dest);
             if (transferSlotIndex == null) {
                 continue;
             }
@@ -338,7 +346,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
             if (itemStack.isEmpty()) {
                 continue;
             }
-            Object transferSlotIndex = itemFilterContainer.matchItemStack(itemStack);
+            Object transferSlotIndex = itemFilterContainer.matchItemStack(itemStack, dest);
             if (transferSlotIndex == null) {
                 continue;
             }
@@ -511,7 +519,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
             if (conveyorMode == ConveyorMode.EXPORT && manualImportExportMode == ManualImportExportMode.DISABLED) {
                 return stack;
             }
-            if (!itemFilterContainer.testItemStack(stack) && manualImportExportMode == ManualImportExportMode.FILTERED) {
+            if (!itemFilterContainer.testItemStack(stack, dest) && manualImportExportMode == ManualImportExportMode.FILTERED) {
                 return stack;
             }
             return super.insertItem(slot, stack, simulate);
@@ -524,7 +532,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
                 return ItemStack.EMPTY;
             }
             ItemStack resultStack = super.extractItem(slot, amount, true);
-            if (!itemFilterContainer.testItemStack(resultStack) && manualImportExportMode == ManualImportExportMode.FILTERED) {
+            if (!itemFilterContainer.testItemStack(resultStack, dest) && manualImportExportMode == ManualImportExportMode.FILTERED) {
                 return ItemStack.EMPTY;
             }
             if (!simulate) {

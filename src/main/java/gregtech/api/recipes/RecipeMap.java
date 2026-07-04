@@ -271,9 +271,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> implements SoundEmitter<Recip
 
         if (recipeList.isEmpty())
             return null;
-        if (minFluidInputs > 0 && GTUtility.amountOfNonNullElements(fluidInputs) < minFluidInputs)
+        if (matchingMode != MatchingMode.IGNORE_FLUIDS && minFluidInputs > 0 && GTUtility.amountOfNonNullElements(fluidInputs) < minFluidInputs)
             return null;
-        if (minInputs > 0 && GTUtility.amountOfNonEmptyStacks(inputs) < minInputs)
+        if (matchingMode != MatchingMode.IGNORE_ITEMS && minInputs > 0 && GTUtility.amountOfNonEmptyStacks(inputs) < minInputs)
             return null;
         if (maxInputs > 0)
             return findByInputs(voltage, inputs, fluidInputs, matchingMode, predicate);

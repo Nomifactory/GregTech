@@ -2,18 +2,25 @@ package gregtech.common.covers.filter;
 
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.CycleButtonWidget;
+import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.*;
 import gregtech.api.unification.stack.ItemAndMetadata;
 import gregtech.api.util.ItemStackKey;
+import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityMultiblockPart;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IStringSerializable;
+import net.minecraftforge.fluids.FluidStack;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public class SmartItemFilter extends ItemFilter {
 
@@ -47,6 +54,10 @@ public class SmartItemFilter extends ItemFilter {
 
     @Override
     public Object matchItemStack(ItemStack itemStack) {
+        return matchItemStack(itemStack, null);
+    }
+
+    public Object matchItemStackWithCache(ItemStack itemStack) {
         ItemAndMetadata itemAndMetadata = new ItemAndMetadata(itemStack);
         Integer cachedTransferRateValue = filteringMode.transferStackSizesCache.get(itemAndMetadata);
 
@@ -55,6 +66,7 @@ public class SmartItemFilter extends ItemFilter {
             infinitelyBigStack.setCount(Integer.MAX_VALUE);
 
             Recipe recipe = filteringMode.recipeMap.findRecipe(Long.MAX_VALUE, Collections.singletonList(infinitelyBigStack), Collections.emptyList(), Integer.MAX_VALUE, matchingMode.matchingMode);
+
             if (recipe == null) {
                 filteringMode.transferStackSizesCache.put(itemAndMetadata, 0);
                 cachedTransferRateValue = 0;
@@ -69,6 +81,59 @@ public class SmartItemFilter extends ItemFilter {
             return null;
         }
         return new ItemAndMetadataAndStackSize(itemAndMetadata, cachedTransferRateValue);
+    }
+
+    public Object matchItemStack(ItemStack itemStack, MetaTileEntity targetEntity) {
+        // Use the logic with caching if ignoring fluids since changes in tanks won't matter
+        if(matchingMode == SmartMatchingMode.IGNORE_FLUID)
+            return matchItemStackWithCache(itemStack);
+
+        ItemAndMetadata itemAndMetadata = new ItemAndMetadata(itemStack);
+        ItemStack infinitelyBigStack = itemStack.copy();
+        infinitelyBigStack.setCount(Integer.MAX_VALUE);
+
+        List<FluidStack> inputFluids = Collections.emptyList();
+        if(targetEntity != null) {
+            inputFluids = new ArrayList<>();
+            /* Multiblock parts need to proxy to the registered controller to get its input fluids.
+               Unfortunately they only know the most recently registered controller, so this will be a bit wonky
+               with parts shared by multiple controllers if they aren't also sharing the same fluid inputs.
+
+               If it's not attached to a controller, there's no way to know what fluids are present.
+
+               This is also limited to RecipeMapMultiblockController multiblocks, since it's the only kind that
+               lets you see its input fluids.
+            */
+            if (targetEntity instanceof MetaTileEntityMultiblockPart part && part.isAttachedToMultiBlock()) {
+                if (part.getController() instanceof RecipeMapMultiblockController rmmc)
+                    for(var tank : rmmc.getInputFluidInventory())
+                        inputFluids.add(tank.getFluid());
+            // All other MTEs we can just directly get the input tanks
+            } else
+                for(var tank : targetEntity.getImportFluids())
+                    inputFluids.add(tank.getFluid());
+        }
+
+        // tests whether the specified ingredient matches our input stack
+        final Predicate<CountableIngredient> isTarget = ci -> ci.getIngredient().apply(infinitelyBigStack);
+
+        // only match a recipe actually involving this item
+        Recipe recipe = filteringMode.recipeMap
+            .findRecipe(Long.MAX_VALUE,
+                        Collections.singletonList(infinitelyBigStack),
+                        inputFluids,
+                        Integer.MAX_VALUE,
+                        matchingMode.matchingMode,
+                        r -> r.getInputs().stream().anyMatch(isTarget));
+
+        // if a recipe was found, get the right ingredient
+        if(recipe != null)
+            for(var input : recipe.getInputs())
+                if (isTarget.test(input))
+                    return new ItemAndMetadataAndStackSize(itemAndMetadata, input.getCount());
+
+        // no match
+        return null;
     }
 
     @Override

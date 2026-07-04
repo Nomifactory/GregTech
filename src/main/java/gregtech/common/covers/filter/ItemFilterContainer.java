@@ -3,6 +3,7 @@ package gregtech.common.covers.filter;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.*;
+import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.IDirtyNotifiable;
 import gregtech.api.util.ItemStackKey;
 import net.minecraft.item.ItemStack;
@@ -140,12 +141,12 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
         return filterWrapper.getSlotTransferLimit(slotIndex, matchedStacks, getTransferStackSize());
     }
 
-    public Object matchItemStack(ItemStack itemStack) {
-        return filterWrapper.matchItemStack(itemStack);
+    public Object matchItemStack(ItemStack itemStack, MetaTileEntity targetEntity) {
+        return filterWrapper.matchItemStack(itemStack, targetEntity);
     }
 
-    public boolean testItemStack(ItemStack itemStack) {
-        return matchItemStack(itemStack) != null;
+    public boolean testItemStack(ItemStack itemStack, MetaTileEntity targetEntity) {
+        return matchItemStack(itemStack, targetEntity) != null;
     }
 
     @Override

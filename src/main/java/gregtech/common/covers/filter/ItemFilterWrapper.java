@@ -4,6 +4,7 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.ServerWidgetGroup;
 import gregtech.api.gui.widgets.ToggleButtonWidget;
+import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.IDirtyNotifiable;
 import gregtech.api.util.ItemStackKey;
 import net.minecraft.item.ItemStack;
@@ -96,10 +97,12 @@ public class ItemFilterWrapper {
         return currentItemFilter.getSlotTransferLimit(matchSlot, matchedStacks, globalTransferLimit);
     }
 
-    public Object matchItemStack(ItemStack itemStack) {
+    public Object matchItemStack(ItemStack itemStack, MetaTileEntity targetEntity) {
         Object originalResult;
         if (currentItemFilter == null) {
             originalResult = MATCH_RESULT_TRUE;
+        } else if(currentItemFilter instanceof SmartItemFilter sif) {
+            originalResult = sif.matchItemStack(itemStack, targetEntity);
         } else {
             originalResult = currentItemFilter.matchItemStack(itemStack);
         }
@@ -109,7 +112,7 @@ public class ItemFilterWrapper {
         return originalResult;
     }
 
-    public boolean testItemStack(ItemStack itemStack) {
-        return matchItemStack(itemStack) != null;
+    public boolean testItemStack(ItemStack itemStack, MetaTileEntity targetEntity) {
+        return matchItemStack(itemStack, targetEntity) != null;
     }
 }
