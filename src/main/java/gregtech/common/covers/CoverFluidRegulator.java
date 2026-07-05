@@ -54,17 +54,23 @@ public class CoverFluidRegulator extends CoverPump {
             case TRANSFER_ANY: return GTFluidUtils.transferFluids(sourceHandler, destHandler, transferLimit, fluidFilter::testFluidStack);
             case KEEP_EXACT: return doKeepExact(transferLimit, sourceHandler, destHandler, fluidFilter::testFluidStack, this.keepAmount);
             case TRANSFER_EXACT: return doTransferExact(transferLimit, sourceHandler, destHandler, fluidFilter::testFluidStack, this.supplyAmount);
+            case TRANSFER_UNIQUE: return doTransferExact(transferLimit, sourceHandler, destHandler, fluidFilter::testFluidStack, this.supplyAmount, true);
         }
         return 0;
     }
 
     protected int doTransferExact(int transferLimit, IFluidHandler sourceHandler, IFluidHandler destHandler, Predicate<FluidStack> fluidFilter, int supplyAmount) {
+        return doTransferExact(transferLimit, sourceHandler, destHandler, fluidFilter, supplyAmount, false);
+    }
+
+    protected int doTransferExact(int transferLimit, IFluidHandler sourceHandler, IFluidHandler destHandler, Predicate<FluidStack> fluidFilter, int supplyAmount, boolean unique) {
         int fluidLeftToTransfer = transferLimit;
         for (IFluidTankProperties tankProperties : sourceHandler.getTankProperties()) {
             if (fluidLeftToTransfer < supplyAmount)
                 break;
             FluidStack sourceFluid = tankProperties.getContents();
             if (sourceFluid == null || sourceFluid.amount == 0 || !fluidFilter.test(sourceFluid)) continue;
+            if(unique && containsFluid(tankProperties.getContents(), destHandler.getTankProperties())) continue;
             sourceFluid.amount = supplyAmount;
             if (GTFluidUtils.transferExactFluidStack(sourceHandler, destHandler, sourceFluid.copy())) {
                 fluidLeftToTransfer -= sourceFluid.amount;
@@ -72,6 +78,19 @@ public class CoverFluidRegulator extends CoverPump {
             if (fluidLeftToTransfer == 0) break;
         }
         return transferLimit - fluidLeftToTransfer;
+    }
+
+    /**
+     * @param needle the target fluid
+     * @param haystack the destination's tank properties
+     * @return true if {@code needle} is not {@code null} and matches the fluid in any tank in {@code haystack}
+     */
+    private boolean containsFluid(FluidStack needle, IFluidTankProperties[] haystack) {
+        if(needle != null)
+            for(var element : haystack)
+                if(needle.isFluidEqual(element.getContents()))
+                    return true;
+        return false;
     }
 
     /**
@@ -208,7 +227,9 @@ public class CoverFluidRegulator extends CoverPump {
     }
 
     private boolean checkTransferMode() {
-        return this.transferMode == TransferMode.TRANSFER_EXACT || this.transferMode == TransferMode.KEEP_EXACT;
+        return this.transferMode == TransferMode.TRANSFER_EXACT ||
+            this.transferMode == TransferMode.KEEP_EXACT ||
+            this.transferMode == TransferMode.TRANSFER_UNIQUE;
     }
 
     private String getTransferSizeString() {
@@ -218,6 +239,7 @@ public class CoverFluidRegulator extends CoverPump {
                 val = keepAmount;
                 break;
             case TRANSFER_EXACT:
+            case TRANSFER_UNIQUE:
                 val = supplyAmount;
                 break;
             default: val = -1;
@@ -242,6 +264,12 @@ public class CoverFluidRegulator extends CoverPump {
                 supplyComponent.getStyle().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverSupply));
                 textList.add(supplyComponent);
                 break;
+            case TRANSFER_UNIQUE:
+                ITextComponent uniqueComponent = new TextComponentString(getTransferSizeString());
+                TextComponentTranslation hoverUnique = new TextComponentTranslation("cover.fluid_regulator.supply_unique", this.supplyAmount);
+                uniqueComponent.getStyle().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverUnique));
+                textList.add(uniqueComponent);
+                break;
         }
     }
 
@@ -258,6 +286,7 @@ public class CoverFluidRegulator extends CoverPump {
         amount *= this.bucketMode == BucketMode.BUCKET ? 1000 : 1;
         switch(this.transferMode) {
             case TRANSFER_EXACT:
+            case TRANSFER_UNIQUE:
                 setSupplyAmount(MathHelper.clamp(this.supplyAmount + amount, 0, this.transferRate));
             case KEEP_EXACT:
                 setKeepAmount(MathHelper.clamp(this.keepAmount + amount, 0, Integer.MAX_VALUE));
