@@ -41,6 +41,7 @@ import stanhebben.zenscript.annotations.*;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.DoubleSupplier;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static gregtech.api.util.Predicates.not;
@@ -250,47 +251,54 @@ public class RecipeMap<R extends RecipeBuilder<R>> implements SoundEmitter<Recip
      */
     @Nullable
     public Recipe findRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, int outputFluidTankCapacity, MatchingMode matchingMode) {
+        return findRecipe(voltage, inputs, fluidInputs, outputFluidTankCapacity, matchingMode, r -> true);
+    }
 
+    /**
+     * @see #findRecipe(long, List, List, int, MatchingMode)
+     * @param predicate additional requirements for the recipe to match
+     */
+    @Nullable
+    public Recipe findRecipe(long voltage,
+                             List<ItemStack> inputs,
+                             List<FluidStack> fluidInputs,
+                             int outputFluidTankCapacity,
+                             MatchingMode matchingMode,
+                             Predicate<Recipe> predicate)
+    {
         // remove air inputs, so we don't iterate over them a million times
         inputs = inputs.stream().filter(not(ItemStack::isEmpty)).collect(Collectors.toList());
 
         if (recipeList.isEmpty())
             return null;
-        if (minFluidInputs > 0 && GTUtility.amountOfNonNullElements(fluidInputs) < minFluidInputs) {
+        if (minFluidInputs > 0 && GTUtility.amountOfNonNullElements(fluidInputs) < minFluidInputs)
             return null;
-        }
-        if (minInputs > 0 && GTUtility.amountOfNonEmptyStacks(inputs) < minInputs) {
+        if (minInputs > 0 && GTUtility.amountOfNonEmptyStacks(inputs) < minInputs)
             return null;
-        }
-        if (maxInputs > 0) {
-            return findByInputs(voltage, inputs, fluidInputs, matchingMode);
-        } else {
-            return findByFluidInputs(voltage, inputs, fluidInputs, matchingMode);
-        }
+        if (maxInputs > 0)
+            return findByInputs(voltage, inputs, fluidInputs, matchingMode, predicate);
+        else
+            return findByFluidInputs(voltage, inputs, fluidInputs, matchingMode, predicate);
     }
 
     @Nullable
-    private Recipe findByFluidInputs(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, MatchingMode matchingMode) {
+    private Recipe findByFluidInputs(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, MatchingMode matchingMode, Predicate<Recipe> predicate) {
         for (FluidStack fluid : fluidInputs) {
             if (fluid == null) continue;
             Collection<Recipe> recipes = recipeFluidMap.get(new FluidKey(fluid));
             if (recipes == null) continue;
-            for (Recipe tmpRecipe : recipes) {
-                if (tmpRecipe.matches(false, inputs, fluidInputs, matchingMode)) {
+            for (Recipe tmpRecipe : recipes)
+                if (predicate.test(tmpRecipe) && tmpRecipe.matches(false, inputs, fluidInputs, matchingMode))
                     return voltage >= tmpRecipe.getEUt() ? tmpRecipe : null;
-                }
-            }
         }
         return null;
     }
 
     @Nullable
-    private Recipe findByInputs(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, MatchingMode matchingMode) {
-        for (Recipe recipe : recipeList) {
-            if (recipe.matches(false, inputs, fluidInputs, matchingMode)) {
+    private Recipe findByInputs(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, MatchingMode matchingMode, Predicate<Recipe> predicate) {
+        for (Recipe recipe : recipeList)
+            if (predicate.test(recipe) && recipe.matches(false, inputs, fluidInputs, matchingMode))
                 return voltage >= recipe.getEUt() ? recipe : null;
-            }
-        }
         return null;
     }
 
