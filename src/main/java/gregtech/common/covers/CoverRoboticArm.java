@@ -46,18 +46,30 @@ public class CoverRoboticArm extends CoverConveyor {
             case TRANSFER_ANY: return doTransferItemsAny(itemHandler, myItemHandler, maxTransferAmount);
             case TRANSFER_EXACT: return doTransferExact(itemHandler, myItemHandler, maxTransferAmount);
             case KEEP_EXACT: return doKeepExact(itemHandler, myItemHandler, maxTransferAmount);
+            case TRANSFER_UNIQUE: return doTransferExact(itemHandler, myItemHandler, maxTransferAmount, true);
             default: return 0;
         }
     }
 
     protected int doTransferExact(IItemHandler itemHandler, IItemHandler myItemHandler, int maxTransferAmount) {
+        return doTransferExact(itemHandler, myItemHandler, maxTransferAmount, false);
+    }
+
+    protected int doTransferExact(IItemHandler itemHandler, IItemHandler myItemHandler, int maxTransferAmount, boolean unique) {
         Map<ItemStackKey, TypeItemInfo> sourceItemAmount = doCountSourceInventoryItemsByType(itemHandler, myItemHandler);
+        Map<ItemStackKey, TypeItemInfo> destItemAmount   = doCountSourceInventoryItemsByType(myItemHandler, itemHandler);
         Iterator<ItemStackKey> iterator = sourceItemAmount.keySet().iterator();
         ItemStack filter = this.itemFilterContainer.getFilterInventory().getStackInSlot(0);
         boolean smartFilter = MetaItems.SMART_FILTER.isItemEqual(filter);
         while (iterator.hasNext()) {
             ItemStackKey key = iterator.next();
             TypeItemInfo sourceInfo = sourceItemAmount.get(key);
+
+            if(unique && destItemAmount.containsKey(key)) {
+                iterator.remove();
+                continue;
+            }
+
             int itemAmount = sourceInfo.totalCount;
             Set<ItemStackKey> matchedItems = Collections.singleton(key);
             int itemToMoveAmount = itemFilterContainer.getSlotTransferLimit(sourceInfo.filterSlot, matchedItems);
@@ -132,8 +144,8 @@ public class CoverRoboticArm extends CoverConveyor {
 
         // restrict general rate to 1024 so filters don't overflow
         int limit = 1024;
-        // restrict Supply Exact to maximum transfer per second
-        if(transferMode == TransferMode.TRANSFER_EXACT)
+        // restrict Supply Exact and Unique to maximum transfer per second
+        if(transferMode == TransferMode.TRANSFER_EXACT || transferMode == TransferMode.TRANSFER_UNIQUE)
             limit = this.maxItemTransferRate;
 
         this.itemFilterContainer.setMaxStackSize(limit);
