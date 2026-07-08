@@ -26,17 +26,12 @@ public class RecipeMapGroupOutput extends RecipeMap<SimpleRecipeBuilder> impleme
 
     @Override
     public Builder createUITemplate(DoubleSupplier progressSupplier, IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems, FluidTankList importFluids, FluidTankList exportFluids) {
-        ModularUI.Builder builder = ModularUI.defaultBuilder();
-        builder.widget(new ProgressWidget(progressSupplier, 77, 22, 21, 20, progressBarTexture, moveType));
+        ModularUI.Builder builder = ModularUI.defaultBuilder(186);
+        builder.widget(new ProgressWidget(progressSupplier, 77, 42, 21, 20, progressBarTexture, moveType));
         addInventorySlotGroup(builder, importItems, importFluids, false);
-        BooleanWrapper booleanWrapper = new BooleanWrapper();
-        ServerWidgetGroup itemOutputGroup = createItemOutputWidgetGroup(exportItems, new ServerWidgetGroup(() -> !booleanWrapper.getCurrentMode()));
-        ServerWidgetGroup fluidOutputGroup = createFluidOutputWidgetGroup(exportFluids, new ServerWidgetGroup(booleanWrapper::getCurrentMode));
+        ServerWidgetGroup itemOutputGroup = createItemOutputWidgetGroup(exportItems, new ServerWidgetGroup(() -> true));
+        ServerWidgetGroup fluidOutputGroup = createFluidOutputWidgetGroup(exportFluids, new ServerWidgetGroup(() -> true));
         builder.widget(itemOutputGroup).widget(fluidOutputGroup);
-        ToggleButtonWidget buttonWidget = new ToggleButtonWidget(176 - 7 - 54, 62, 18, 18,
-            GuiTextures.BUTTON_SWITCH_VIEW, booleanWrapper::getCurrentMode, booleanWrapper::setCurrentMode)
-            .setTooltipText("gregtech.gui.toggle_view");
-        builder.widget(buttonWidget);
         return builder;
     }
 
@@ -86,7 +81,7 @@ public class RecipeMapGroupOutput extends RecipeMap<SimpleRecipeBuilder> impleme
         int itemSlotsToLeft = inputSlotGrid[0];
         int itemSlotsToDown = inputSlotGrid[1];
         int startInputsX = 106;
-        int startInputsY = 32 - (int) (itemSlotsToDown / 2.0 * 18);
+        int startInputsY = 68 - (int) (itemSlotsToDown / 2.0 * 18);
         for (int i = 0; i < itemSlotsToDown; i++) {
             for (int j = 0; j < itemSlotsToLeft; j++) {
                 int slotIndex = i * itemSlotsToLeft + j;

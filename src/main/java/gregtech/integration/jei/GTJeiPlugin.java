@@ -18,6 +18,7 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.type.DustMaterial;
 import gregtech.api.unification.material.type.Material;
+import gregtech.api.unification.material.type.SolidMaterial;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.worldgen.config.OreDepositDefinition;
 import gregtech.api.worldgen.config.WorldGenRegistry;
@@ -40,6 +41,7 @@ import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeCategoryRegistration;
 import mezz.jei.api.recipe.VanillaRecipeCategoryUid;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -49,6 +51,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
+
+import static gregtech.api.GTValues.ULV;
 
 @JEIPlugin
 public class GTJeiPlugin implements IModPlugin {
@@ -80,6 +84,7 @@ public class GTJeiPlugin implements IModPlugin {
         registry.addRecipeCategories(new CokeOvenRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
         registry.addRecipeCategories(new OreByProductCategory(registry.getJeiHelpers().getGuiHelper()));
         registry.addRecipeCategories(new GTOreCategory(registry.getJeiHelpers().getGuiHelper()));
+        registry.addRecipeCategories(new MaterialTreeCategory(registry.getJeiHelpers().getGuiHelper()));
     }
 
     @Override
@@ -154,8 +159,12 @@ public class GTJeiPlugin implements IModPlugin {
             .collect(Collectors.toList()), cokeOvenId);
         registry.addRecipeCatalyst(MetaTileEntities.COKE_OVEN.getStackForm(), cokeOvenId);
 
+        List<MaterialTree> materialTreeList = new CopyOnWriteArrayList<>();
         List<OreByProduct> oreByproductList = new CopyOnWriteArrayList<>();
         for (Material material : Material.MATERIAL_REGISTRY) {
+            if (material instanceof SolidMaterial) {
+                materialTreeList.add(new MaterialTree(material));
+            }
             if (material instanceof DustMaterial && OreDictUnifier.get(OrePrefix.ore, material) != ItemStack.EMPTY) {
                 final OreByProduct oreByProduct = new OreByProduct((DustMaterial) material);
                 if (oreByProduct.hasByProducts())
@@ -163,17 +172,14 @@ public class GTJeiPlugin implements IModPlugin {
             }
         }
         String oreByProductId = GTValues.MODID + ":" + "ore_by_product";
+        String materialTreeId = GTValues.MODID + ":" + "material_tree";
+        registry.addRecipes(materialTreeList, materialTreeId);
         registry.addRecipes(oreByproductList, oreByProductId);
-        for (MetaTileEntity machine : MetaTileEntities.MACERATOR)
-            registry.addRecipeCatalyst(machine.getStackForm(), oreByProductId);
-        for (MetaTileEntity machine : MetaTileEntities.ORE_WASHER)
-            registry.addRecipeCatalyst(machine.getStackForm(), oreByProductId);
-        for (MetaTileEntity machine : MetaTileEntities.CENTRIFUGE)
-            registry.addRecipeCatalyst(machine.getStackForm(), oreByProductId);
-        for (MetaTileEntity machine : MetaTileEntities.THERMAL_CENTRIFUGE)
-            registry.addRecipeCatalyst(machine.getStackForm(), oreByProductId);
-        for (MetaTileEntity machine : MetaTileEntities.CHEMICAL_BATH)
-            registry.addRecipeCatalyst(machine.getStackForm(), oreByProductId);
+        registry.addRecipeCatalyst(MetaTileEntities.MACERATOR[ULV].getStackForm(), oreByProductId);
+        registry.addRecipeCatalyst(MetaTileEntities.ORE_WASHER[ULV].getStackForm(), oreByProductId);
+        registry.addRecipeCatalyst(MetaTileEntities.CENTRIFUGE[ULV].getStackForm(), oreByProductId);
+        registry.addRecipeCatalyst(MetaTileEntities.THERMAL_CENTRIFUGE[ULV].getStackForm(), oreByProductId);
+        registry.addRecipeCatalyst(new ItemStack(Items.CAULDRON), oreByProductId);
 
         //Ore Veins
         List<OreDepositDefinition> oreVeins = WorldGenRegistry.getOreDeposits();
