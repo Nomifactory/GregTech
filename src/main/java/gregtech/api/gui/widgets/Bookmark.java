@@ -25,7 +25,7 @@ public class Bookmark {
         Method daTmp;
 
         try {
-            bmTemp = Class.forName("mezz.jei.bookmarks.BookmarkItem", false, PhantomFluidWidget.class.getClassLoader());
+            bmTemp = Class.forName("mezz.jei.bookmarks.BookmarkItem", false, Bookmark.class.getClassLoader());
         } catch(ClassNotFoundException e) {
             bmTemp = null;
         }
