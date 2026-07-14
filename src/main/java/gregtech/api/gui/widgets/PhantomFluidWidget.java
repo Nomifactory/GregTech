@@ -11,6 +11,7 @@ import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import mezz.jei.api.gui.IGhostIngredientHandler.Target;
+import mezz.jei.bookmarks.BookmarkItem;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -18,6 +19,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.io.IOException;
@@ -30,8 +32,8 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
 
     protected TextureArea backgroundTexture = GuiTextures.FLUID_SLOT;
 
-    private Supplier<FluidStack> fluidStackSupplier;
-    private Consumer<FluidStack> fluidStackUpdater;
+    private final Supplier<FluidStack> fluidStackSupplier;
+    private final Consumer<FluidStack> fluidStackUpdater;
     protected FluidStack lastFluidStack;
 
     public PhantomFluidWidget(int xPosition, int yPosition, int width, int height, Supplier<FluidStack> fluidStackSupplier, Consumer<FluidStack> fluidStackUpdater) {
@@ -40,9 +42,8 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
         this.fluidStackUpdater = fluidStackUpdater;
     }
 
-    private FluidStack drainFrom(Object ingredient) {
-        if (ingredient instanceof ItemStack) {
-            ItemStack itemStack = (ItemStack) ingredient;
+    private static FluidStack drainFrom(Object ingredient) {
+        if (ingredient instanceof ItemStack itemStack) {
             IFluidHandlerItem fluidHandler = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
             if (fluidHandler != null)
                 return fluidHandler.drain(Integer.MAX_VALUE, false);
@@ -52,23 +53,32 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
 
     @Override
     public List<Target<?>> getPhantomTargets(Object ingredient) {
-        if (!(ingredient instanceof FluidStack) && drainFrom(ingredient) == null) {
+        if (!(ingredient instanceof FluidStack || ingredient instanceof BookmarkItem)  && drainFrom(ingredient) == null)
             return Collections.emptyList();
-        }
 
         Rectangle rectangle = toRectangleBox();
-        return Lists.newArrayList(new Target<Object>() {
+        return Lists.newArrayList(new Target<>() {
             @Override
+            @NotNull
             public Rectangle getArea() {
                 return rectangle;
             }
 
             @Override
-            public void accept(Object ingredient) {
-                FluidStack ingredientStack;
-                if (ingredient instanceof FluidStack)
-                    ingredientStack = (FluidStack) ingredient;
-                else
+            public void accept(@NotNull Object ingredient) {
+                FluidStack ingredientStack = null;
+                if (ingredient instanceof BookmarkItem bookmark)
+                    if (bookmark.ingredient instanceof FluidStack stack) {
+                        ingredientStack = stack.copy();
+                        if(bookmark.getDisplayAmount() != 0)
+                            ingredientStack.amount = clampLong(bookmark.getDisplayAmount());
+                    } else if (bookmark.ingredient instanceof ItemStack is) {
+                        ItemStack temp = is.copy();
+                        temp.setCount(clampLong(bookmark.getDisplayAmount()));
+                        ingredient = temp;
+                    }
+
+                if (ingredientStack == null)
                     ingredientStack = drainFrom(ingredient);
 
                 if (ingredientStack != null) {
