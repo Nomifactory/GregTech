@@ -11,7 +11,6 @@ import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import mezz.jei.api.gui.IGhostIngredientHandler.Target;
-import mezz.jei.bookmarks.BookmarkItem;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -27,6 +26,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+
+import static gregtech.api.gui.widgets.Bookmark.*;
 
 public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhostIngredientTarget {
 
@@ -51,9 +52,22 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
         return null;
     }
 
+    // Usable if the ingredient is a fluid, a drainable item, or a bookmark containing either
+    protected boolean isUsable(Object ingredient) {
+        if(ingredient instanceof FluidStack)
+            return true;
+        if(ingredient instanceof ItemStack stack && drainFrom(stack) != null)
+            return true;
+        if(isBookmark(ingredient)) {
+            Bookmark bookmark = wrap(ingredient);
+            return bookmark.hasFluid() || (bookmark.hasItem() && drainFrom(bookmark.getItem()) != null);
+        }
+        return false;
+    }
+
     @Override
     public List<Target<?>> getPhantomTargets(Object ingredient) {
-        if (!(ingredient instanceof FluidStack || ingredient instanceof BookmarkItem)  && drainFrom(ingredient) == null)
+        if (!isUsable(ingredient))
             return Collections.emptyList();
 
         Rectangle rectangle = toRectangleBox();
@@ -66,25 +80,33 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
 
             @Override
             public void accept(@NotNull Object ingredient) {
-                FluidStack ingredientStack = null;
-                if (ingredient instanceof BookmarkItem bookmark)
-                    if (bookmark.ingredient instanceof FluidStack stack) {
-                        ingredientStack = stack.copy();
-                        if(bookmark.getDisplayAmount() != 0)
-                            ingredientStack.amount = clampLong(bookmark.getDisplayAmount());
-                    } else if (bookmark.ingredient instanceof ItemStack is) {
-                        ItemStack temp = is.copy();
+                if(ingredient instanceof FluidStack stack)
+                    finish(stack);
+                else if (ingredient instanceof ItemStack) {
+                    FluidStack drained;
+                    if((drained = drainFrom(ingredient)) != null)
+                        finish(drained);
+                } else if (isBookmark(ingredient)) {
+                    Bookmark bookmark = wrap(ingredient);
+                    bookmark.ifHasFluid(fluid -> {
+                        FluidStack copy = fluid.copy();
+                        if (bookmark.getDisplayAmount() != 0)
+                            copy.amount = clampLong(bookmark.getDisplayAmount());
+                        finish(copy);
+                    });
+                    bookmark.ifHasItem(item -> {
+                        ItemStack temp = item.copy();
                         temp.setCount(clampLong(bookmark.getDisplayAmount()));
-                        ingredient = temp;
-                    }
-
-                if (ingredientStack == null)
-                    ingredientStack = drainFrom(ingredient);
-
-                if (ingredientStack != null) {
-                    NBTTagCompound tagCompound = ingredientStack.writeToNBT(new NBTTagCompound());
-                    writeClientAction(2, buffer -> buffer.writeCompoundTag(tagCompound));
+                        FluidStack drained = drainFrom(temp);
+                        if (drained != null)
+                            finish(drained);
+                    });
                 }
+            }
+
+            private void finish(FluidStack stack) {
+                NBTTagCompound tagCompound = stack.writeToNBT(new NBTTagCompound());
+                writeClientAction(2, buffer -> buffer.writeCompoundTag(tagCompound));
             }
         });
     }
