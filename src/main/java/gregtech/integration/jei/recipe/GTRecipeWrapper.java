@@ -3,7 +3,6 @@ package gregtech.integration.jei.recipe;
 import gregtech.api.recipes.CountableIngredient;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.Recipe.ChanceEntry;
-import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.recipeproperties.RecipeProperty;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.util.ItemStackHashStrategy;
@@ -37,14 +36,6 @@ public class GTRecipeWrapper implements IRecipeWrapper {
     private final Recipe recipe;
 
     public GTRecipeWrapper(Recipe recipe) {
-        this.recipe = recipe;
-    }
-
-    /**
-     * @deprecated use {@link #GTRecipeWrapper(Recipe recipe)} instead
-     */
-    @Deprecated
-    public GTRecipeWrapper(RecipeMap<?> recipeMap, Recipe recipe) {
         this.recipe = recipe;
     }
 

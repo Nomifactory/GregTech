@@ -133,10 +133,6 @@ public class OreByProduct implements IRecipeWrapper {
 		return outputs.size();
 	}
 
-	public int getProcessingStepCount() {
-		return oreProcessingSteps.size();
-	}
-
 	public void addOreTooltip(List<String> tooltip, int byproduct, String machine, boolean result) {
 		Material byProductMaterial = GTUtility.selectItemInList(byproduct, material, material.oreByProducts,
 				DustMaterial.class);
