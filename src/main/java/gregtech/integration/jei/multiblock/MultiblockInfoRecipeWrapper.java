@@ -17,6 +17,7 @@ import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawable;
 import mezz.jei.api.gui.IGuiItemStackGroup;
 import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import mezz.jei.gui.recipes.RecipeLayout;
 import net.minecraft.block.Block;
@@ -104,8 +105,8 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper, SceneRenderC
 
     @Override
     public void getIngredients(IIngredients ingredients) {
-        ingredients.setInputs(ItemStack.class, allItemStackInputs);
-        ingredients.setOutput(ItemStack.class, controllerStack);
+        ingredients.setInputs(VanillaTypes.ITEM, allItemStackInputs);
+        ingredients.setOutput(VanillaTypes.ITEM, controllerStack);
     }
 
     public MultiblockInfoPage getInfoPage() {

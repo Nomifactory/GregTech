@@ -13,6 +13,7 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
@@ -46,9 +47,9 @@ public class CokeOvenRecipeWrapper implements IRecipeWrapper {
 
 	@Override
 	public void getIngredients(IIngredients ingredients) {
-		ingredients.setInputLists(ItemStack.class, this.matchingInputs);
-		ingredients.setOutputs(ItemStack.class, this.outputs);
-		ingredients.setOutputs(FluidStack.class, this.fluidOutputs);
+		ingredients.setInputLists(VanillaTypes.ITEM, this.matchingInputs);
+		ingredients.setOutputs(VanillaTypes.ITEM, this.outputs);
+		ingredients.setOutputs(VanillaTypes.FLUID, this.fluidOutputs);
 	}
 
 	@Override

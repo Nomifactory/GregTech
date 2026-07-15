@@ -15,6 +15,7 @@ import mezz.jei.api.gui.IGuiFluidStackGroup;
 import mezz.jei.api.gui.IGuiItemStackGroup;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeCategory;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fluids.FluidStack;
@@ -97,7 +98,7 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
                 TankWidget tankWidget = (TankWidget) uiWidget;
                 if (importFluids.getFluidTanks().contains(tankWidget.fluidTank)) {
                     int importIndex = importFluids.getFluidTanks().indexOf(tankWidget.fluidTank);
-                    List<List<FluidStack>> inputsList = ingredients.getInputs(FluidStack.class);
+                    List<List<FluidStack>> inputsList = ingredients.getInputs(VanillaTypes.FLUID);
                     int fluidAmount = 0;
                     if (inputsList.size() > importIndex && !inputsList.get(importIndex).isEmpty())
                         fluidAmount = inputsList.get(importIndex).get(0).amount;
@@ -111,7 +112,7 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
 
                 } else if (exportFluids.getFluidTanks().contains(tankWidget.fluidTank)) {
                     int exportIndex = exportFluids.getFluidTanks().indexOf(tankWidget.fluidTank);
-                    List<List<FluidStack>> inputsList = ingredients.getOutputs(FluidStack.class);
+                    List<List<FluidStack>> inputsList = ingredients.getOutputs(VanillaTypes.FLUID);
                     int fluidAmount = 0;
                     if (inputsList.size() > exportIndex && !inputsList.get(exportIndex).isEmpty())
                         fluidAmount = inputsList.get(exportIndex).get(0).amount;

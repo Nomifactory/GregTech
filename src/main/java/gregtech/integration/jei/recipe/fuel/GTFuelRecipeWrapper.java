@@ -2,10 +2,10 @@ package gregtech.integration.jei.recipe.fuel;
 
 import gregtech.api.recipes.recipes.FuelRecipe;
 import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
-import net.minecraftforge.fluids.FluidStack;
 
 import static gregtech.integration.jei.utils.JEIHelpers.getDurationText;
 
@@ -19,7 +19,7 @@ public class GTFuelRecipeWrapper implements IRecipeWrapper {
 
     @Override
     public void getIngredients(IIngredients ingredients) {
-        ingredients.setInput(FluidStack.class, recipe.getRecipeFluid());
+        ingredients.setInput(VanillaTypes.FLUID, recipe.getRecipeFluid());
     }
 
     @Override
