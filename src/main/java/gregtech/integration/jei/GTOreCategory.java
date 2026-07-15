@@ -71,7 +71,7 @@ public class GTOreCategory extends PrimitiveRecipeCategory<GTOreInfo, GTOreInfo>
             itemStackGroup.init(i + 2, false, xPos, yPos);
         }
 
-        itemStackGroup.addTooltipCallback(recipeWrapper::addTooltip);
+        itemStackGroup.addTooltipCallback(recipeWrapper);
         itemStackGroup.set(ingredients);
         veinName = recipeWrapper.getVeinName();
         minHeight = recipeWrapper.getMinHeight();

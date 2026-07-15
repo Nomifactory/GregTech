@@ -16,6 +16,7 @@ import gregtech.api.util.ItemStackKey;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawable;
 import mezz.jei.api.gui.IGuiItemStackGroup;
+import mezz.jei.api.gui.ITooltipCallback;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
@@ -49,7 +50,7 @@ import javax.vecmath.Vector3f;
 import java.util.*;
 import java.util.Map.Entry;
 
-public class MultiblockInfoRecipeWrapper implements IRecipeWrapper, SceneRenderCallback {
+public class MultiblockInfoRecipeWrapper implements IRecipeWrapper, SceneRenderCallback, ITooltipCallback<ItemStack> {
     private static final int MAX_PARTS = 20;
     private static final int PARTS_HEIGHT = 36;
     private final int SLOT_SIZE = 18;
@@ -362,7 +363,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper, SceneRenderC
         return Collections.emptyList();
     }
 
-    public void addBlockTooltips(int slotIndex, boolean input, ItemStack itemStack, List<String> tooltip) {
+    public void onTooltip(int slotIndex, boolean input, @NotNull ItemStack itemStack, @NotNull List<String> tooltip) {
         Map<ItemStack, List<ITextComponent>> blockTooltipMap = infoPage.getBlockTooltipMap();
         if(blockTooltipMap.containsKey(itemStack)) {
             List<ITextComponent> tooltips = blockTooltipMap.get(itemStack);

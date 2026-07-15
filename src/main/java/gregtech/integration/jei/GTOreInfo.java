@@ -9,6 +9,7 @@ import gregtech.api.worldgen.populator.FluidSpringPopulator;
 import gregtech.api.worldgen.populator.IVeinPopulator;
 import gregtech.api.worldgen.populator.SurfaceBlockPopulator;
 import gregtech.api.worldgen.populator.SurfaceRockPopulator;
+import mezz.jei.api.gui.ITooltipCallback;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
@@ -20,6 +21,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fluids.*;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
@@ -29,7 +31,7 @@ import java.util.regex.Matcher;
 
 import static gregtech.api.GTValues.*;
 
-public class GTOreInfo implements IRecipeWrapper {
+public class GTOreInfo implements IRecipeWrapper, ITooltipCallback<ItemStack> {
 
     private final OreDepositDefinition definition;
     private final int maxHeight;
@@ -225,7 +227,7 @@ public class GTOreInfo implements IRecipeWrapper {
     }
 
     //Creates a tooltip based on the specific slots
-    public void addTooltip(int slotIndex, boolean input, Object ingredient, List<String> tooltip) {
+    public void onTooltip(int slotIndex, boolean input, @NotNull ItemStack ingredient, @NotNull List<String> tooltip) {
 
         //Only add the Biome Information to the selected Ore
         if(slotIndex == 0) {

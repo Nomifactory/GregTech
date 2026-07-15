@@ -55,7 +55,7 @@ public class OreByProductCategory extends PrimitiveRecipeCategory<OreByProduct, 
 		for(int i = 0; i < recipeWrapper.getOutputCount();i++)
 			itemStackGroup.init(i + 7, false, 70 + (i * 18), 59);
 		
-		itemStackGroup.addTooltipCallback(recipeWrapper::addTooltip);
+		itemStackGroup.addTooltipCallback(recipeWrapper);
 		itemStackGroup.set(ingredients);
 	}
 
