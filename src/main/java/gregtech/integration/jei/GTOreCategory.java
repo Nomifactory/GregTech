@@ -16,6 +16,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.world.DimensionType;
 import net.minecraftforge.common.DimensionManager;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -52,7 +53,7 @@ public class GTOreCategory extends PrimitiveRecipeCategory<GTOreInfo, GTOreInfo>
 
 
     @Override
-    public void setRecipe(IRecipeLayout recipeLayout, GTOreInfo recipeWrapper, IIngredients ingredients) {
+    public void setRecipe(IRecipeLayout recipeLayout, GTOreInfo recipeWrapper, @NotNull IIngredients ingredients) {
 
         IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
         int baseYPos = 19;
@@ -81,12 +82,13 @@ public class GTOreCategory extends PrimitiveRecipeCategory<GTOreInfo, GTOreInfo>
     }
 
     @Override
-    public IRecipeWrapper getRecipeWrapper(GTOreInfo recipe) {
+    @NotNull
+    public IRecipeWrapper getRecipeWrapper(@NotNull GTOreInfo recipe) {
         return recipe;
     }
 
     @Override
-    public void drawExtras(Minecraft minecraft) {
+    public void drawExtras(@NotNull Minecraft minecraft) {
 
         int baseXPos = 70;
         int baseYPos = 19;

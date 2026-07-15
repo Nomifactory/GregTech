@@ -14,6 +14,7 @@ import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IRecipeCategory;
 import mezz.jei.gui.recipes.RecipeLayout;
 import net.minecraft.client.resources.I18n;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -55,21 +56,25 @@ public class MultiblockInfoCategory implements IRecipeCategory<MultiblockInfoRec
     }
 
     @Override
+    @NotNull
     public String getUid() {
         return "gregtech:multiblock_info";
     }
 
     @Override
+    @NotNull
     public String getTitle() {
         return I18n.format("gregtech.multiblock.title");
     }
 
     @Override
+    @NotNull
     public String getModName() {
         return GTValues.MODID;
     }
 
     @Override
+    @NotNull
     public IDrawable getBackground() {
         return background;
     }
@@ -80,7 +85,10 @@ public class MultiblockInfoCategory implements IRecipeCategory<MultiblockInfoRec
     }
 
     @Override
-    public void setRecipe(IRecipeLayout recipeLayout, MultiblockInfoRecipeWrapper recipeWrapper, IIngredients ingredients) {
+    public void setRecipe(IRecipeLayout recipeLayout,
+                          MultiblockInfoRecipeWrapper recipeWrapper,
+                          @NotNull IIngredients ingredients)
+    {
         recipeWrapper.setRecipeLayout((RecipeLayout) recipeLayout, this.guiHelper);
 
         IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();

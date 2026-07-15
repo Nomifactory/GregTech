@@ -9,6 +9,7 @@ import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IRecipeCategory;
 import net.minecraft.client.Minecraft;
+import org.jetbrains.annotations.NotNull;
 
 public class FuelRecipeMapCategory implements IRecipeCategory<GTFuelRecipeWrapper> {
 
@@ -21,34 +22,41 @@ public class FuelRecipeMapCategory implements IRecipeCategory<GTFuelRecipeWrappe
     }
 
     @Override
+    @NotNull
     public String getUid() {
         return GTValues.MODID + ":" + recipeMap.getUnlocalizedName();
     }
 
     @Override
+    @NotNull
     public String getTitle() {
         return recipeMap.getLocalizedName();
     }
 
     @Override
+    @NotNull
     public String getModName() {
         return GTValues.MODID;
     }
 
     @Override
+    @NotNull
     public IDrawable getBackground() {
         return background;
     }
 
     @Override
-    public void setRecipe(IRecipeLayout recipeLayout, GTFuelRecipeWrapper recipeWrapper, IIngredients ingredients) {
+    public void setRecipe(IRecipeLayout recipeLayout,
+                          GTFuelRecipeWrapper recipeWrapper,
+                          @NotNull IIngredients ingredients)
+    {
         recipeLayout.getFluidStacks().init(0, true, 52, 24, 16, 16,
             recipeWrapper.recipe.getRecipeFluid().amount, false, null);
         recipeLayout.getFluidStacks().set(ingredients);
     }
 
     @Override
-    public void drawExtras(Minecraft minecraft) {
+    public void drawExtras(@NotNull Minecraft minecraft) {
         GuiTextures.PROGRESS_BAR_ARROW.drawSubArea(77, 22, 20, 20, 0.0, 0.0, 1.0, 0.5);
         GuiTextures.FLUID_SLOT.draw(51, 23, 18, 18);
     }

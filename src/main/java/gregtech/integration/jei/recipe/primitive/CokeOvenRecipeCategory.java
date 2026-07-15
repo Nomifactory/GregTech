@@ -10,15 +10,15 @@ import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.client.Minecraft;
+import org.jetbrains.annotations.NotNull;
 
 public class CokeOvenRecipeCategory extends PrimitiveRecipeCategory<CokeOvenRecipe, CokeOvenRecipeWrapper> {
 
-    protected final IDrawable slot;
-    protected final IDrawable progressBar;
+	protected final IDrawable slot;
+	protected final IDrawable progressBar;
 	protected final IDrawable fluidTank;
 	protected final IDrawable fluidTankOverlay;
 
-	
 	public CokeOvenRecipeCategory(IGuiHelper guiHelper) {
 		super("coke_oven",
             "gregtech.machine.coke_oven.name",
@@ -42,7 +42,10 @@ public class CokeOvenRecipeCategory extends PrimitiveRecipeCategory<CokeOvenReci
 	}
 
 	@Override
-	public void setRecipe(IRecipeLayout recipeLayout, CokeOvenRecipeWrapper recipeWrapper, IIngredients ingredients) {
+	public void setRecipe(IRecipeLayout recipeLayout,
+	                      @NotNull CokeOvenRecipeWrapper recipeWrapper,
+	                      @NotNull IIngredients ingredients)
+	{
 		IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
 		IGuiFluidStackGroup fluidStackGroup = recipeLayout.getFluidStacks();
 		itemStackGroup.init(0, true, 32, 19);
@@ -53,12 +56,13 @@ public class CokeOvenRecipeCategory extends PrimitiveRecipeCategory<CokeOvenReci
 	}
 
 	@Override
-	public IRecipeWrapper getRecipeWrapper(CokeOvenRecipe recipe) {
+	@NotNull
+	public IRecipeWrapper getRecipeWrapper(@NotNull CokeOvenRecipe recipe) {
 		return new CokeOvenRecipeWrapper(recipe);
 	}
 
 	@Override
-	public void drawExtras(Minecraft minecraft) {
+	public void drawExtras(@NotNull Minecraft minecraft) {
 		this.slot.draw(minecraft, 32, 19);
 		this.slot.draw(minecraft, 84, 19);
 		this.progressBar.draw(minecraft, 57, 20);

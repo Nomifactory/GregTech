@@ -137,13 +137,11 @@ public class GTOreInfo implements IRecipeWrapper {
         List<List<ItemStack>> groupedItems = new ArrayList<>();
         int entries = itemList.size();
 
-
         //return early for Fluid Generation
         if(veinPopulator instanceof FluidSpringPopulator) {
             groupedItems.add(new ArrayList<>(itemList));
             return groupedItems;
         }
-
 
         ItemStack firstItem = itemList.get(0);
         List<ItemStack> oreList = new ArrayList<>();

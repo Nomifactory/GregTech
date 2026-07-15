@@ -18,8 +18,8 @@ public class JEIHooks {
      * Do NOT use this method for any reason.
      */
     public static void addFluidTooltip(List<String> tooltip, Object ingredient) {
-        if (ingredient instanceof FluidStack) {
-            String formula = FluidTooltipUtil.getFluidTooltip(((FluidStack) ingredient).getFluid());
+        if (ingredient instanceof FluidStack fs) {
+            String formula = FluidTooltipUtil.getFluidTooltip(fs.getFluid());
             if (formula != null && !formula.isEmpty()) {
                 tooltip.add(1, ChatFormatting.GRAY + formula);
             }

@@ -9,10 +9,15 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.common.covers.facade.FacadeHelper;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.behaviors.FacadeItem;
-import mezz.jei.api.recipe.*;
+import mezz.jei.api.recipe.IFocus;
 import mezz.jei.api.recipe.IFocus.Mode;
+import mezz.jei.api.recipe.IRecipeCategory;
+import mezz.jei.api.recipe.IRecipeRegistryPlugin;
+import mezz.jei.api.recipe.IRecipeWrapper;
+import mezz.jei.api.recipe.VanillaRecipeCategoryUid;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
@@ -20,9 +25,9 @@ import java.util.List;
 public class FacadeRegistryPlugin implements IRecipeRegistryPlugin {
 
     @Override
+    @NotNull
     public <V> List<String> getRecipeCategoryUids(IFocus<V> focus) {
-        if (focus.getValue() instanceof ItemStack) {
-            ItemStack itemStack = (ItemStack) focus.getValue();
+        if (focus.getValue() instanceof ItemStack itemStack) {
             if (focus.getMode() == Mode.OUTPUT) {
                 if (MetaItems.COVER_FACADE.isItemEqual(itemStack)) {
                     //looking up recipes of facade cover
@@ -39,12 +44,15 @@ public class FacadeRegistryPlugin implements IRecipeRegistryPlugin {
     }
 
     @Override
-    public <T extends IRecipeWrapper, V> List<T> getRecipeWrappers(IRecipeCategory<T> recipeCategory, IFocus<V> focus) {
+    @NotNull
+    @SuppressWarnings("unchecked")
+    public <T extends IRecipeWrapper, V> List<T> getRecipeWrappers(IRecipeCategory<T> recipeCategory,
+                                                                   @NotNull IFocus<V> focus)
+    {
         if (!VanillaRecipeCategoryUid.CRAFTING.equals(recipeCategory.getUid())) {
             return Collections.emptyList();
         }
-        if (focus.getValue() instanceof ItemStack) {
-            ItemStack itemStack = (ItemStack) focus.getValue();
+        if (focus.getValue() instanceof ItemStack itemStack) {
             if (focus.getMode() == Mode.OUTPUT) {
                 if (MetaItems.COVER_FACADE.isItemEqual(itemStack)) {
                     //looking up recipes of facade cover
@@ -77,7 +85,8 @@ public class FacadeRegistryPlugin implements IRecipeRegistryPlugin {
     }
 
     @Override
-    public <T extends IRecipeWrapper> List<T> getRecipeWrappers(IRecipeCategory<T> recipeCategory) {
+    @NotNull
+    public <T extends IRecipeWrapper> List<T> getRecipeWrappers(@NotNull IRecipeCategory<T> recipeCategory) {
         return Collections.emptyList();
     }
 }

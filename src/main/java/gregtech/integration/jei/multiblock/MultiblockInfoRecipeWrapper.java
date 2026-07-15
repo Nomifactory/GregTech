@@ -41,6 +41,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
@@ -234,7 +235,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper, SceneRenderC
     }
 
     @Override
-    public void drawInfo(Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
+    public void drawInfo(@NotNull Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
         WorldSceneRenderer renderer = getCurrentRenderer();
         int sceneHeight = recipeHeight - PARTS_HEIGHT;
 
@@ -323,7 +324,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper, SceneRenderC
     }
 
     @Override
-    public boolean handleClick(Minecraft minecraft, int mouseX, int mouseY, int mouseButton) {
+    public boolean handleClick(@NotNull Minecraft minecraft, int mouseX, int mouseY, int mouseButton) {
         for (Entry<GuiButton, Runnable> button : buttons.entrySet()) {
             if (button.getKey().mousePressed(minecraft, mouseX, mouseY)) {
                 button.getValue().run();
@@ -334,6 +335,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper, SceneRenderC
     }
 
     @Override
+    @NotNull
     public List<String> getTooltipStrings(int mouseX, int mouseY) {
         if (tooltipBlockStack != null && !tooltipBlockStack.isEmpty() && !Mouse.isButtonDown(0)) {
             Minecraft minecraft = Minecraft.getMinecraft();

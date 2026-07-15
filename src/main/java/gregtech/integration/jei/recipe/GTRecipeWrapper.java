@@ -18,6 +18,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -48,7 +49,7 @@ public class GTRecipeWrapper implements IRecipeWrapper {
     }
 
     @Override
-    public void getIngredients(IIngredients ingredients) {
+    public void getIngredients(@NotNull IIngredients ingredients) {
         if (!recipe.getInputs().isEmpty()) {
             List<CountableIngredient> recipeInputs = recipe.getInputs();
             List<List<ItemStack>> matchingInputs = new ArrayList<>(recipeInputs.size());
