@@ -18,6 +18,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.io.IOException;
@@ -26,12 +27,14 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import static gregtech.api.gui.widgets.Bookmark.*;
+
 public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhostIngredientTarget {
 
     protected TextureArea backgroundTexture = GuiTextures.FLUID_SLOT;
 
-    private Supplier<FluidStack> fluidStackSupplier;
-    private Consumer<FluidStack> fluidStackUpdater;
+    private final Supplier<FluidStack> fluidStackSupplier;
+    private final Consumer<FluidStack> fluidStackUpdater;
     protected FluidStack lastFluidStack;
 
     public PhantomFluidWidget(int xPosition, int yPosition, int width, int height, Supplier<FluidStack> fluidStackSupplier, Consumer<FluidStack> fluidStackUpdater) {
@@ -40,9 +43,8 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
         this.fluidStackUpdater = fluidStackUpdater;
     }
 
-    private FluidStack drainFrom(Object ingredient) {
-        if (ingredient instanceof ItemStack) {
-            ItemStack itemStack = (ItemStack) ingredient;
+    private static FluidStack drainFrom(Object ingredient) {
+        if (ingredient instanceof ItemStack itemStack) {
             IFluidHandlerItem fluidHandler = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
             if (fluidHandler != null)
                 return fluidHandler.drain(Integer.MAX_VALUE, false);
@@ -50,31 +52,61 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
         return null;
     }
 
+    // Usable if the ingredient is a fluid, a drainable item, or a bookmark containing either
+    protected boolean isUsable(Object ingredient) {
+        if(ingredient instanceof FluidStack)
+            return true;
+        if(ingredient instanceof ItemStack stack && drainFrom(stack) != null)
+            return true;
+        if(isBookmark(ingredient)) {
+            Bookmark bookmark = wrap(ingredient);
+            return bookmark.hasFluid() || (bookmark.hasItem() && drainFrom(bookmark.getItem()) != null);
+        }
+        return false;
+    }
+
     @Override
     public List<Target<?>> getPhantomTargets(Object ingredient) {
-        if (!(ingredient instanceof FluidStack) && drainFrom(ingredient) == null) {
+        if (!isUsable(ingredient))
             return Collections.emptyList();
-        }
 
         Rectangle rectangle = toRectangleBox();
-        return Lists.newArrayList(new Target<Object>() {
+        return Lists.newArrayList(new Target<>() {
             @Override
+            @NotNull
             public Rectangle getArea() {
                 return rectangle;
             }
 
             @Override
-            public void accept(Object ingredient) {
-                FluidStack ingredientStack;
-                if (ingredient instanceof FluidStack)
-                    ingredientStack = (FluidStack) ingredient;
-                else
-                    ingredientStack = drainFrom(ingredient);
-
-                if (ingredientStack != null) {
-                    NBTTagCompound tagCompound = ingredientStack.writeToNBT(new NBTTagCompound());
-                    writeClientAction(2, buffer -> buffer.writeCompoundTag(tagCompound));
+            public void accept(@NotNull Object ingredient) {
+                if(ingredient instanceof FluidStack stack)
+                    finish(stack);
+                else if (ingredient instanceof ItemStack) {
+                    FluidStack drained;
+                    if((drained = drainFrom(ingredient)) != null)
+                        finish(drained);
+                } else if (isBookmark(ingredient)) {
+                    Bookmark bookmark = wrap(ingredient);
+                    bookmark.ifHasFluid(fluid -> {
+                        FluidStack copy = fluid.copy();
+                        if (bookmark.getDisplayAmount() != 0)
+                            copy.amount = clampLong(bookmark.getDisplayAmount());
+                        finish(copy);
+                    });
+                    bookmark.ifHasItem(item -> {
+                        ItemStack temp = item.copy();
+                        temp.setCount(clampLong(bookmark.getDisplayAmount()));
+                        FluidStack drained = drainFrom(temp);
+                        if (drained != null)
+                            finish(drained);
+                    });
                 }
+            }
+
+            private void finish(FluidStack stack) {
+                NBTTagCompound tagCompound = stack.writeToNBT(new NBTTagCompound());
+                writeClientAction(2, buffer -> buffer.writeCompoundTag(tagCompound));
             }
         });
     }

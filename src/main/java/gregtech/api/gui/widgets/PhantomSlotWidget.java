@@ -9,6 +9,7 @@ import net.minecraft.inventory.ClickType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.items.IItemHandlerModifiable;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
@@ -16,6 +17,8 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+
+import static gregtech.api.gui.widgets.Bookmark.*;
 
 public class PhantomSlotWidget extends SlotWidget implements IGhostIngredientTarget {
 
@@ -34,29 +37,44 @@ public class PhantomSlotWidget extends SlotWidget implements IGhostIngredientTar
         return false;
     }
 
+    // Usable if target is an item or item bookmark
+    protected boolean isUsable(Object ingredient) {
+        return ingredient instanceof ItemStack || isItemBookmark(ingredient);
+    }
+
     @Override
     public List<Target<?>> getPhantomTargets(Object ingredient) {
-        if (!(ingredient instanceof ItemStack)) {
+        if (!isUsable(ingredient))
             return Collections.emptyList();
-        }
+
         Rectangle rectangle = toRectangleBox();
-        return Lists.newArrayList(new Target<Object>() {
+        return Lists.newArrayList(new Target<>() {
             @Override
+            @NotNull
             public Rectangle getArea() {
                 return rectangle;
             }
 
             @Override
-            public void accept(Object ingredient) {
-                if (ingredient instanceof ItemStack) {
-                    int mouseButton = Mouse.getEventButton();
-                    boolean shiftDown = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
-                    writeClientAction(1, buffer -> {
-                        buffer.writeItemStack((ItemStack) ingredient);
-                        buffer.writeVarInt(mouseButton);
-                        buffer.writeBoolean(shiftDown);
-                    });
-                }
+            public void accept(@NotNull Object ingredient) {
+                if (ingredient instanceof ItemStack stack)
+                    finish(stack);
+                else
+                    ifIsItemBookmark(ingredient, bookmark -> bookmark.ifHasItem(stack -> {
+                        ItemStack copy = stack.copy();
+                        copy.setCount(clampLong(bookmark.getDisplayAmount()));
+                        finish(copy);
+                    }));
+            }
+
+            private void finish(ItemStack stack) {
+                int mouseButton = Mouse.getEventButton();
+                boolean shiftDown = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
+                writeClientAction(1, buffer -> {
+                    buffer.writeItemStack(stack);
+                    buffer.writeVarInt(mouseButton);
+                    buffer.writeBoolean(shiftDown);
+                });
             }
         });
     }
