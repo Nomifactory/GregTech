@@ -16,6 +16,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static gregtech.integration.jei.utils.JEIHelpers.getDurationText;
+
 public class PrimitiveBlastRecipeWrapper implements IRecipeWrapper {
 
 	private final PrimitiveBlastFurnaceRecipe recipe;
@@ -50,7 +52,7 @@ public class PrimitiveBlastRecipeWrapper implements IRecipeWrapper {
 
 	@Override
 	public void drawInfo(Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
-		minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.duration", this.recipe.getDuration() / 20f), 0, 50, 0x111111);
+		minecraft.fontRenderer.drawString(getDurationText(this.recipe.getDuration()), 0, 50, 0x111111);
 	}
 
 }

@@ -20,6 +20,8 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
+import static gregtech.integration.jei.utils.JEIHelpers.getDurationText;
+
 public class CokeOvenRecipeWrapper implements IRecipeWrapper {
 
 	private final CokeOvenRecipe recipe;
@@ -51,7 +53,7 @@ public class CokeOvenRecipeWrapper implements IRecipeWrapper {
 
 	@Override
 	public void drawInfo(Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
-		minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.duration", this.recipe.getDuration() / 20f), 0, 60, 0x111111);
+		minecraft.fontRenderer.drawString(getDurationText(this.recipe.getDuration()), 0, 60, 0x111111);
 	}
 
 }

@@ -7,6 +7,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fluids.FluidStack;
 
+import static gregtech.integration.jei.utils.JEIHelpers.getDurationText;
+
 public class GTFuelRecipeWrapper implements IRecipeWrapper {
 
     public final FuelRecipe recipe;
@@ -26,14 +28,7 @@ public class GTFuelRecipeWrapper implements IRecipeWrapper {
         long voltage = recipe.getMinVoltage();
         minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.total", voltage * duration), 0, 70, 0x111111);
         minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.eu_inverted", voltage), 0, 80, 0x111111);
-
-        String duraText;
-        if(duration < 20)
-            duraText = I18n.format("gregtech.recipe.duration_ticks", duration);
-        else
-            duraText = I18n.format("gregtech.recipe.duration", duration / 20.0);
-        minecraft.fontRenderer.drawString(duraText, 0, 90, 0x111111);
-
+        minecraft.fontRenderer.drawString(getDurationText(duration), 0, 90, 0x111111);
         minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.energy_density", recipe.getEnergyDensity()), 0, 100, 0x111111);
     }
 }

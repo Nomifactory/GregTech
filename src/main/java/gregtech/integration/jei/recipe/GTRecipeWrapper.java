@@ -22,6 +22,8 @@ import net.minecraftforge.fluids.FluidStack;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static gregtech.integration.jei.utils.JEIHelpers.getDurationText;
+
 public class GTRecipeWrapper implements IRecipeWrapper {
     private static final int LINE_HEIGHT = 10;
 
@@ -138,7 +140,7 @@ public class GTRecipeWrapper implements IRecipeWrapper {
         int yPosition = recipeHeight - getPropertyListHeight();
         minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.total", Math.abs((long) recipe.getEUt()) * recipe.getDuration()), 0, yPosition, 0x111111);
         minecraft.fontRenderer.drawString(I18n.format(recipe.getEUt() >= 0 ? "gregtech.recipe.eu" : "gregtech.recipe.eu_inverted", Math.abs(recipe.getEUt()), JEIHelpers.getMinTierForVoltage(recipe.getEUt())), 0, yPosition += LINE_HEIGHT, 0x111111);
-        minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.duration", recipe.getDuration() / 20f), 0, yPosition += LINE_HEIGHT, 0x111111);
+        minecraft.fontRenderer.drawString(getDurationText(recipe.getDuration()), 0, yPosition += LINE_HEIGHT, 0x111111);
         for (Map.Entry<RecipeProperty<?>, Object> propertyEntry : recipe.getRecipePropertyStorage().getRecipeProperties()) {
             if(!propertyEntry.getKey().isHidden()) {
                 propertyEntry.getKey().drawInfo(minecraft, 0, yPosition += LINE_HEIGHT, 0x111111, propertyEntry.getValue());
