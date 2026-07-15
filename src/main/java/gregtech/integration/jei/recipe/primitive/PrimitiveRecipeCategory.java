@@ -16,9 +16,9 @@ import java.util.List;
 
 public abstract class PrimitiveRecipeCategory<T, W extends IRecipeWrapper> implements IRecipeCategory<W>, IRecipeWrapperFactory<T> {
 
-	public String uniqueName;
-	public String localizedName;
-	protected IDrawable background;
+	public final String uniqueName;
+	public final String localizedName;
+	protected final IDrawable background;
 
 	public PrimitiveRecipeCategory(String uniqueName, String localKey, IDrawable background, IGuiHelper guiHelper) {
 		this.uniqueName = uniqueName;

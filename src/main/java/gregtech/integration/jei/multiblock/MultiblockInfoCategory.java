@@ -31,7 +31,7 @@ public class MultiblockInfoCategory implements IRecipeCategory<MultiblockInfoRec
         this.icon = guiHelper.drawableBuilder(GuiTextures.MULTIBLOCK_CATEGORY.imageLocation, 0, 0, 18, 18).setTextureSize(18, 18).build();
     }
 
-    public static final Map<String, MultiblockInfoRecipeWrapper> multiblockRecipes = new HashMap<String, MultiblockInfoRecipeWrapper>() {{
+    public static final Map<String, MultiblockInfoRecipeWrapper> multiblockRecipes = new HashMap<>() {{
         put("primitive_blast_furnace", new MultiblockInfoRecipeWrapper(new PrimitiveBlastFurnaceInfo()));
         put("coke_oven", new MultiblockInfoRecipeWrapper(new CokeOvenInfo()));
         put("vacuum_freezer", new MultiblockInfoRecipeWrapper(new VacuumFreezerInfo()));

@@ -127,7 +127,6 @@ public class GTRecipeWrapper implements IRecipeWrapper {
     }
 
     @Override
-    @SuppressWarnings("java:S1121")
     public void drawInfo(Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
         int yPosition = recipeHeight - getPropertyListHeight();
         minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.total", Math.abs((long) recipe.getEUt()) * recipe.getDuration()), 0, yPosition, 0x111111);

@@ -33,17 +33,16 @@ public class OreByProduct implements IRecipeWrapper {
 	private final List<ItemStack> outputs = new ArrayList<>();
 	private final DustMaterial material;
 	private final List<ItemStack> oreIngredients;
-	private final List<ItemStack> byProductIngredients;
 
 	public OreByProduct(DustMaterial material) {
 		this.material = material;
-		this.oreIngredients = new ArrayList<ItemStack>();
+		this.oreIngredients = new ArrayList<>();
 		for (OrePrefix ore : ORES)
 			this.oreIngredients.add(OreDictUnifier.get(ore, material));
-		this.byProductIngredients = new ArrayList<ItemStack>();
 
+		List<ItemStack> byProductIngredients = new ArrayList<>();
 		for (Material mat : material.oreByProducts)
-			this.byProductIngredients.add(OreDictUnifier.get(OrePrefix.dust, mat));
+			byProductIngredients.add(OreDictUnifier.get(OrePrefix.dust, mat));
 
 		this.oreProcessingSteps.add(OreDictUnifier.get(OrePrefix.crushed, material));
 		this.oreProcessingSteps.add(OreDictUnifier.get(OrePrefix.crushedPurified, material));
@@ -52,11 +51,10 @@ public class OreByProduct implements IRecipeWrapper {
 		this.oreProcessingSteps.add(OreDictUnifier.get(OrePrefix.dustPure, material));
 		this.oreProcessingSteps.add(OreDictUnifier.get(OrePrefix.dust, material));
 
-		List<ItemStack> inputOres = new ArrayList<ItemStack>();
-		inputOres.addAll(oreIngredients);
+		List<ItemStack> inputOres = new ArrayList<>(oreIngredients);
 		matchingInputs.add(inputOres);
 		for (ItemStack stack : oreProcessingSteps) {
-			List<ItemStack> stepStack = new ArrayList<ItemStack>();
+			List<ItemStack> stepStack = new ArrayList<>();
 			stepStack.add(stack);
 			matchingInputs.add(stepStack);
 		}

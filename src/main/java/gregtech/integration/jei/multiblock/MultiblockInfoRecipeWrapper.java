@@ -68,11 +68,11 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper, SceneRenderC
     }
 
     private final MultiblockInfoPage infoPage;
-    private MBPattern[] patterns;
-    private Map<GuiButton, Runnable> buttons = new HashMap<>();
+    private final MBPattern[] patterns;
+    private final Map<GuiButton, Runnable> buttons = new HashMap<>();
     private RecipeLayout recipeLayout;
-    private List<ItemStack> allItemStackInputs = new ArrayList<>();
-    private ItemStack controllerStack;
+    private final List<ItemStack> allItemStackInputs = new ArrayList<>();
+    private final ItemStack controllerStack;
 
     private int layerIndex = -1;
     private int currentRendererPage = 0;

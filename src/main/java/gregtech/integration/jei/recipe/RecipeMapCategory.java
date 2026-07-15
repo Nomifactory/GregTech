@@ -30,8 +30,10 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
 
     private final RecipeMap<?> recipeMap;
     private final ModularUI modularUI;
-    private ItemStackHandler importItems, exportItems;
-    private FluidTankList importFluids, exportFluids;
+    private final ItemStackHandler importItems;
+    private final ItemStackHandler exportItems;
+    private final FluidTankList importFluids;
+    private final FluidTankList exportFluids;
     private final IDrawable backgroundDrawable;
 
     public RecipeMapCategory(RecipeMap<?> recipeMap, IGuiHelper guiHelper) {
