@@ -24,7 +24,7 @@ public class OreByProductCategory extends PrimitiveRecipeCategory<OreByProduct, 
 	public OreByProductCategory(IGuiHelper guiHelper) {
 		super("ore_by_product", 
 				"recipemap.byproductlist.name", 
-				guiHelper.createBlankDrawable(176, 166), 
+				guiHelper.createBlankDrawable(176, 110),
 				guiHelper);
 
 		this.slot = guiHelper.createDrawable(GuiTextures.SLOT.imageLocation, 0, 0, 18, 18, 18, 18);

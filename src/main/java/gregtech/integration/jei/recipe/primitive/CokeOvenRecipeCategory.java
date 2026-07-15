@@ -22,7 +22,7 @@ public class CokeOvenRecipeCategory extends PrimitiveRecipeCategory<CokeOvenReci
 	public CokeOvenRecipeCategory(IGuiHelper guiHelper) {
 		super("coke_oven",
             "gregtech.machine.coke_oven.name",
-            guiHelper.createBlankDrawable(176, 166), guiHelper);
+            guiHelper.createBlankDrawable(176, 110), guiHelper);
 
         this.slot = guiHelper.createDrawable(GuiTextures.SLOT.imageLocation, 0, 0, 18, 18, 18, 18);
         this.progressBar = guiHelper.createDrawable(GuiTextures.BRONZE_BLAST_FURNACE_PROGRESS_BAR.imageLocation, 0, 0, 20, 15, 20, 30);
