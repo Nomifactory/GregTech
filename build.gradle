@@ -1324,7 +1324,7 @@ def addModrinthDep(String scope, String type, String name) {
     project.modrinth.dependencies.add(dep)
 }
 
-if (customMavenPublishUrl) {
+/* Maven Publishing */ {
     String publishedVersion = modVersion
 
     publishing {
@@ -1345,12 +1345,18 @@ if (customMavenPublishUrl) {
         }
 
         repositories {
-            maven {
-                url = customMavenPublishUrl
-                allowInsecureProtocol = !customMavenPublishUrl.startsWith('https')
-                credentials {
-                    username = providers.environmentVariable('MAVEN_USER').getOrElse('NONE')
-                    password = providers.environmentVariable('MAVEN_PASSWORD').getOrElse('NONE')
+            if(customMavenPublishUrl) {
+                maven {
+                    url = customMavenPublishUrl
+                    allowInsecureProtocol = !customMavenPublishUrl.startsWith('https')
+                    credentials {
+                        username = providers.environmentVariable('MAVEN_USER').getOrElse('NONE')
+                        password = providers.environmentVariable('MAVEN_PASSWORD').getOrElse('NONE')
+                    }
+                }
+            } else {
+                maven {
+                    mavenLocal()
                 }
             }
         }
