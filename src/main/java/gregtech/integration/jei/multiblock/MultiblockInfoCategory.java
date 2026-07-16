@@ -14,8 +14,9 @@ import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IRecipeCategory;
 import mezz.jei.gui.recipes.RecipeLayout;
 import net.minecraft.client.resources.I18n;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class MultiblockInfoCategory implements IRecipeCategory<MultiblockInfoRecipeWrapper> {
@@ -30,46 +31,52 @@ public class MultiblockInfoCategory implements IRecipeCategory<MultiblockInfoRec
         this.icon = guiHelper.drawableBuilder(GuiTextures.MULTIBLOCK_CATEGORY.imageLocation, 0, 0, 18, 18).setTextureSize(18, 18).build();
     }
 
-    public static final Map<String, MultiblockInfoRecipeWrapper> multiblockRecipes = new HashMap<String, MultiblockInfoRecipeWrapper>() {{
-        put("primitive_blast_furnace", new MultiblockInfoRecipeWrapper(new PrimitiveBlastFurnaceInfo()));
-        put("coke_oven", new MultiblockInfoRecipeWrapper(new CokeOvenInfo()));
-        put("vacuum_freezer", new MultiblockInfoRecipeWrapper(new VacuumFreezerInfo()));
-        put("implosion_compressor", new MultiblockInfoRecipeWrapper(new ImplosionCompressorInfo()));
-        put("pyrolyze_oven", new MultiblockInfoRecipeWrapper(new PyrolyzeOvenInfo()));
-        put("cracker_unit", new MultiblockInfoRecipeWrapper(new CrackerUnitInfo()));
-        put("diesel_engine", new MultiblockInfoRecipeWrapper(new DieselEngineInfo()));
-        put("distillation_tower", new MultiblockInfoRecipeWrapper(new DistillationTowerInfo()));
-        put("electric_blast_furnace", new MultiblockInfoRecipeWrapper(new ElectricBlastFurnaceInfo()));
-        put("multi_smelter", new MultiblockInfoRecipeWrapper(new MultiSmelterInfo()));
-        put("large_bronze_boiler", new MultiblockInfoRecipeWrapper(new LargeBoilerInfo(MetaTileEntities.LARGE_BRONZE_BOILER)));
-        put("large_steel_boiler", new MultiblockInfoRecipeWrapper(new LargeBoilerInfo(MetaTileEntities.LARGE_STEEL_BOILER)));
-        put("large_titanium_boiler", new MultiblockInfoRecipeWrapper(new LargeBoilerInfo(MetaTileEntities.LARGE_TITANIUM_BOILER)));
-        put("large_tungstensteel_boiler", new MultiblockInfoRecipeWrapper(new LargeBoilerInfo(MetaTileEntities.LARGE_TUNGSTENSTEEL_BOILER)));
-        put("large_steam_turbine", new MultiblockInfoRecipeWrapper(new LargeTurbineInfo(MetaTileEntities.LARGE_STEAM_TURBINE)));
-        put("large_gas_turbine", new MultiblockInfoRecipeWrapper(new LargeTurbineInfo(MetaTileEntities.LARGE_GAS_TURBINE)));
-        put("large_plasma_turbine", new MultiblockInfoRecipeWrapper(new LargeTurbineInfo(MetaTileEntities.LARGE_PLASMA_TURBINE)));
-    }};
+    public static final Map<String, MultiblockInfoRecipeWrapper> multiblockRecipes = new LinkedHashMap<>();
+    static {
+        var map = multiblockRecipes;
+        map.put("primitive_blast_furnace", new MultiblockInfoRecipeWrapper(new PrimitiveBlastFurnaceInfo()));
+        map.put("coke_oven", new MultiblockInfoRecipeWrapper(new CokeOvenInfo()));
+        map.put("vacuum_freezer", new MultiblockInfoRecipeWrapper(new VacuumFreezerInfo()));
+        map.put("implosion_compressor", new MultiblockInfoRecipeWrapper(new ImplosionCompressorInfo()));
+        map.put("pyrolyze_oven", new MultiblockInfoRecipeWrapper(new PyrolyzeOvenInfo()));
+        map.put("cracker_unit", new MultiblockInfoRecipeWrapper(new CrackerUnitInfo()));
+        map.put("diesel_engine", new MultiblockInfoRecipeWrapper(new DieselEngineInfo()));
+        map.put("distillation_tower", new MultiblockInfoRecipeWrapper(new DistillationTowerInfo()));
+        map.put("electric_blast_furnace", new MultiblockInfoRecipeWrapper(new ElectricBlastFurnaceInfo()));
+        map.put("multi_smelter", new MultiblockInfoRecipeWrapper(new MultiSmelterInfo()));
+        map.put("large_bronze_boiler", new MultiblockInfoRecipeWrapper(new LargeBoilerInfo(MetaTileEntities.LARGE_BRONZE_BOILER)));
+        map.put("large_steel_boiler", new MultiblockInfoRecipeWrapper(new LargeBoilerInfo(MetaTileEntities.LARGE_STEEL_BOILER)));
+        map.put("large_titanium_boiler", new MultiblockInfoRecipeWrapper(new LargeBoilerInfo(MetaTileEntities.LARGE_TITANIUM_BOILER)));
+        map.put("large_tungstensteel_boiler", new MultiblockInfoRecipeWrapper(new LargeBoilerInfo(MetaTileEntities.LARGE_TUNGSTENSTEEL_BOILER)));
+        map.put("large_steam_turbine", new MultiblockInfoRecipeWrapper(new LargeTurbineInfo(MetaTileEntities.LARGE_STEAM_TURBINE)));
+        map.put("large_gas_turbine", new MultiblockInfoRecipeWrapper(new LargeTurbineInfo(MetaTileEntities.LARGE_GAS_TURBINE)));
+        map.put("large_plasma_turbine", new MultiblockInfoRecipeWrapper(new LargeTurbineInfo(MetaTileEntities.LARGE_PLASMA_TURBINE)));
+    }
 
     public static void registerRecipes(IModRegistry registry) {
         registry.addRecipes(multiblockRecipes.values(), "gregtech:multiblock_info");
     }
 
     @Override
+    @NotNull
     public String getUid() {
         return "gregtech:multiblock_info";
     }
 
     @Override
+    @NotNull
     public String getTitle() {
         return I18n.format("gregtech.multiblock.title");
     }
 
     @Override
+    @NotNull
     public String getModName() {
         return GTValues.MODID;
     }
 
     @Override
+    @NotNull
     public IDrawable getBackground() {
         return background;
     }
@@ -80,10 +87,13 @@ public class MultiblockInfoCategory implements IRecipeCategory<MultiblockInfoRec
     }
 
     @Override
-    public void setRecipe(IRecipeLayout recipeLayout, MultiblockInfoRecipeWrapper recipeWrapper, IIngredients ingredients) {
+    public void setRecipe(IRecipeLayout recipeLayout,
+                          MultiblockInfoRecipeWrapper recipeWrapper,
+                          @NotNull IIngredients ingredients)
+    {
         recipeWrapper.setRecipeLayout((RecipeLayout) recipeLayout, this.guiHelper);
 
         IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
-        itemStackGroup.addTooltipCallback(recipeWrapper::addBlockTooltips);
+        itemStackGroup.addTooltipCallback(recipeWrapper);
     }
 }

@@ -5,7 +5,9 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.enchants.EnchantmentEnderDamage;
 import gregtech.api.items.metaitem.MetaItem;
+import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.crafttweaker.MetaItemBracketHandler;
+import gregtech.api.recipes.machines.FuelRecipeMap;
 import gregtech.api.recipes.recipeproperties.BlastTemperatureProperty;
 import gregtech.api.unification.material.type.DustMaterial;
 import gregtech.api.unification.material.type.Material;
@@ -265,6 +267,8 @@ public class CommonProxy {
 
     public void onPostLoad() {
         WoodMachineRecipes.postInit();
+        RecipeMap.sort();
+        FuelRecipeMap.sort();
     }
   
 }

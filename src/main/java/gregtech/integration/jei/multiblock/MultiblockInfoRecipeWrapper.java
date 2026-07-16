@@ -16,7 +16,9 @@ import gregtech.api.util.ItemStackKey;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawable;
 import mezz.jei.api.gui.IGuiItemStackGroup;
+import mezz.jei.api.gui.ITooltipCallback;
 import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import mezz.jei.gui.recipes.RecipeLayout;
 import net.minecraft.block.Block;
@@ -40,6 +42,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
@@ -47,7 +50,7 @@ import javax.vecmath.Vector3f;
 import java.util.*;
 import java.util.Map.Entry;
 
-public class MultiblockInfoRecipeWrapper implements IRecipeWrapper, SceneRenderCallback {
+public class MultiblockInfoRecipeWrapper implements IRecipeWrapper, SceneRenderCallback, ITooltipCallback<ItemStack> {
     private static final int MAX_PARTS = 20;
     private static final int PARTS_HEIGHT = 36;
     private final int SLOT_SIZE = 18;
@@ -66,11 +69,11 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper, SceneRenderC
     }
 
     private final MultiblockInfoPage infoPage;
-    private MBPattern[] patterns;
-    private Map<GuiButton, Runnable> buttons = new HashMap<>();
+    private final MBPattern[] patterns;
+    private final Map<GuiButton, Runnable> buttons = new HashMap<>();
     private RecipeLayout recipeLayout;
-    private List<ItemStack> allItemStackInputs = new ArrayList<>();
-    private ItemStack controllerStack;
+    private final List<ItemStack> allItemStackInputs = new ArrayList<>();
+    private final ItemStack controllerStack;
 
     private int layerIndex = -1;
     private int currentRendererPage = 0;
@@ -104,8 +107,8 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper, SceneRenderC
 
     @Override
     public void getIngredients(IIngredients ingredients) {
-        ingredients.setInputs(ItemStack.class, allItemStackInputs);
-        ingredients.setOutput(ItemStack.class, controllerStack);
+        ingredients.setInputs(VanillaTypes.ITEM, allItemStackInputs);
+        ingredients.setOutput(VanillaTypes.ITEM, controllerStack);
     }
 
     public MultiblockInfoPage getInfoPage() {
@@ -233,7 +236,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper, SceneRenderC
     }
 
     @Override
-    public void drawInfo(Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
+    public void drawInfo(@NotNull Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
         WorldSceneRenderer renderer = getCurrentRenderer();
         int sceneHeight = recipeHeight - PARTS_HEIGHT;
 
@@ -322,7 +325,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper, SceneRenderC
     }
 
     @Override
-    public boolean handleClick(Minecraft minecraft, int mouseX, int mouseY, int mouseButton) {
+    public boolean handleClick(@NotNull Minecraft minecraft, int mouseX, int mouseY, int mouseButton) {
         for (Entry<GuiButton, Runnable> button : buttons.entrySet()) {
             if (button.getKey().mousePressed(minecraft, mouseX, mouseY)) {
                 button.getValue().run();
@@ -333,6 +336,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper, SceneRenderC
     }
 
     @Override
+    @NotNull
     public List<String> getTooltipStrings(int mouseX, int mouseY) {
         if (tooltipBlockStack != null && !tooltipBlockStack.isEmpty() && !Mouse.isButtonDown(0)) {
             Minecraft minecraft = Minecraft.getMinecraft();
@@ -359,7 +363,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper, SceneRenderC
         return Collections.emptyList();
     }
 
-    public void addBlockTooltips(int slotIndex, boolean input, ItemStack itemStack, List<String> tooltip) {
+    public void onTooltip(int slotIndex, boolean input, @NotNull ItemStack itemStack, @NotNull List<String> tooltip) {
         Map<ItemStack, List<ITextComponent>> blockTooltipMap = infoPage.getBlockTooltipMap();
         if(blockTooltipMap.containsKey(itemStack)) {
             List<ITextComponent> tooltips = blockTooltipMap.get(itemStack);

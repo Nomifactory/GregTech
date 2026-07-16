@@ -1,18 +1,17 @@
 package gregtech.integration.jei.recipe.primitive;
 
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.recipes.recipes.CokeOvenRecipe;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawable;
 import mezz.jei.api.gui.IDrawableAnimated;
-import mezz.jei.api.gui.IGuiFluidStackGroup;
-import mezz.jei.api.gui.IGuiItemStackGroup;
-import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.gui.IDrawableAnimated.StartDirection;
 import mezz.jei.api.gui.IDrawableStatic;
+import mezz.jei.api.gui.IGuiItemStackGroup;
+import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.client.Minecraft;
+import org.jetbrains.annotations.NotNull;
 
 public class OreByProductCategory extends PrimitiveRecipeCategory<OreByProduct, OreByProduct>{
 
@@ -24,17 +23,26 @@ public class OreByProductCategory extends PrimitiveRecipeCategory<OreByProduct, 
 	public OreByProductCategory(IGuiHelper guiHelper) {
 		super("ore_by_product", 
 				"recipemap.byproductlist.name", 
-				guiHelper.createBlankDrawable(176, 166), 
+				guiHelper.createBlankDrawable(176, 110),
 				guiHelper);
 
-		this.slot = guiHelper.createDrawable(GuiTextures.SLOT.imageLocation, 0, 0, 18, 18, 18, 18);
-		this.arrowBackground = guiHelper.createDrawable(GuiTextures.PROGRESS_BAR_ARROW.imageLocation, 0, 0, 20, 20, 20, 40);
-		this.arrowForeground = guiHelper.createDrawable(GuiTextures.PROGRESS_BAR_ARROW.imageLocation, 0, 20, 20, 20, 20, 40);
+		this.slot =
+			guiHelper.drawableBuilder(GuiTextures.SLOT.imageLocation,0, 0, 18, 18)
+			         .setTextureSize(18, 18).build();
+
+		this.arrowBackground =
+			guiHelper.drawableBuilder(GuiTextures.PROGRESS_BAR_ARROW.imageLocation,0, 0, 20, 20)
+			         .setTextureSize(20, 40).build();
+
+		this.arrowForeground =
+			guiHelper.drawableBuilder(GuiTextures.PROGRESS_BAR_ARROW.imageLocation,0, 20, 20, 20)
+			         .setTextureSize(20, 40).build();
+
 		this.arrowAnimation = guiHelper.createAnimatedDrawable(arrowForeground, 30, StartDirection.LEFT, false);
 	}
 
 	@Override
-	public void setRecipe(IRecipeLayout recipeLayout, OreByProduct recipeWrapper, IIngredients ingredients) {
+	public void setRecipe(IRecipeLayout recipeLayout, OreByProduct recipeWrapper, @NotNull IIngredients ingredients) {
 		IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
 		itemStackGroup.init(0, true,  22,  29); //Ore
 		itemStackGroup.init(1, true,  70,  19); //Crushed
@@ -47,17 +55,18 @@ public class OreByProductCategory extends PrimitiveRecipeCategory<OreByProduct, 
 		for(int i = 0; i < recipeWrapper.getOutputCount();i++)
 			itemStackGroup.init(i + 7, false, 70 + (i * 18), 59);
 		
-		itemStackGroup.addTooltipCallback(recipeWrapper::addTooltip);
+		itemStackGroup.addTooltipCallback(recipeWrapper);
 		itemStackGroup.set(ingredients);
 	}
 
 	@Override
-	public IRecipeWrapper getRecipeWrapper(OreByProduct recipe) {
+	@NotNull
+	public IRecipeWrapper getRecipeWrapper(@NotNull OreByProduct recipe) {
 		return recipe;
 	}
 
 	@Override
-	public void drawExtras(Minecraft minecraft) {
+	public void drawExtras(@NotNull Minecraft minecraft) {
 		this.slot.draw(minecraft,  22, 29);
 		this.arrowBackground.draw(minecraft, 44, 28);
 		this.arrowAnimation.draw(minecraft, 44, 28);

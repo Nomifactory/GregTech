@@ -18,11 +18,13 @@ public class FuelRecipe {
     private final FluidStack recipeFluid;
     private final int duration;
     private final long minVoltage;
+    private final double energyDensity;
 
     public FuelRecipe(FluidStack recipeFluid, int duration, long minVoltage) {
         this.recipeFluid = recipeFluid.copy();
         this.duration = duration;
         this.minVoltage = minVoltage;
+        this.energyDensity = (duration * minVoltage) / (double) recipeFluid.amount;
     }
 
     @ZenMethod("create")
@@ -54,4 +56,9 @@ public class FuelRecipe {
     public ILiquidStack ctGetFluid() {
         return new MCLiquidStack(getRecipeFluid());
     }
+
+    public double getEnergyDensity() {
+        return energyDensity;
+    }
+
 }

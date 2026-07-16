@@ -2,10 +2,12 @@ package gregtech.integration.jei.recipe.fuel;
 
 import gregtech.api.recipes.recipes.FuelRecipe;
 import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
-import net.minecraftforge.fluids.FluidStack;
+
+import static gregtech.integration.jei.utils.JEIHelpers.getDurationText;
 
 public class GTFuelRecipeWrapper implements IRecipeWrapper {
 
@@ -17,7 +19,7 @@ public class GTFuelRecipeWrapper implements IRecipeWrapper {
 
     @Override
     public void getIngredients(IIngredients ingredients) {
-        ingredients.setInput(FluidStack.class, recipe.getRecipeFluid());
+        ingredients.setInput(VanillaTypes.FLUID, recipe.getRecipeFluid());
     }
 
     @Override
@@ -26,6 +28,7 @@ public class GTFuelRecipeWrapper implements IRecipeWrapper {
         long voltage = recipe.getMinVoltage();
         minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.total", voltage * duration), 0, 70, 0x111111);
         minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.eu_inverted", voltage), 0, 80, 0x111111);
-        minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.duration", duration / 20.0), 0, 90, 0x111111);
+        minecraft.fontRenderer.drawString(getDurationText(duration), 0, 90, 0x111111);
+        minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.energy_density", recipe.getEnergyDensity()), 0, 100, 0x111111);
     }
 }

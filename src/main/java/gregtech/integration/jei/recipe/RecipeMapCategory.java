@@ -15,12 +15,14 @@ import mezz.jei.api.gui.IGuiFluidStackGroup;
 import mezz.jei.api.gui.IGuiItemStackGroup;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeCategory;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -28,8 +30,10 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
 
     private final RecipeMap<?> recipeMap;
     private final ModularUI modularUI;
-    private ItemStackHandler importItems, exportItems;
-    private FluidTankList importFluids, exportFluids;
+    private final ItemStackHandler importItems;
+    private final ItemStackHandler exportItems;
+    private final FluidTankList importFluids;
+    private final FluidTankList exportFluids;
     private final IDrawable backgroundDrawable;
 
     public RecipeMapCategory(RecipeMap<?> recipeMap, IGuiHelper guiHelper) {
@@ -51,37 +55,42 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
     }
 
     @Override
+    @NotNull
     public String getUid() {
         return GTValues.MODID + ":" + recipeMap.unlocalizedName;
     }
 
     @Override
+    @NotNull
     public String getTitle() {
         return recipeMap.getLocalizedName();
     }
 
     @Override
+    @NotNull
     public String getModName() {
         return GTValues.MODID;
     }
 
     @Override
+    @NotNull
     public IDrawable getBackground() {
         return backgroundDrawable;
     }
 
     @Override
-    public void setRecipe(IRecipeLayout recipeLayout, GTRecipeWrapper recipeWrapper, IIngredients ingredients) {
+    public void setRecipe(IRecipeLayout recipeLayout,
+                          @NotNull GTRecipeWrapper recipeWrapper,
+                          @NotNull IIngredients ingredients)
+    {
         IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
         IGuiFluidStackGroup fluidStackGroup = recipeLayout.getFluidStacks();
         for (Widget uiWidget : modularUI.guiWidgets.values()) {
 
-            if (uiWidget instanceof SlotWidget) {
-                SlotWidget slotWidget = (SlotWidget) uiWidget;
-                if (!(slotWidget.getHandle() instanceof SlotItemHandler)) {
+            if (uiWidget instanceof SlotWidget slotWidget) {
+                if (!(slotWidget.getHandle() instanceof SlotItemHandler handle)) {
                     continue;
                 }
-                SlotItemHandler handle = (SlotItemHandler) slotWidget.getHandle();
                 if (handle.getItemHandler() == importItems) {
                     //this is input item stack slot widget, so add it to item group
                     itemStackGroup.init(handle.getSlotIndex(), true,
@@ -93,11 +102,10 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
                         slotWidget.getPosition().x,
                         slotWidget.getPosition().y);
                 }
-            } else if (uiWidget instanceof TankWidget) {
-                TankWidget tankWidget = (TankWidget) uiWidget;
+            } else if (uiWidget instanceof TankWidget tankWidget) {
                 if (importFluids.getFluidTanks().contains(tankWidget.fluidTank)) {
                     int importIndex = importFluids.getFluidTanks().indexOf(tankWidget.fluidTank);
-                    List<List<FluidStack>> inputsList = ingredients.getInputs(FluidStack.class);
+                    List<List<FluidStack>> inputsList = ingredients.getInputs(VanillaTypes.FLUID);
                     int fluidAmount = 0;
                     if (inputsList.size() > importIndex && !inputsList.get(importIndex).isEmpty())
                         fluidAmount = inputsList.get(importIndex).get(0).amount;
@@ -111,7 +119,7 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
 
                 } else if (exportFluids.getFluidTanks().contains(tankWidget.fluidTank)) {
                     int exportIndex = exportFluids.getFluidTanks().indexOf(tankWidget.fluidTank);
-                    List<List<FluidStack>> inputsList = ingredients.getOutputs(FluidStack.class);
+                    List<List<FluidStack>> inputsList = ingredients.getOutputs(VanillaTypes.FLUID);
                     int fluidAmount = 0;
                     if (inputsList.size() > exportIndex && !inputsList.get(exportIndex).isEmpty())
                         fluidAmount = inputsList.get(exportIndex).get(0).amount;
@@ -126,14 +134,14 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
                 }
             }
         }
-        itemStackGroup.addTooltipCallback(recipeWrapper::addTooltip);
-        fluidStackGroup.addTooltipCallback(recipeWrapper::addTooltip);
+        itemStackGroup.addTooltipCallback(recipeWrapper.itemCallback);
+        fluidStackGroup.addTooltipCallback(recipeWrapper.fluidCallback);
         itemStackGroup.set(ingredients);
         fluidStackGroup.set(ingredients);
     }
 
     @Override
-    public void drawExtras(Minecraft minecraft) {
+    public void drawExtras(@NotNull Minecraft minecraft) {
         for (Widget widget : modularUI.guiWidgets.values()) {
             widget.drawInBackground(0, 0, new IRenderContext() {
             });

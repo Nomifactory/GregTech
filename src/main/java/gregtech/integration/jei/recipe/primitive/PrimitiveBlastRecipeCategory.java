@@ -9,6 +9,7 @@ import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.client.Minecraft;
+import org.jetbrains.annotations.NotNull;
 
 public class PrimitiveBlastRecipeCategory extends PrimitiveRecipeCategory<PrimitiveBlastFurnaceRecipe, PrimitiveBlastRecipeWrapper> {
 
@@ -20,13 +21,20 @@ public class PrimitiveBlastRecipeCategory extends PrimitiveRecipeCategory<Primit
             "gregtech.machine.primitive_blast_furnace.bronze.name",
             guiHelper.createBlankDrawable(140, 60), guiHelper);
 
-        this.slot = guiHelper.createDrawable(GuiTextures.SLOT.imageLocation, 0, 0, 18, 18, 18, 18);
-        this.progressBar = guiHelper.createDrawable(GuiTextures.BRONZE_BLAST_FURNACE_PROGRESS_BAR.imageLocation, 0, 0, 20, 15, 20, 30);
+		this.slot =
+			guiHelper.drawableBuilder(GuiTextures.SLOT.imageLocation,0, 0, 18, 18)
+			         .setTextureSize(18, 18).build();
+
+		this.progressBar =
+			guiHelper.drawableBuilder(GuiTextures.BRONZE_BLAST_FURNACE_PROGRESS_BAR.imageLocation,0, 0, 20, 15)
+			         .setTextureSize(20, 30).build();
 	}
 
 	@Override
-	public void setRecipe(IRecipeLayout recipeLayout, PrimitiveBlastRecipeWrapper recipeWrapper,
-			IIngredients ingredients) {
+	public void setRecipe(IRecipeLayout recipeLayout,
+	                      @NotNull PrimitiveBlastRecipeWrapper recipeWrapper,
+	                      @NotNull IIngredients ingredients)
+	{
 		IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
 		itemStackGroup.init(0, true, 32, 4);
 		itemStackGroup.init(1, true, 32, 22);
@@ -37,12 +45,13 @@ public class PrimitiveBlastRecipeCategory extends PrimitiveRecipeCategory<Primit
 	}
 
 	@Override
-	public IRecipeWrapper getRecipeWrapper(PrimitiveBlastFurnaceRecipe recipe) {
+	@NotNull
+	public IRecipeWrapper getRecipeWrapper(@NotNull PrimitiveBlastFurnaceRecipe recipe) {
 		return new PrimitiveBlastRecipeWrapper(recipe);
 	}
 
 	@Override
-	public void drawExtras(Minecraft minecraft) {
+	public void drawExtras(@NotNull Minecraft minecraft) {
 		this.slot.draw(minecraft, 32, 4);
 		this.slot.draw(minecraft, 32, 22);
 		this.slot.draw(minecraft, 84, 13);

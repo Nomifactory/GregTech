@@ -9,7 +9,9 @@ import gregtech.api.worldgen.populator.FluidSpringPopulator;
 import gregtech.api.worldgen.populator.IVeinPopulator;
 import gregtech.api.worldgen.populator.SurfaceBlockPopulator;
 import gregtech.api.worldgen.populator.SurfaceRockPopulator;
+import mezz.jei.api.gui.ITooltipCallback;
 import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -19,6 +21,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fluids.*;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
@@ -28,7 +31,7 @@ import java.util.regex.Matcher;
 
 import static gregtech.api.GTValues.*;
 
-public class GTOreInfo implements IRecipeWrapper {
+public class GTOreInfo implements IRecipeWrapper, ITooltipCallback<ItemStack> {
 
     private final OreDepositDefinition definition;
     private final int maxHeight;
@@ -38,8 +41,8 @@ public class GTOreInfo implements IRecipeWrapper {
     private final int weight;
     private final IVeinPopulator veinPopulator;
     private final BlockFiller blockFiller;
-    private List<List<ItemStack>> groupedInputsAsItemStacks = new ArrayList<>();
-    private List<List<ItemStack>> groupedOutputsAsItemStacks = new ArrayList<>();
+    private final List<List<ItemStack>> groupedInputsAsItemStacks = new ArrayList<>();
+    private final List<List<ItemStack>> groupedOutputsAsItemStacks;
     private final Function<Biome, Integer> biomeFunction;
 
     public GTOreInfo(OreDepositDefinition definition) {
@@ -90,8 +93,8 @@ public class GTOreInfo implements IRecipeWrapper {
 
     @Override
     public void getIngredients(IIngredients ingredients) {
-        ingredients.setInputLists(ItemStack.class, groupedInputsAsItemStacks);
-        ingredients.setOutputLists(ItemStack.class, groupedOutputsAsItemStacks);
+        ingredients.setInputLists(VanillaTypes.ITEM, groupedInputsAsItemStacks);
+        ingredients.setOutputLists(VanillaTypes.ITEM, groupedOutputsAsItemStacks);
     }
 
     //Finds the possible blocks from the Filler definition, and returns them as ItemStacks
@@ -136,13 +139,11 @@ public class GTOreInfo implements IRecipeWrapper {
         List<List<ItemStack>> groupedItems = new ArrayList<>();
         int entries = itemList.size();
 
-
         //return early for Fluid Generation
         if(veinPopulator instanceof FluidSpringPopulator) {
             groupedItems.add(new ArrayList<>(itemList));
             return groupedItems;
         }
-
 
         ItemStack firstItem = itemList.get(0);
         List<ItemStack> oreList = new ArrayList<>();
@@ -226,7 +227,7 @@ public class GTOreInfo implements IRecipeWrapper {
     }
 
     //Creates a tooltip based on the specific slots
-    public void addTooltip(int slotIndex, boolean input, Object ingredient, List<String> tooltip) {
+    public void onTooltip(int slotIndex, boolean input, @NotNull ItemStack ingredient, @NotNull List<String> tooltip) {
 
         //Only add the Biome Information to the selected Ore
         if(slotIndex == 0) {

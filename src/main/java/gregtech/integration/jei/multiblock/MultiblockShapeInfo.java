@@ -31,8 +31,8 @@ public class MultiblockShapeInfo {
 
     public static class Builder {
 
-        private List<String[]> shape = new ArrayList<>();
-        private Map<Character, BlockInfo> symbolMap = new HashMap<>();
+        private final List<String[]> shape = new ArrayList<>();
+        private final Map<Character, BlockInfo> symbolMap = new HashMap<>();
 
         public Builder aisle(String... data) {
             this.shape.add(data);

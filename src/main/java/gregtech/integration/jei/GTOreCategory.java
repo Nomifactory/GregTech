@@ -16,6 +16,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.world.DimensionType;
 import net.minecraftforge.common.DimensionManager;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -35,7 +36,7 @@ public class GTOreCategory extends PrimitiveRecipeCategory<GTOreInfo, GTOreInfo>
     protected List<Integer> dimensionIDs;
     protected final int FONT_HEIGHT = Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT;
     protected final Map<Integer, String> namedDimensions = WorldGenRegistry.getNamedDimensions();
-    private Supplier<List<Integer>> dimension = this::getAllRegisteredDimensions;
+    private final Supplier<List<Integer>> dimension = this::getAllRegisteredDimensions;
     private final int NUM_OF_SLOTS = 5;
     private final int SLOT_WIDTH = 18;
     private final int SLOT_HEIGHT = 18;
@@ -46,12 +47,13 @@ public class GTOreCategory extends PrimitiveRecipeCategory<GTOreInfo, GTOreInfo>
             guiHelper.createBlankDrawable(176, 166),
             guiHelper);
 
-        this.slot = guiHelper.createDrawable(GuiTextures.SLOT.imageLocation, 0, 0, 18, 18, 18, 18);
+        this.slot = guiHelper.drawableBuilder(GuiTextures.SLOT.imageLocation, 0, 0, 18, 18)
+                             .setTextureSize(18, 18).build();
     }
 
 
     @Override
-    public void setRecipe(IRecipeLayout recipeLayout, GTOreInfo recipeWrapper, IIngredients ingredients) {
+    public void setRecipe(IRecipeLayout recipeLayout, GTOreInfo recipeWrapper, @NotNull IIngredients ingredients) {
 
         IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
         int baseYPos = 19;
@@ -69,7 +71,7 @@ public class GTOreCategory extends PrimitiveRecipeCategory<GTOreInfo, GTOreInfo>
             itemStackGroup.init(i + 2, false, xPos, yPos);
         }
 
-        itemStackGroup.addTooltipCallback(recipeWrapper::addTooltip);
+        itemStackGroup.addTooltipCallback(recipeWrapper);
         itemStackGroup.set(ingredients);
         veinName = recipeWrapper.getVeinName();
         minHeight = recipeWrapper.getMinHeight();
@@ -80,12 +82,13 @@ public class GTOreCategory extends PrimitiveRecipeCategory<GTOreInfo, GTOreInfo>
     }
 
     @Override
-    public IRecipeWrapper getRecipeWrapper(GTOreInfo recipe) {
+    @NotNull
+    public IRecipeWrapper getRecipeWrapper(@NotNull GTOreInfo recipe) {
         return recipe;
     }
 
     @Override
-    public void drawExtras(Minecraft minecraft) {
+    public void drawExtras(@NotNull Minecraft minecraft) {
 
         int baseXPos = 70;
         int baseYPos = 19;

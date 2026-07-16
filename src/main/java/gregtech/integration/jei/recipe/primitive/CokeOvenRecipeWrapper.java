@@ -1,24 +1,21 @@
 package gregtech.integration.jei.recipe.primitive;
 
+import gregtech.api.recipes.CountableIngredient;
+import gregtech.api.recipes.recipes.CokeOvenRecipe;
+import gregtech.api.unification.OreDictUnifier;
+import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.ingredients.VanillaTypes;
+import mezz.jei.api.recipe.IRecipeWrapper;
+import net.minecraft.client.Minecraft;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidStack;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import codechicken.lib.util.ItemNBTUtils;
-import gregtech.api.recipes.CountableIngredient;
-import gregtech.api.recipes.recipes.CokeOvenRecipe;
-import gregtech.api.recipes.recipes.PrimitiveBlastFurnaceRecipe;
-import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.ore.OrePrefix;
-import mezz.jei.api.ingredients.IIngredients;
-import mezz.jei.api.recipe.IRecipeWrapper;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.FluidStack;
+import static gregtech.integration.jei.utils.JEIHelpers.getDurationText;
 
 public class CokeOvenRecipeWrapper implements IRecipeWrapper {
 
@@ -44,14 +41,14 @@ public class CokeOvenRecipeWrapper implements IRecipeWrapper {
 
 	@Override
 	public void getIngredients(IIngredients ingredients) {
-		ingredients.setInputLists(ItemStack.class, this.matchingInputs);
-		ingredients.setOutputs(ItemStack.class, this.outputs);
-		ingredients.setOutputs(FluidStack.class, this.fluidOutputs);
+		ingredients.setInputLists(VanillaTypes.ITEM, this.matchingInputs);
+		ingredients.setOutputs(VanillaTypes.ITEM, this.outputs);
+		ingredients.setOutputs(VanillaTypes.FLUID, this.fluidOutputs);
 	}
 
 	@Override
 	public void drawInfo(Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
-		minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.duration", this.recipe.getDuration() / 20f), 0, 60, 0x111111);
+		minecraft.fontRenderer.drawString(getDurationText(this.recipe.getDuration()), 0, 60, 0x111111);
 	}
 
 }

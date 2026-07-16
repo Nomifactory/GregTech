@@ -1,26 +1,24 @@
 package gregtech.integration.jei.recipe.primitive;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import com.google.common.collect.ImmutableList;
-
-import gregtech.api.recipes.CountableIngredient;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.type.DustMaterial;
 import gregtech.api.unification.material.type.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTUtility;
+import mezz.jei.api.gui.ITooltipCallback;
 import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
-public class OreByProduct implements IRecipeWrapper {
+import java.util.ArrayList;
+import java.util.List;
+
+public class OreByProduct implements IRecipeWrapper, ITooltipCallback<ItemStack> {
 	private final static ImmutableList<OrePrefix> ORES = ImmutableList.of(
 			OrePrefix.ore, 
 			OrePrefix.oreBasalt,
@@ -37,17 +35,16 @@ public class OreByProduct implements IRecipeWrapper {
 	private final List<ItemStack> outputs = new ArrayList<>();
 	private final DustMaterial material;
 	private final List<ItemStack> oreIngredients;
-	private final List<ItemStack> byProductIngredients;
 
 	public OreByProduct(DustMaterial material) {
 		this.material = material;
-		this.oreIngredients = new ArrayList<ItemStack>();
+		this.oreIngredients = new ArrayList<>();
 		for (OrePrefix ore : ORES)
 			this.oreIngredients.add(OreDictUnifier.get(ore, material));
-		this.byProductIngredients = new ArrayList<ItemStack>();
 
+		List<ItemStack> byProductIngredients = new ArrayList<>();
 		for (Material mat : material.oreByProducts)
-			this.byProductIngredients.add(OreDictUnifier.get(OrePrefix.dust, mat));
+			byProductIngredients.add(OreDictUnifier.get(OrePrefix.dust, mat));
 
 		this.oreProcessingSteps.add(OreDictUnifier.get(OrePrefix.crushed, material));
 		this.oreProcessingSteps.add(OreDictUnifier.get(OrePrefix.crushedPurified, material));
@@ -56,11 +53,10 @@ public class OreByProduct implements IRecipeWrapper {
 		this.oreProcessingSteps.add(OreDictUnifier.get(OrePrefix.dustPure, material));
 		this.oreProcessingSteps.add(OreDictUnifier.get(OrePrefix.dust, material));
 
-		List<ItemStack> inputOres = new ArrayList<ItemStack>();
-		inputOres.addAll(oreIngredients);
+		List<ItemStack> inputOres = new ArrayList<>(oreIngredients);
 		matchingInputs.add(inputOres);
 		for (ItemStack stack : oreProcessingSteps) {
-			List<ItemStack> stepStack = new ArrayList<ItemStack>();
+			List<ItemStack> stepStack = new ArrayList<>();
 			stepStack.add(stack);
 			matchingInputs.add(stepStack);
 		}
@@ -69,15 +65,15 @@ public class OreByProduct implements IRecipeWrapper {
 
 	@Override
 	public void getIngredients(IIngredients ingredients) {
-		ingredients.setInputLists(ItemStack.class, this.matchingInputs);
-		ingredients.setOutputs(ItemStack.class, this.outputs);
+		ingredients.setInputLists(VanillaTypes.ITEM, this.matchingInputs);
+		ingredients.setOutputs(VanillaTypes.ITEM, this.outputs);
 	}
 
      public boolean hasByProducts() {
          return !outputs.isEmpty();
      }
 
-	public void addTooltip(int slotIndex, boolean input, Object ingredient, List<String> tooltip) {
+	public void onTooltip(int slotIndex, boolean input, @NotNull ItemStack ingredient, @NotNull List<String> tooltip) {
 		switch (slotIndex) {
 		case 0: // Ore
 			addOreTooltip(tooltip, 0, RecipeMaps.MACERATOR_RECIPES.getLocalizedName(), false);
@@ -137,18 +133,17 @@ public class OreByProduct implements IRecipeWrapper {
 		return outputs.size();
 	}
 
-	public int getProcessingStepCount() {
-		return oreProcessingSteps.size();
-	}
-
 	public void addOreTooltip(List<String> tooltip, int byproduct, String machine, boolean result) {
 		Material byProductMaterial = GTUtility.selectItemInList(byproduct, material, material.oreByProducts,
 				DustMaterial.class);
 		if (!result)
 			tooltip.add(I18n.format("gregtech.jei.ore_by_product_from_ore", machine, byProductMaterial.getLocalizedName()));
 		else {
-			String oreType = byproduct == 0 ? oreIngredients.get(0).getDisplayName()
-					: oreProcessingSteps.get(byproduct - 1).getDisplayName();
+			String oreType;
+			if(byproduct == 0)
+				oreType = oreIngredients.get(0).getDisplayName();
+			else
+				oreType = oreProcessingSteps.get(byproduct - 1).getDisplayName();
 			tooltip.add(I18n.format("gregtech.jei.ore_by_product_from_machine", oreType, machine));
 		}
 	}
