@@ -109,4 +109,10 @@ public class FuelRecipeMap implements SoundEmitter<FuelRecipeMap> {
         this.sound = event;
         return this;
     }
+
+    // Sort fuels by energy density
+    public static void sort() {
+        for(var map : RECIPE_MAPS)
+            map.recipeList.sort(Comparator.comparingDouble(FuelRecipe::getEnergyDensity));
+    }
 }

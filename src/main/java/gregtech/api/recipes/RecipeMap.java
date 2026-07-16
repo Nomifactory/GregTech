@@ -68,7 +68,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> implements SoundEmitter<Recip
     protected SoundEvent sound;
 
     private final Map<FluidKey, Collection<Recipe>> recipeFluidMap = new HashMap<>();
-    private final Collection<Recipe> recipeList = new ArrayList<>();
+    private final List<Recipe> recipeList = new ArrayList<>();
 
     public RecipeMap(String unlocalizedName,
                      int minInputs, int maxInputs, int minOutputs, int maxOutputs,
@@ -527,5 +527,11 @@ public class RecipeMap<R extends RecipeBuilder<R>> implements SoundEmitter<Recip
          * @return the computed chance value
          */
         int chanceFor(int chance, int boostPerTier, int boostTier);
+    }
+
+    // sort standard recipes by EU/t
+    public static void sort() {
+        for(var map : RECIPE_MAPS)
+            map.recipeList.sort(Comparator.comparingInt(Recipe::getEUt));
     }
 }
