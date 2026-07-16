@@ -624,12 +624,12 @@ test {
     }.get()
 
     testLogging {
-        events TestLogEvent.STARTED, TestLogEvent.PASSED, TestLogEvent.FAILED
+        events TestLogEvent.SKIPPED, TestLogEvent.PASSED, TestLogEvent.FAILED
         exceptionFormat TestExceptionFormat.FULL
         showExceptions true
         showStackTraces true
         showCauses true
-        showStandardStreams true
+        showStandardStreams false
     }
 
     if (enableJUnit.toBoolean()) {
