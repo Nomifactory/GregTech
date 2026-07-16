@@ -43,6 +43,7 @@ jobs:
             jdks
             notifications
             wrapper
+
       - name: Publish to GitHub
         uses: softprops/action-gh-release@v1
         with:
@@ -51,16 +52,14 @@ jobs:
           fail_on_unmatched_files: true
 
       - name: Publish to Curseforge
-        uses: gradle/gradle-build-action@v2
-        env:
-          CURSEFORGE_API_KEY: "${{secrets.CURSEFORGE_API_KEY}}"
-          CURSEFORGE_PROJECT_ID: "${{secrets.CURSEFORGE_PROJECT_ID}}"
-          CHANGELOG_LOCATION: "${{env.CHANGELOG_LOCATION}}"
+        uses: Kira-NT/mc-publish@v3
         with:
-          arguments: 'curseforge --daemon'
-          generate-job-summary: false
-          gradle-home-cache-includes: |
-            caches
-            jdks
-            notifications
-            wrapper
+          curseforge-id: ${{ secrets.CURSEFORGE_PROJECT_ID }}
+          curseforge-token: ${{ secrets.CURSEFORGE_API_KEY }}
+          changelog: ${{env.CHANGELOG_LOCATION}}
+          loaders: |
+            forge
+          game-versions: |
+            [1.12,1.13)
+          environment: client | server
+          version-type: release
