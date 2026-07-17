@@ -32,14 +32,15 @@ jobs:
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
-        with:
-          arguments: 'build --build-cache --daemon' # use the daemon here so the rest of the process is faster
           add-job-summary: 'never'
           gradle-home-cache-includes: |
             caches
             jdks
             notifications
             wrapper
+
+      - name: Gradle Build
+        run: ./gradlew build --build-cache --daemon
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v7
