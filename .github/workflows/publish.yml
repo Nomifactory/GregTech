@@ -86,9 +86,20 @@ jobs:
           curseforge-id: ${{ secrets.CURSEFORGE_PROJECT_ID }}
           curseforge-token: ${{ secrets.CURSEFORGE_API_KEY }}
           changelog: ${{env.CHANGELOG_LOCATION}}
+          name: GregTech Nomifactory Edition − ${{ github.ref_name }}
           loaders: |
             forge
           game-versions: |
             [1.12,1.13)
           environment: client | server
           version-type: release
+          dependencies: |
+            ctm(optional){curseforge:267602}
+            crafttweaker(optional){curseforge:239197}
+            jei(optional){curseforge:238222}
+            the-one-probe(optional){curseforge:245211}
+            had-enough-items(optional){curseforge:557549}
+            codechicken-lib-1-8(required){curseforge:242818}
+            gregtechce(incompatible){curseforge:293327}
+            gregtech-ce-unofficial(incompatible){curseforge:557242}
+            gtce-tj-edition(incompatible){curseforge:597032}
