@@ -41,6 +41,12 @@ jobs:
             notifications
             wrapper
 
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          path: |
+            build/libs/*.jar
+
   publish_github:
     name: Publish (GitHub)
     needs: build
@@ -50,6 +56,11 @@ jobs:
       contents: write # needed to create GitHub releases
 
     steps:
+      - name: Download Artifacts
+        uses: actions/download-artifacts@v8
+        with:
+          path: build/libs
+
       - name: Publish to GitHub
         uses: softprops/action-gh-release@v3
         with:
@@ -63,6 +74,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Download Artifacts
+        uses: actions/download-artifacts@v8
+        with:
+          path: build/libs
       - name: Publish to Curseforge
         uses: Kira-NT/mc-publish@v3
         with:
